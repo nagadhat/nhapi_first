@@ -41,4 +41,8 @@ class OrderRepository implements OrderRepositoryInterface
     {
         return $this->model::where('is_fulfilled', true);
     }
+    public function getOrders() 
+    {
+        return $this->model::all();
+    }
 }

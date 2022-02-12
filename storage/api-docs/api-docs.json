@@ -8,7 +8,7 @@
         "/api/orders": {
             "get": {
                 "tags": [
-                    "Order"
+                    "Orderss"
                 ],
                 "summary": "Get orders list",
                 "operationId": "803fc5d32177a888e12dd7a8f9d0e6d4",

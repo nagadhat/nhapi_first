@@ -265,4 +265,11 @@ class OrderController extends BaseController
 
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
+
+    public function allOrders() 
+    {
+        return response()->json([
+            'data' => $this->orderRepository->getOrders()
+        ]);
+    }
 }

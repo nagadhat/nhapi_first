@@ -19,7 +19,7 @@ class Order extends Model
 
     protected $guarded = ['id'];
 
-      /**
+    /**
      * @OA\Property(
      *      title="client",
      *      description="Name of the new client",
