@@ -1,3 +1,7 @@
 {
-    "Core": true
+    "Core": true,
+    "Hrm": true,
+    "Inventory": true,
+    "Accounts": true,
+    "Finance": true
 }
