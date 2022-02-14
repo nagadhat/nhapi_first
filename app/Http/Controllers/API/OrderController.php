@@ -9,11 +9,12 @@ use Illuminate\Http\Response;
 
 
      /**
-     * @OAS\SecurityScheme(
-     *      securityScheme="bearerToken",
-     *      type="http",
-     *      scheme="bearer"
-     * )
+     *     @SWG\SecurityScheme(
+     *          securityDefinition="passport",
+     *          type="apiKey",
+     *          in="header",
+     *          name="Authorization"
+     *      )
      */
 class OrderController extends BaseController
 {

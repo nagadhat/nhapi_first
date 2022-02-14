@@ -380,7 +380,7 @@
                 "type": "oauth2",
                 "description": "Laravel passport oauth2 security.",
                 "in": "header",
-                "scheme": "https",
+                "scheme": "http",
                 "flows": {
                     "password": {
                         "authorizationUrl": "http://localhost/oauth/authorize",

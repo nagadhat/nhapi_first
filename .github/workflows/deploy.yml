@@ -1,0 +1,72 @@
+name: ronorp deployement
+
+on:
+  push:
+    branches:
+      - develop
+      #branches-ignore:
+      #- '**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Copy file via scp
+        uses: appleboy/scp-action@master
+        with:
+          # host: ${{ secrets.DEV_HOST }}
+          # username: ${{ secrets.DEV_USERNAME }}
+          # port: ${{ secrets.DEV_PORT }}
+          # password: ${{ secrets.DEV_SSHPASS }}
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          port: ${{ secrets.STAGING_PORT }}
+          password: ${{ secrets.STAGING_PASS }}
+          # KEY: ${{ secrets.STAGING_SSH_SECRET_KEY }}
+          source: "."
+          # target: "/var/www/nhapi"
+          target: "/var/www/html/nhapi"
+      - run: |
+          # remove .git files
+          echo "removing .git folder"
+          rm -rf .git
+          echo "list of files..."
+          ls -la
+
+      - name: executing laravel deployement commands
+        uses: appleboy/ssh-action@master
+        with:
+          # host: ${{ secrets.DEV_HOST }}
+          # username: ${{ secrets.DEV_USERNAME }}
+          # port: ${{ secrets.DEV_PORT }}
+          # password: ${{ secrets.DEV_SSHPASS }}
+          host: ${{ secrets.STAGING_HOST }}
+          username: ${{ secrets.STAGING_USER }}
+          port: ${{ secrets.STAGING_PORT }}
+          password: ${{ secrets.STAGING_PASS }}
+          # KEY: ${{ secrets.STAGING_SSH_SECRET_KEY }}
+          script: |
+            # cd /var/www/nhapi
+            cd /var/www/html/nhapi
+            echo "creating env file...."
+            php -r "file_exists('.env') || copy('.env.example', '.env');"
+            echo "executing composer install...."
+            composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+            echo "Generating key..."
+            php artisan key:generate
+            echo "running migration"
+            php artisan migrate
+            echo "run seed"
+            php artisan db:seed
+            echo "finally unit testing..."
+            vendor/bin/phpunit
+            echo "executing yarn command"
+            echo  yarn && yarn run prod
+            php artisan optimize:clear
+            echo "Granting directory permissions..."
+            chmod -R 777 bootstrap/cache
+            chmod -R 777 storage/*
+            echo "done...."

@@ -175,7 +175,7 @@ return [
                     'type' => 'oauth2', // The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2".
                     'description' => 'Laravel passport oauth2 security.',
                     'in' => 'header',
-                    'scheme' => 'https',
+                    'scheme' => 'http',
                     'flows' => [
                         "password" => [
                             "authorizationUrl" => config('app.url') . '/oauth/authorize',
@@ -224,7 +224,7 @@ return [
          * Default is the order returned by the server unchanged.
         */
         'operations_sort' => env('L5_SWAGGER_OPERATIONS_SORT', null),
-
+        
         /*
          * Pass the validatorUrl parameter to SwaggerUi init on the JS side.
          * A null value here disables validation.
