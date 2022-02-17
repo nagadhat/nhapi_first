@@ -16,10 +16,10 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind(
-            OrderRepositoryInterface::class,
-            OrderRepository::class
-        );
+        // $this->app->bind(
+        //     OrderRepositoryInterface::class,
+        //     OrderRepository::class
+        // );
     }
     
 
