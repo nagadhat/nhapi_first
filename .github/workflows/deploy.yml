@@ -1,4 +1,4 @@
-name: ronorp deployement
+name: nhapi deployement
 
 on:
   push:
