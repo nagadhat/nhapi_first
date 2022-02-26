@@ -269,6 +269,7 @@ class OrderController extends BaseController
     }
 
     public function test_api(){
+        echo 'OKay';
         return true;
     }
 }

@@ -56,6 +56,7 @@ return [
              * Route for Oauth2 authentication callback.
             */
             'oauth2_callback' => 'api/oauth2-callback',
+            'oauth' =>'oauth/token',
 
             /*
              * Middleware allows to prevent unexpected access to API documentation
@@ -65,6 +66,7 @@ return [
                 'asset' => [],
                 'docs' => [],
                 'oauth2_callback' => [],
+                'oauth' => []
             ],
 
             /*

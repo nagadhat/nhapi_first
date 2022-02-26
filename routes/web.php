@@ -13,6 +13,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::group(['middleware' => 'web'], function () {
+    Route::post('/oauth/token', function(){
+        return 'ok';
+    });
+});
+
+
+
 
 Route::get('/', function () {
     return Redirect::to('api/nhapi-doc');
