@@ -11,8 +11,10 @@ use Validator;
 use App\Traits\NhTraits;
 use App\Traits\SmsTraits;
 use App\Models\User;
+use App\Models\UserCustomer;
 use App\Models\TempUserCustomer;
-// use App\Models\product;
+use App\Models\Address_assign;
+use App\Models\Address;
 // use App\Models\Brand;
 // use App\Models\categorie;
 // use App\Models\FlashSaleProduct;
@@ -26,14 +28,22 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
     use NhTraits;
     use SmsTraits;
     protected $user;
+    protected $customer;
+    protected $addressCodes;
+    protected $address;
+    protected $tempUserCustomer;
     // protected $product;
     // protected $brand;
     // protected $categorie;
     // protected $flash_sale;
     // protected $flash_sale_product;
     // protected $products_categorie;
-    public function __construct(User $user){
+    public function __construct(User $user, UserCustomer $customer, TempUserCustomer $tempUserCustomer, Address_assign $addressCodes, Address $address){
         $this->user = $user;
+        $this->customer = $customer;
+        $this->addressCodes = $addressCodes;
+        $this->address = $address;
+        $this->tempUserCustomer = $tempUserCustomer;
     }
 
     public function userLogin(Request $req)
@@ -46,7 +56,7 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
             if(Auth::user()->user_type == 'agent'){               
                 $msg = 'AgentDashboard';
             }
-            if(Auth::user()->user_type == 'customer'){                               
+            if(Auth::user()->user_type == 'user'){                               
                 $msg = 'CustomerDashboard';
             }
             $user = Auth::user();
@@ -54,7 +64,7 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
             $success['user'] =  $user;
             return $this->sendResponse($success, $msg);         
         }else{
-            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
+            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised username or password.']);
         }
     }
 
@@ -78,7 +88,7 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
             return 'User not found!';
         }
 
-        $tempUser = $this->CreateTempOTP($req);
+        $tempUser = $this->CreatePasswordResetOTP($req);
         $smsContent = "Your Password Reset OTP for Nagadhat is " . $tempUser['user_otp_code'] . ".\nHelp line: 09602444444";
         $smsContent = $this->sendSingleSms($tempUser["username"], $smsContent);
         if($smsContent){
@@ -89,13 +99,84 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
     }
 
     public function forgetPasswordOtpVerification(Request $req){
-        return $this->otpVerification($req);
+        $result = $this->otpVerification($req);
+        $this->tempUserCustomer::where('username', $result['user']['username'])->delete();
+        return $result;
     }
 
-    public function userInfo(Request $req)
+    public function passwordReset(Request $req){
+        $validator = Validator::make($req->all(), [
+            'username' => 'required',
+            'password' => 'required|confirmed|min:6',
+        ]);     
+   
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
+        $user = $this->user::where('username', $req->username)->first();
+        if (!$user) {
+            return 'User not found!';
+        }
+
+        $user->password = bcrypt($req->password);
+        if($user->save()){
+            return ['user_info'=>$user, 'status'=>true, 'msg'=>'Password has been updated'];
+        }
+        return "Something wrong, can't update password!";
+
+        // $user = $this->user::where('username', $req->username)->first();
+        // $updatePassword = $user->update(['password'=>bcrypt($req->password)]);
+        // return [$updatePassword, $user->password, $req->password];
+    }
+
+    public function userInfo()
     {
-        $user = Auth::user();     
+        $user = Auth::user();
+        $user['first_name'] = $this->customer::where('username', Auth::user()->username)->pluck('first_name')->first();    
         return $user;
+    }
+
+    public function userAddressCodes()
+    {
+        return $this->addressCodes::where('username', Auth::user()->username)->pluck('address_id');
+    }
+
+    public function userAddress()
+    {
+        $addressIds = $this->addressCodes::where('username', Auth::user()->username)->pluck('address_id');
+        return $this->address::whereIn('id', $addressIds)->get();
+    }
+
+    public function userInfoById($userId)
+    {
+        $user = $this->user::where('id', $userId)->first();
+        if(!$user){
+            return 'User not found!';
+        }return $user;
+
+        // return $this->user::findOrFail($userId);
+    }
+
+    public function userAddressCodesById($userId)
+    {
+        $addressCode = $this->addressCodes::where('user_id', $userId)->pluck('address_id')->toArray();
+        if(!$addressCode || empty($addressCode)){
+            return 'Address not found!';
+        }
+        return $addressCode;
+
+        // return $this->addressCodes::where('user_id', $userId)->pluck('address_id');
+    }
+
+    public function userAddressByAddressId($addressId)
+    {
+        $address = $this->address::where('id', $addressId)->first();
+        if(!$address || empty($address)){
+            return 'Addresses not found!';
+        }
+        return $address;
+
+        // return $this->addressCodes::where('user_id', $userId)->pluck('address_id');
     }
 
     // This function will create a new user

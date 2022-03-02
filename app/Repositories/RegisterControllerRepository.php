@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\RegisterControllerRepositoryInterface;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Traits\NhTraits;
+use App\Traits\SmsTraits;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -17,6 +18,7 @@ use App\Models\TempUserCustomer;
 class RegisterControllerRepository extends BaseController implements RegisterControllerRepositoryInterface
 {
     use NhTraits;
+    use SmsTraits;
     protected $user;
     public function __construct(User $user){
         $this->user = $user;
@@ -40,11 +42,7 @@ class RegisterControllerRepository extends BaseController implements RegisterCon
         }
 
         // Calling a method from NhTraits
-        $tempCustomer = $this->CreateTempCustomer($req);
-        return $tempCustomer;   
-        
-        // $success['token'] =  $user->createToken('MyApp')->accessToken;
-        // $success['name'] =  $user->name;
+        return $this->CreateTempCustomer($req);
     }
 
     public function regOtpVerification(Request $req){

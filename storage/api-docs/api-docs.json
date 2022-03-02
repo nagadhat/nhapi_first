@@ -5,34 +5,74 @@
         "version": "1"
     },
     "paths": {
-        "/api/": {
+        "/api/all-cart-product/{userId}": {
             "get": {
                 "tags": [
-                    "Landing (home page)"
+                    "Cart Product"
                 ],
-                "summary": "Get home page view",
-                "operationId": "462e88d37d580b8c7b0550f779b4757b",
+                "summary": "Get Cart Product by User ID",
+                "description": "Returns Products",
+                "operationId": "893474df5a2caa8f9e9a7607e460e995",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Success",
+                        "description": "This will return all product listed in cart of the given user id.",
                         "content": {
-                            "application/json": {}
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "intiger",
+                                            "example": "567"
+                                        },
+                                        "user_id": {
+                                            "type": "intiger",
+                                            "example": "3166"
+                                        },
+                                        "order_type": {
+                                            "type": "string",
+                                            "example": "Flash"
+                                        },
+                                        "product_id": {
+                                            "type": "intiger",
+                                            "example": "1549"
+                                        },
+                                        "quantity": {
+                                            "type": "intiger",
+                                            "example": "3"
+                                        },
+                                        "product_unit_price": {
+                                            "type": "intiger",
+                                            "example": "15568"
+                                        },
+                                        "product_variation_size": {
+                                            "type": "intiger",
+                                            "example": "0"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
                         }
-                    },
-                    "401": {
-                        "description": "Unauthorize Access, Invalid Token or Token has expired",
-                        "content": {
-                            "application/json": {}
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden"
                     },
                     "400": {
                         "description": "Bad Request"
                     },
-                    "404": {
-                        "description": "not found"
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
                     }
                 },
                 "security": [
@@ -45,7 +85,7 @@
         "/api/orders": {
             "get": {
                 "tags": [
-                    "Order"
+                    "Orders CRUD"
                 ],
                 "summary": "Get orders list",
                 "operationId": "803fc5d32177a888e12dd7a8f9d0e6d4",
@@ -80,7 +120,7 @@
             },
             "post": {
                 "tags": [
-                    "Order"
+                    "Orders CRUD"
                 ],
                 "summary": "Store new order",
                 "description": "Returns project data",
@@ -118,7 +158,7 @@
                 },
                 "security": [
                     {
-                        "bearer": []
+                        "passport": []
                     }
                 ]
             }
@@ -126,7 +166,7 @@
         "/api/orders/{id}": {
             "get": {
                 "tags": [
-                    "Order"
+                    "Orders CRUD"
                 ],
                 "summary": "Get order information",
                 "description": "Returns order data",
@@ -165,13 +205,13 @@
                 },
                 "security": [
                     {
-                        "bearer": []
+                        "passport": []
                     }
                 ]
             },
             "put": {
                 "tags": [
-                    "Order"
+                    "Orders CRUD"
                 ],
                 "summary": "Update existing order",
                 "description": "Returns updated project data",
@@ -229,7 +269,7 @@
             },
             "delete": {
                 "tags": [
-                    "Order"
+                    "Orders CRUD"
                 ],
                 "summary": "Delete existing order",
                 "description": "Deletes a record and returns no content",
@@ -787,34 +827,200 @@
                 ]
             }
         },
-        "/api/all-orders": {
-            "get": {
+        "/api/nh-registration": {
+            "post": {
                 "tags": [
-                    "Order List"
+                    "Authentication"
                 ],
-                "summary": "Get orders list",
-                "operationId": "d7b72ff785a2392ac40e5c1530290a19",
+                "summary": "NH Registration",
+                "description": "This end-point will be used for registration new user. You have to provide body params with the keys of- 'username', 'password', 'password_confirmation', and 'email' (Optional). The 'username' must be a valid phone number and password length at least 6 digit. After registration, system will send an OTP to given username (phone), that you must verify in '/api/registration-otp-verify'.",
+                "operationId": "nh-registration",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password",
+                                    "password_confirmation",
+                                    "email"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "01xxxxxxxxx"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "123456"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "123456"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "name@domain.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
-                    "200": {
-                        "description": "Success",
-                        "content": {
-                            "application/json": {}
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorize Access, Invalid Token or Token has expired",
-                        "content": {
-                            "application/json": {}
-                        }
-                    },
-                    "403": {
-                        "description": "Forbidden"
+                    "201": {
+                        "description": "Successful operation"
                     },
                     "400": {
                         "description": "Bad Request"
                     },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/registration-otp-verify": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Verify Registration OTP",
+                "description": "This end-point will be used for verify Registration OTP.",
+                "operationId": "registration-otp-verify",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "user_otp"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "01xxxxxxxxx"
+                                    },
+                                    "user_otp": {
+                                        "type": "string",
+                                        "example": "12345"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                }
+            }
+        },
+        "/api/nh-login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "NH Login",
+                "description": "Login by username, password. Username must be phone number and 11 digit.",
+                "operationId": "nh-login",
+                "requestBody": {
+                    "description": "Pass user credentials (username and password).",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "01xxxxxxxxx"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "12345"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
                     "404": {
-                        "description": "not found"
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthorised username or password."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/nh-logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "NH Logout",
+                "description": "Logout user and invalidate token",
+                "operationId": "nh logout",
+                "responses": {
+                    "200": {
+                        "description": "Success"
+                    },
+                    "401": {
+                        "description": "Returns when user is not authenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user": {
+                                            "type": "string",
+                                            "example": "basic user info"
+                                        },
+                                        "login_status": {
+                                            "type": "string",
+                                            "example": "false"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [
@@ -822,6 +1028,172 @@
                         "passport": []
                     }
                 ]
+            }
+        },
+        "/api/nh-forget-password-otp": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Get OTP for Forget Password",
+                "description": "This end-point will provide OTP for Forget Password. You have to pass body param with the key name 'username' and it must be a valid phone number, already registered.",
+                "operationId": "nh-forget-password-otp",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "01xxxxxxxxx"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sorry, wrong email address or password. Please try again"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/forget-password-otp-verify": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Verify OTP for Forget Password",
+                "description": "For verify the 'Forget Password OTP' you have to pass body param with the key 'username' and 'user_otp'.",
+                "operationId": "forget-password-otp-verify",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "01xxxxxxxxx"
+                                    },
+                                    "user_otp": {
+                                        "type": "string",
+                                        "example": "12345"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "422": {
+                        "description": "Wrong credentials response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Sorry, wrong email address or password. Please try again"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/password-reset": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Update Password",
+                "description": "This end-point will update previous password with given password. You have to pass body param with the key 'username', 'password' and 'password_confirmation'.",
+                "operationId": "password-reset",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "example": "01xxxxxxxxx"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "123456"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "123456"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "This will return user_info, msg, status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "user_info": {
+                                            "type": "string",
+                                            "example": "Basic information of the user"
+                                        },
+                                        "status": {
+                                            "type": "string",
+                                            "example": "true"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "Password has been updated"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
     },

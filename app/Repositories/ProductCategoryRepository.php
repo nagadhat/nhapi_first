@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\ProductCategoryRepositoryInterface;
+use App\Http\Controllers\API\FlashSalesController;
 use App\Models\product;
 use App\Models\Brand;
 use App\Models\categorie;
@@ -67,6 +68,28 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         return $this->flash_sale::first();
     }
 
+    public function flashSaleStatus() 
+    {
+        // $flash = flash_sale::where("id", $id)->get()->first();
+        $flash = $this->flash_sale::first();
+        if ($flash == null) {
+            return 0;
+        } else {
+            $status = $flash["status"];
+            $startTime = $flash["start_time"];
+            $endTime = $flash["end_time"];
+
+            $ts1 = strtotime($startTime);
+            $ts2 = strtotime($endTime);
+            $currentTime = strtotime(date("Y-m-d H:i:s"));
+            if($ts1 <= $currentTime && $currentTime <= $ts2 && $status){
+                return 1;
+            }else{
+                return 0;
+            }
+        }
+    }
+
     public function mainCategories(Request $req) 
     {
         $limit = 10;
@@ -100,5 +123,26 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
             return ProductsCategorie::join("products", "products_categories.product_id", "=", "products.id")->where("category_id", $catId)->where("products.target_audience", 0)->limit($max)->inRandomOrder()->get();
         }
         return ProductsCategorie::join("products", "products_categories.product_id", "=", "products.id")->where("category_id", $catId)->where("products.target_audience", 0)->limit($max)->get();
+    }
+
+    public function productPriceByProductId($productId) 
+    {
+        $productDetails = $this->product::where("id", $productId)->get()->first();
+
+        $flashSaleController = new FlashSalesController();
+        // Calculate the product price
+        $productSellPrice = $productDetails["price"];
+        // Discount For flash-sale (Override Existing Discount)
+        if ($flashSaleController->getFlashSaleStatus()) {
+            $productDetails["discount_type"] = ($flashSaleController->getFlashSaleProductDiscountType($productDetails["id"]) != null) ? $flashSaleController->getFlashSaleProductDiscountType($productDetails["id"]) : $productDetails["discount_type"];
+            $productDetails["discount_amount"] = ($flashSaleController->getFlashSaleProductDiscountPrice($productDetails["id"]) > 0) ? $flashSaleController->getFlashSaleProductDiscountPrice($productDetails["id"]) : $productDetails["discount_amount"];
+        }
+        // Discount Calculation
+        if ($productDetails["discount_type"] == "percentage") {
+            $productSellPrice = round($productDetails["price"] - (($productDetails["price"] * $productDetails["discount_amount"]) / 100));
+        } else if ($productDetails["discount_type"] == "flat") {
+            $productSellPrice = round($productDetails["price"] - $productDetails["discount_amount"]);
+        }
+        return $productSellPrice;
     }
 }

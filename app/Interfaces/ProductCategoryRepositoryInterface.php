@@ -12,5 +12,7 @@ interface ProductCategoryRepositoryInterface
     public function newProducts();
     public function flashSaleProducts();
     public function flashSaleInfo();
+    public function flashSaleStatus();
     public function productByCategoryID(Request $req);
+    public function productPriceByProductId(Request $request);
 }

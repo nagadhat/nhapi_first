@@ -26,8 +26,14 @@ trait NhTraits
         if($req->email){
             $input['user_email'] = $req->email;
         }
-        $tempUser = TempUserCustomer::create($input);    
-        return $tempUser;
+        $tempUser = TempUserCustomer::create($input);
+
+        $smsContent = "Nagadhat Registration OTP is " . $tempUser['user_otp_code'] . ".\nHelp line: 09602444444";
+        $smsContent = $this->sendSingleSms($tempUser["username"], $smsContent);
+        if($smsContent){
+            return ['user_info'=>$tempUser, 'sms_sending_status'=>true, 'otp'=>$tempUser['user_otp_code']];
+        }
+        return ['user_info'=>$tempUser, 'sms_sending_status'=>false];
     }
 
     public function CreateNewCustomer($req)
@@ -44,7 +50,7 @@ trait NhTraits
         return ['msg'=>'New user created successfully', 'user_info'=>$user, 'token'=>$token];
     }
 
-    public function CreateTempOTP(Request $req)
+    public function CreatePasswordResetOTP(Request $req)
     {
         $input['username'] = $this->FilterMobileNumber($req->username);
         $input['user_otp_code'] = rand(11111,99999);

@@ -278,6 +278,12 @@ class ProductCategoryController extends Controller
         ]);
     }
 
+    function flashSaleStatus(){
+        return response()->json([
+            'data' => $this->productCategoryRepository->flashSaleStatus()
+        ]);
+    }
+
     /**
      * @OA\Post(
      *     path="/api/all-product-by-category-id",
@@ -418,6 +424,14 @@ class ProductCategoryController extends Controller
     function allBrands(Request $req){
         return response()->json([
             'data' => $this->productCategoryRepository->allBrands($req)
+        ]);
+    }
+
+    function productPriceByProductId(Request $request){
+        $productId = $request->route('productId');
+
+        return response()->json([
+            'data' => $this->productCategoryRepository->productPriceByProductId($productId)
         ]);
     }
 }
