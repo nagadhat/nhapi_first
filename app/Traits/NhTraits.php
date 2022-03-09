@@ -80,4 +80,18 @@ trait NhTraits
         }
         return ['status'=>false, 'msg'=>'User not found.'];       
     }
+
+    // Upload File to public/media/products/images
+    function uploadAndGetPath($file, $path = "\storage\app\public\media\products\images")
+    {
+        $image = $file;
+        $actual_image = $image->getClientOriginalName();
+        $filename_image = time() . '_' . $actual_image;
+        $path = $image->storeAs($path, $filename_image);
+        // $path = $image->storeAs($path, $filename_image, 'public_web_url');
+        //$path = $file->store($path);
+        // Remove /public from $path
+        //$path = substr($path, 7);
+        return "media/products/images/" . $filename_image;
+    }
 }

@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Http\Controllers\API\BaseController as BaseController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Repositories\ProductCategoryRepository;
+use Validator;
 
-class ProductCategoryController extends Controller
+class ProductCategoryController extends BaseController
 {
     protected $productCategoryRepository;
     public function __construct(ProductCategoryRepository $productCategoryRepository) 
@@ -432,6 +434,41 @@ class ProductCategoryController extends Controller
 
         return response()->json([
             'data' => $this->productCategoryRepository->productPriceByProductId($productId)
+        ]);
+    }
+
+    public function addMasterProduct(Request $request){
+        $validator = Validator::make($request->all(), [
+            'author_id'             => 'required',
+            'product_title'         => 'required',
+            'product_sku'           => 'required',
+            'short_description'     => 'required',
+            'full_description'      => 'required',
+        ]);       
+   
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
+
+        return response()->json([
+            'data' => $this->productCategoryRepository->addMasterProduct($request)
+        ]);
+    }
+
+    public function getProductsByLimit(Request $request) 
+    {
+        // $validator = Validator::make($request->all(), [
+        //     'limit' => 'required',
+        // ]);       
+   
+        // if($validator->fails()){
+        //     return $this->sendError('Validation Error.', $validator->errors());       
+        // }
+
+        $limit = $request->route('limit');
+
+        return response()->json([
+            'data' => $this->productCategoryRepository->getProductsByLimit($limit)
         ]);
     }
 }

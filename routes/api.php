@@ -49,15 +49,18 @@ Route::middleware('auth:api')->group( function () {
 
     //Get cart products and prices
     Route::get('get-cart-product/{userId}', [CartController::class, 'allCartProductById']);
+    Route::post('add-to-cart', [CartController::class, 'addToCart']);
     Route::get('get-product-price/{productId}', [ProductCategoryController::class, 'productPriceByProductId']);
 
     // 'Products & Categories' section in API documentation
+    Route::post('add-master-product', [ProductCategoryController::class, 'addMasterProduct']);
     Route::post('all-brand', [ProductCategoryController::class, 'allBrands']);
     Route::post('all-category', [ProductCategoryController::class, 'categories']);
     Route::post('all-category-main', [ProductCategoryController::class, 'mainCategories']);
     Route::get('all-category-slide', [ProductCategoryController::class, 'categoriesSlide']);
     Route::get('all-category-top-menu', [ProductCategoryController::class, 'categoriesTopMenu']);
     Route::get('all-product-new', [ProductCategoryController::class, 'newProducts']);
+    Route::get('get-product/{limit}', [ProductCategoryController::class, 'getProductsByLimit']);
     Route::post('all-product-by-category-id', [ProductCategoryController::class, 'productByCategoryID']);
     
     // Flash Sales Product Info

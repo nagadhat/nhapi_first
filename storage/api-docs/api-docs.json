@@ -31,33 +31,45 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
-                                        "id": {
+                                        "cartId": {
                                             "type": "intiger",
                                             "example": "567"
                                         },
-                                        "user_id": {
+                                        "productId": {
                                             "type": "intiger",
-                                            "example": "3166"
+                                            "example": "2562"
                                         },
-                                        "order_type": {
+                                        "orderType": {
                                             "type": "string",
-                                            "example": "Flash"
+                                            "example": "Regular"
                                         },
-                                        "product_id": {
-                                            "type": "intiger",
-                                            "example": "1549"
+                                        "cartProductImage": {
+                                            "type": "string",
+                                            "example": "media/products/26072021737515495.webp"
                                         },
-                                        "quantity": {
-                                            "type": "intiger",
-                                            "example": "3"
+                                        "cartProductName": {
+                                            "type": "string",
+                                            "example": "DIBAOLING Hand Sanitizer Formula"
                                         },
-                                        "product_unit_price": {
+                                        "cartProductQuantity": {
                                             "type": "intiger",
-                                            "example": "15568"
+                                            "example": "10"
                                         },
-                                        "product_variation_size": {
+                                        "cartProductUnitPrice": {
                                             "type": "intiger",
-                                            "example": "0"
+                                            "example": "500"
+                                        },
+                                        "cartProductVendorId": {
+                                            "type": "intiger",
+                                            "example": "40"
+                                        },
+                                        "cartProductReturnPolicy": {
+                                            "type": "string",
+                                            "example": "null"
+                                        },
+                                        "cartProductSlug": {
+                                            "type": "string",
+                                            "example": "DIBAOLING-Hand-Sanitizer-Formula-610abac3cc9c4"
                                         }
                                     },
                                     "type": "object"
@@ -73,6 +85,83 @@
                     },
                     "403": {
                         "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/add-to-cart": {
+            "post": {
+                "tags": [
+                    "Cart Product"
+                ],
+                "summary": "Add to cart",
+                "description": "This end-point will add products to cart",
+                "operationId": "add-to-cart",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer",
+                                        "example": "3121"
+                                    },
+                                    "order_type": {
+                                        "type": "string",
+                                        "example": "Regular"
+                                    },
+                                    "product_id": {
+                                        "type": "integer",
+                                        "example": "1559"
+                                    },
+                                    "quantity": {
+                                        "type": "integer",
+                                        "example": "5"
+                                    },
+                                    "product_variation_size": {
+                                        "type": "integer",
+                                        "example": "0"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "This will return status, msg, and basic information about the cart",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": "true"
+                                        },
+                                        "msg": {
+                                            "type": "string",
+                                            "example": "Product added to cart successfully"
+                                        },
+                                        "data": {
+                                            "type": "string",
+                                            "example": "Basic information about the cart"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
                     }
                 },
                 "security": [

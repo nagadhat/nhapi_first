@@ -15,4 +15,6 @@ interface ProductCategoryRepositoryInterface
     public function flashSaleStatus();
     public function productByCategoryID(Request $req);
     public function productPriceByProductId(Request $request);
+    public function addMasterProduct(Request $request);
+    public function getProductsByLimit(Request $request);
 }

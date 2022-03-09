@@ -4,10 +4,12 @@ namespace App\Repositories;
 
 use App\Repositories\ProductCategoryRepository;
 use App\Interfaces\CartRepositoryInterface;
+use Illuminate\Http\Request;
 use App\Models\ProductsVariations;
 use App\Models\OrdersProduct;
 use App\Models\Product;
 use App\Models\Cart;
+use Validator;
 use Auth;
 use DB;
 
@@ -26,9 +28,23 @@ class CartRepository implements CartRepositoryInterface
         $this->ordersProduct = $ordersProduct;
     }
 
-    public function allCartProductById($userId) 
+    public function addToCart(Request $request) {
+        $productExist = $this->cart::where('user_id', $request->user_id)->where('product_id', $request->product_id)->first();
+        
+        if($productExist){
+            $productExist->quantity = $productExist->quantity + $request->quantity;
+            $productExist->save();
+            $cartProduct = $productExist;
+
+        } else $cartProduct = $this->cart::create($request->all());
+        
+        return ['status'=>true, 'msg'=>'Product added to cart successfully', 'data'=>$cartProduct];
+    }
+
+    public function allCartProductById($userId)
     {
-        $cartData = $this->cart::where("user_id", Auth::id())->get()->toArray();
+        // $cartData = $this->cart::where("user_id", Auth::id())->get()->toArray();
+        $cartData = $this->cart::where("user_id", $userId)->get()->toArray();
         if(empty($cartData)){
             return ['status'=>false, 'msg'=>'Cart is empty.'];
         }
@@ -61,7 +77,7 @@ class CartRepository implements CartRepositoryInterface
         }
         return $cartProductsDetails;
 
-        $vendors = $this->getVendorsListOfCart(Auth::id());
+        $vendors = $this->getVendorsListOfCart($userId);
         $totalVendor = count($vendors);
         return ['chartProducts'=> $cartProductsDetails, 'vendors'=> $vendors, 'totalVendors'=> $totalVendor];
     }
