@@ -7,7 +7,7 @@ use App\Http\Controllers\API\FlashSalesController;
 use App\Traits\NhTraits;
 use App\Models\Product;
 use App\Models\Brand;
-use App\Models\categorie;
+use App\Models\Categorie;
 use App\Models\FlashSaleProduct;
 use App\Models\ProductsCategorie;
 use App\Models\ProductsVariations;
