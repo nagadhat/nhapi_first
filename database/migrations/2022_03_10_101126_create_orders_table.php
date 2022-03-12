@@ -35,7 +35,7 @@ class CreateOrdersTable extends Migration
             $table->integer('total_products_price')->nullable();
             $table->integer('total_quantity')->nullable();
             $table->timestamp('deleted_at')->nullable();
-            $table->timestamps()->default('current_timestamp()');
+            $table->timestamps();
         });
     }
 
