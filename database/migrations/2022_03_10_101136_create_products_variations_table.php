@@ -23,7 +23,7 @@ class CreateProductsVariationsTable extends Migration
             $table->string('size_name', 100)->nullable();
             $table->string('color_name', 100)->nullable();
             $table->string('color_code', 100)->nullable();
-            $table->timestamps()->default('current_timestamp()');
+            $table->timestamps();
         });
     }
 

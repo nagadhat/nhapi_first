@@ -23,7 +23,7 @@ class CreateProductsCategoriesTable extends Migration
             $table->string('last_modified_ip')->nullable();
             $table->string('last_modified_device')->nullable();
             $table->string('category_name')->nullable();
-            $table->timestamps()->default('current_timestamp()');
+            $table->timestamps();
         });
     }
 

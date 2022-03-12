@@ -39,7 +39,7 @@ class CreateUserCustomersTable extends Migration
             $table->string('nominee_relation', 200)->nullable();
             $table->double('cash_balance')->nullable();
             $table->integer('status')->default(0);
-            $table->timestamps()->default('current_timestamp()');
+            $table->timestamps();
             $table->integer('user_id')->nullable();
         });
     }

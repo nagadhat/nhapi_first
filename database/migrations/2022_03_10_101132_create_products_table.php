@@ -75,7 +75,7 @@ class CreateProductsTable extends Migration
             $table->integer('target_audience')->default(0);
             $table->tinyInteger('barcode_type')->nullable();
             $table->unsignedSmallInteger('outlet_id')->nullable();
-            $table->timestamps()->default('current_timestamp()');
+            $table->timestamps();
         });
     }
 
