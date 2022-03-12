@@ -423,9 +423,10 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function allBrands(Request $req){
+    function allBrands(Request $request){
+        $limit = $request->route('limit');
         return response()->json([
-            'data' => $this->productCategoryRepository->allBrands($req)
+            'data' => $this->productCategoryRepository->allBrands($limit)
         ]);
     }
 
@@ -439,7 +440,7 @@ class ProductCategoryController extends BaseController
 
     public function addMasterProduct(Request $request){
         $validator = Validator::make($request->all(), [
-            'author_id'             => 'required',
+            'outlet_id'             => 'required',
             'product_title'         => 'required',
             'product_sku'           => 'required',
             'short_description'     => 'required',

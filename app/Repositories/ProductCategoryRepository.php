@@ -133,12 +133,15 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         return $this->categorie::where('parent_id', 0)->where('status', 1)->limit($limit)->get();
     }
 
-    public function allBrands(Request $req) 
+    public function allBrands($limit) 
     {
-        if(!empty($req->limit) && $req->limit > 0){
-            return $this->brand::where('status', 1)->limit($req->limit)->get();
+        if($limit > 0 && $limit != 'all'){
+            return $this->brand::where('status', 1)->limit($limit)->get();
         }        
-        return $this->brand::where('status', 1)->get();
+        if($limit == 'all'){
+            return $this->brand::where('status', 1)->get();
+        }
+        return 'Invalid input!!';        
     }
 
     public function productByCategoryID(Request $req) 
@@ -190,10 +193,9 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         $newProduct['model'] = $request['model'];
         $newProduct['price'] = $request['product_price'];
         $newProduct['quantity'] = $request['product_quantity'];
-        $newProduct['vendor'] = $request['author_id'];
-        $newProduct['author_id'] = $request['author_id'];           
-        $newProduct['barcode_type'] = $request['barcode_type'];           
-             
+        $newProduct['author_id'] = $request['outlet_id'];                  
+        $newProduct['barcode_type'] = $request['barcode_type'];
+        $newProduct['outlet_id'] = $request['outlet_id'];             
         $newProduct['discount_type'] = $request["discount_type"]; // discount_type = percentage/flat
         $newProduct['discount_amount'] = $request["discount_amount"];
 

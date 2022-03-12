@@ -12,6 +12,7 @@ use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\UserLoginController;
 use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\FlashSalesController;
+use App\Http\Controllers\API\OutletController;
   
  
 
@@ -54,7 +55,7 @@ Route::middleware('auth:api')->group( function () {
 
     // 'Products & Categories' section in API documentation
     Route::post('add-master-product', [ProductCategoryController::class, 'addMasterProduct']);
-    Route::post('all-brand', [ProductCategoryController::class, 'allBrands']);
+    Route::get('all-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
     Route::post('all-category', [ProductCategoryController::class, 'categories']);
     Route::post('all-category-main', [ProductCategoryController::class, 'mainCategories']);
     Route::get('all-category-slide', [ProductCategoryController::class, 'categoriesSlide']);
@@ -63,6 +64,10 @@ Route::middleware('auth:api')->group( function () {
     Route::get('get-product/{limit}', [ProductCategoryController::class, 'getProductsByLimit']);
     Route::post('all-product-by-category-id', [ProductCategoryController::class, 'productByCategoryID']);
     
+    // Get Outlets
+    Route::get('get-all-outlet', [OutletController::class, 'getOutlet']);
+    Route::get('get-outlet/{outletId}', [OutletController::class, 'getOutletById']);
+
     // Flash Sales Product Info
     Route::get('get-flashsale-info', [ProductCategoryController::class, 'flashSaleInfo']);
     Route::get('get-flashsale-status', [ProductCategoryController::class, 'flashSaleStatus']);

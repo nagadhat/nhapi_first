@@ -38,16 +38,17 @@ trait NhTraits
 
     public function CreateNewCustomer($req)
     {
-        $input['username'] = $req->username;
-        $input['password'] = $req->user_password;
+        $input['username']  = $req->username;
+        $input['password']  = $req->user_password;
         $input['user_type'] = 'customer';
+        $input['active']    = 1;
         if($req->user_email){
             $input['email'] = $req->user_email;
         }       
         $user = User::create($input);
         $token =  $user->createToken('MyApp')->accessToken;
         $deleteTempUser = TempUserCustomer::where('username', $req->username)->delete();
-        return ['msg'=>'New user created successfully', 'user_info'=>$user, 'token'=>$token];
+        return ['user_info'=>$user, 'token'=>$token];
     }
 
     public function CreatePasswordResetOTP(Request $req)
@@ -66,7 +67,7 @@ trait NhTraits
         ]);
    
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $validator->errors()->toArray();
         }
 
         $tempUser = TempUserCustomer::where('username', $req->username)->get()->toArray();

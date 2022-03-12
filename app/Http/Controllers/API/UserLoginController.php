@@ -43,7 +43,10 @@ class UserLoginController extends Controller
      * )
      */
     function userLogin(Request $req){
-        return $this->userLoginRepository->userLogin($req);
+        // return $this->userLoginRepository->userLogin($req);
+        return response()->json([
+            'data' => $this->userLoginRepository->userLogin($req)
+        ]);
     }
 
     /**

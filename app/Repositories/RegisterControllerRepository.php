@@ -48,9 +48,10 @@ class RegisterControllerRepository extends BaseController implements RegisterCon
     public function regOtpVerification(Request $req){
         $otpVerify = $this->otpVerification($req);
 
-        if($otpVerify['status']){
-            return $this->CreateNewCustomer($otpVerify['user']);
+        if(!empty($otpVerify['status']) && $otpVerify['status'] == true){
+            $userData = $this->CreateNewCustomer($otpVerify['user']);
+            return $this->sendResponse($userData, 'New user created successfully');
         }
-        return $otpVerify;      
+        return $this->sendError('Validation Error.', $otpVerify);     
     }
 }
