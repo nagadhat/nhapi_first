@@ -6,7 +6,7 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
+use Validator;
 
 
      /**
@@ -28,7 +28,7 @@ class OrderController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/orders",
-     *     tags={"Order"},
+     *     tags={"Orders CRUD"},
      *     summary="Get orders list",
      *     security={{"passport": {}}},
      *     @OA\Response(
@@ -71,9 +71,9 @@ class OrderController extends BaseController
      * @OA\Post(
      *      path="/api/orders",
      *      operationId="store",
-     *      tags={"Order"},
+     *      tags={"Orders CRUD"},
      *      summary="Store new order",
-     *      security={{"bearer":{}}},
+     *      security={{"passport": {}}},
      *      description="Returns project data",
      *      @OA\RequestBody(
      *          required=true,
@@ -100,36 +100,54 @@ class OrderController extends BaseController
      */
     public function store(Request $request) 
     {
-        $input = $request->all();
-
-        $validator = Validator::make($input, [
-            'client'    => 'required',
-            'details' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->handleError($validator->errors());
+        $validator = Validator::make($request->all(), [
+            'user_id'           => 'required',
+            'shipping_address'  => 'required',
+            'delivery_address'  => 'required',
+            'shipping_type'     => 'required',
+        ]);       
+   
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
         }
 
-        $orderDetails = $request->only([
-            'client',
-            'details'
-        ]);
-
+        $orderDetails['user_id']            = $request->user_id; 
+        $orderDetails['shipping_address']   = $request->shipping_address; 
+        $orderDetails['delivery_address']   = $request->delivery_address; 
+        $orderDetails['shipping_type']      = $request->shipping_type; 
+        if($request->delivery_note){
+            $orderDetails['delivery_note']  = $request->delivery_note;
+        }        
         return response()->json(
             [
                 'data' => $this->orderRepository->createOrder($orderDetails)
             ],
             Response::HTTP_CREATED
         );
+        // return $request->all();
+        // $input = $request->all();
+
+        // $validator = Validator::make($input, [
+        //     'client'    => 'required',
+        //     'details' => 'required',
+        // ]);
+
+        // if ($validator->fails()) {
+        //     return $this->handleError($validator->errors());
+        // }
+
+        // $orderDetails = $request->only([
+        //     'client',
+        //     'details'
+        // ]);        
     }
 
     /**
      * @OA\Get(
      *      path="/api/orders/{id}",
-     *      tags={"Order"},
+     *      tags={"Orders CRUD"},
      *      summary="Get order information",
-     *      security={{"bearer":{}}},
+     *      security={{"passport": {}}},
      *      description="Returns order data",
      *      @OA\Parameter(
      *          name="id",
@@ -171,7 +189,7 @@ class OrderController extends BaseController
      * @OA\Put(
      *      path="/api/orders/{id}",
      *      operationId="updateProject",
-     *      tags={"Order"},
+     *      tags={"Orders CRUD"},
      *      summary="Update existing order",
      *      security={{"bearer":{}}},
      *      description="Returns updated project data",
@@ -228,7 +246,7 @@ class OrderController extends BaseController
      * @OA\Delete(
      *      path="/api/orders/{id}",
      *      operationId="destroy",
-     *      tags={"Order"},
+     *      tags={"Orders CRUD"},
      *      summary="Delete existing order",
      *      security={{"bearer":{}}},
      *      description="Deletes a record and returns no content",

@@ -9,4 +9,5 @@ interface OrderRepositoryInterface
     public function createOrder(array $orderDetails);
     public function updateOrder($orderId, array $newDetails);
     public function getFulfilledOrders();
+    public function createNewOrder($data);
 }

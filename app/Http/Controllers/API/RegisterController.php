@@ -4,12 +4,19 @@ namespace App\Http\Controllers\API;
    
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
+use App\Repositories\RegisterControllerRepository;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Validator;
    
 class RegisterController extends BaseController
 {
+    protected $registerControllerRepository;
+    public function __construct(RegisterControllerRepository $registerControllerRepository) 
+    {
+        $this->registerControllerRepository = $registerControllerRepository;
+    }
+
     /**
      * Register api
      *
@@ -65,6 +72,9 @@ class RegisterController extends BaseController
    
         return $this->sendResponse($success, 'User register successfully.');
     }
+
+
+    
    
     /**
      * Login api
@@ -100,7 +110,7 @@ class RegisterController extends BaseController
      */
     public function login(Request $request)
     {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){ 
+        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
             $user = Auth::user(); 
             $success['token'] =  $user->createToken('MyApp')->accessToken; 
             $success['user'] =  $user;
@@ -135,9 +145,90 @@ class RegisterController extends BaseController
 
     public function logout(Request $request)
     {
-        $user = Auth::user(); 
+        $user = Auth::user();
         $success['name'] =  $user->name;
         Auth::user()->tokens()->delete();
         return $this->sendResponse($success, 'User logout successfully.');
     }
+
+    /**
+     * @OA\Post(
+     *      path="/api/nh-registration",
+     *      operationId="nh-registration",
+     *      tags={"Authentication"},
+     *      summary="NH Registration",
+     *      description="This end-point will be used for registration new user. You have to provide body params with the keys of- 'username', 'password', 'password_confirmation', and 'email' (Optional). The 'username' must be a valid phone number and password length at least 6 digit. After registration, system will send an OTP to given username (phone), that you must verify in '/api/registration-otp-verify'.",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              required={"username","password","password_confirmation","email"},
+     *              @OA\Property(property="username", type="string", example="01xxxxxxxxx"),
+     *              @OA\Property(property="password", type="string", format="password", example="123456"),
+     *              @OA\Property(property="password_confirmation", type="string", format="password", example="123456"),
+     *              @OA\Property(property="email", type="string", format="email", example="name@domain.com"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Successful operation",
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad Request"
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
+    function registration(Request $req){
+        return response()->json([
+            'data' => $this->registerControllerRepository->registration($req)
+        ]);
+    }
+
+     /**
+     * @OA\Post(
+     *      path="/api/registration-otp-verify",
+     *      operationId="registration-otp-verify",
+     *      tags={"Authentication"},
+     *      summary="Verify Registration OTP",
+     *      description="This end-point will be used for verify Registration OTP.",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              required={"username","user_otp"},
+     *              @OA\Property(property="username", type="string", example="01xxxxxxxxx"),
+     *              @OA\Property(property="user_otp", type="string", example="12345"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Successful operation",
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad Request"
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
+    function regOtpVerification(Request $req){
+        return response()->json([
+            'data' => $this->registerControllerRepository->regOtpVerification($req)
+        ]);
+    }
+
 }
