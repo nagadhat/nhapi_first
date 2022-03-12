@@ -5,7 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\ProductCategoryRepositoryInterface;
 use App\Http\Controllers\API\FlashSalesController;
 use App\Traits\NhTraits;
-use App\Models\product;
+use App\Models\Product;
 use App\Models\Brand;
 use App\Models\categorie;
 use App\Models\FlashSaleProduct;
