@@ -50,7 +50,8 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
     {
         // Login from single table as well as multiple role
         if(Auth::attempt(['username' => $req->username,'password' => $req->password])){
-            if(Auth::user()->user_type == 'superAdmin'){               
+            $msg = 'NagadhatUser';
+            if(Auth::user()->user_type == 'superAdmin'){             
                 $msg = 'SuperAdminDashboard';
             } 
             if(Auth::user()->user_type == 'agent'){               
