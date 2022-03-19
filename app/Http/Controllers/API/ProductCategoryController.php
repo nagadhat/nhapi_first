@@ -69,6 +69,57 @@ class ProductCategoryController extends BaseController
     }
 
     /**
+     * @OA\Post(
+     *      path="/api/create-category",
+     *      operationId="create-category",
+     *      tags={"Products & Categories"},
+     *      summary="Create new category",
+     *      security={{"passport": {}}},
+     *      description="Returns project data",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              required={"username","password"},
+     *              @OA\Property(property="title", type="string", example="Category Title Here"),
+     *              @OA\Property(property="slug", type="string", example="Category Slug Here"),
+     *              @OA\Property(property="logo", type="file", example="Logo.jpg"),
+     *              @OA\Property(property="author_id", type="integer", example="3121"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="title", type="string", example="Brand Title Here"),
+     *              @OA\Property(property="slug", type="string", example="Brand Slug Here"),
+     *              @OA\Property(property="author_id", type="integer", example="3121"),
+     *              @OA\Property(property="logo", type="file", example="Logo.jpg"),
+     *              @OA\Property(property="updated_at", type="timestamps", example="2022-03-15T07:09:21.000000Z"),
+     *              @OA\Property(property="created_at", type="timestamps", example="2022-03-15T07:09:21.000000Z"),
+     *              @OA\Property(property="id", type="integer", example="44"),
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad Request"
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
+    function createCategory(Request $request){
+        return response()->json([
+            'data' => $this->productCategoryRepository->createCategory($request)
+        ]);
+    }
+
+    /**
      * @OA\Get(
      *     path="/api/all-category-top-menu",
      *     tags={"Products & Categories"},
@@ -390,7 +441,7 @@ class ProductCategoryController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/all-brand",
-     *     tags={"Products & Categories"},
+     *     tags={"Brand"},
      *     summary="Get brand list with it's all data.",
      *     security={{"passport": {}}},
      *     @OA\Response(
@@ -427,6 +478,65 @@ class ProductCategoryController extends BaseController
         $limit = $request->route('limit');
         return response()->json([
             'data' => $this->productCategoryRepository->allBrands($limit)
+        ]);
+    }
+
+     /**
+     * @OA\Post(
+     *      path="/api/all-brand",
+     *      operationId="all-brand",
+     *      tags={"Brand"},
+     *      summary="Store new brand",
+     *      security={{"passport": {}}},
+     *      description="Returns project data",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              required={"username","password"},
+     *              @OA\Property(property="title", type="string", example="Brand Title Here"),
+     *              @OA\Property(property="slug", type="string", example="Brand Slug Here"),
+     *              @OA\Property(property="logo", type="file", example="Logo.jpg"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="title", type="string", example="Brand Title Here"),
+     *              @OA\Property(property="slug", type="string", example="Brand Slug Here"),
+     *              @OA\Property(property="logo", type="file", example="Logo.jpg"),
+     *              @OA\Property(property="updated_at", type="timestamps", example="2022-03-15T07:09:21.000000Z"),
+     *              @OA\Property(property="created_at", type="timestamps", example="2022-03-15T07:09:21.000000Z"),
+     *              @OA\Property(property="id", type="integer", example="44"),
+     *          )
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad Request"
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
+    function newBrand(Request $request){
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'slug'  => 'required',
+            'logo'  => 'required',
+        ]);       
+   
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
+
+        return response()->json([
+            'data' => $this->productCategoryRepository->newBrand($request)
         ]);
     }
 

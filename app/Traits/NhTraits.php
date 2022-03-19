@@ -83,16 +83,26 @@ trait NhTraits
     }
 
     // Upload File to public/media/products/images
-    function uploadAndGetPath($file, $path = "\storage\app\public\media\products\images")
+    // $path = "\storage\app\public\media\products\images
+    function uploadAndGetPath($file, $path = "/public/media/products/images")
     {
+        // $destination = storage_path().'/public/new/'.$image_name;
         $image = $file;
         $actual_image = $image->getClientOriginalName();
         $filename_image = time() . '_' . $actual_image;
-        $path = $image->storeAs($path, $filename_image);
+        $path = $image->storeAs($path, $filename_image, 'storage_in_customer');
         // $path = $image->storeAs($path, $filename_image, 'public_web_url');
         //$path = $file->store($path);
         // Remove /public from $path
         //$path = substr($path, 7);
         return "media/products/images/" . $filename_image;
+    }
+
+    function uploadFile($file, $path, $return_path){
+        $actual_image = $file->getClientOriginalName();
+        $filename_image = time() . '_' . $actual_image;
+        $path = $file->storeAs($path, $filename_image, 'storage_in_customer');
+
+        return $return_path.$filename_image;
     }
 }

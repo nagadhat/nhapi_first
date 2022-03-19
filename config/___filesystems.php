@@ -1,4 +1,16 @@
 <?php
+// use Request;
+// use Illuminate\Support\Facades\Request;
+
+// $base_url = 'I:\nagadhat-laravel';
+// $base_url = 'D:\NH Git\nagadhat-customer';
+$base_url = 'D:\NH';
+
+if (config('app.env') == 'staging') {
+    $base_url = '/var/www/html';
+} elseif (config('app.env') == 'production') {
+    $base_url = '/home/nagadhat/public_html';
+}
 
 return [
 
@@ -35,18 +47,19 @@ return [
             'root' => storage_path('app'),
         ],
 
-        'storage_in_customer' => [
-            'driver' => 'local',
-            'root'   => 'D:\NH Git\nagadhat-customer\storage\app',
-        ],
-
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
         ],
-
+        /* Override Root url of the website */
+        'public_web_url' => [
+            'driver' => 'local',
+            'root' => $base_url,
+            'visibility' => 'public',
+        ],
+        /* .Override Root url of the website end */
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -55,7 +68,6 @@ return [
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
-            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
 
     ],

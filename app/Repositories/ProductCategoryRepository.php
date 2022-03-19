@@ -63,6 +63,22 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         return $this->categorie::select('id', 'title', 'slug')->get();     
     }
 
+    public function createCategory(Request $request) 
+    {
+        $category_info['title'] = $request->title;
+        $category_info['slug'] = $request->slug;
+        $category_info['author_id'] = $request->author_id;
+        
+        if ($request->hasFile('logo')) {
+            $path = 'public/media/categories';
+            $return_path = 'media/categories/';
+            $category_info['logo'] = $this->uploadFile($request->file('logo'), $path, $return_path);
+        }else{
+            $category_info['logo'] = '';
+        }
+        return $this->categorie::create($category_info);
+    }
+
     public function categoriesTopMenu()
     {
         return $this->categorie::where("home_page_top_menu", 1)->where('status', 1)->get();
@@ -142,6 +158,21 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
             return $this->brand::where('status', 1)->get();
         }
         return 'Invalid input!!';        
+    }
+
+    public function newBrand(Request $request) 
+    {
+        $brand_info['title'] = $request->title;
+        $brand_info['slug'] = $request->slug;
+        
+        if ($request->hasFile('logo')) {
+            $path = 'public/media/brands';
+            $return_path = 'media/brands/';
+            $brand_info['logo'] = $this->uploadFile($request->file('logo'), $path, $return_path);
+        }else{
+            $brand_info['logo'] = '';
+        }
+        return $this->brand::create($brand_info);
     }
 
     public function productByCategoryID(Request $req) 

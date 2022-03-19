@@ -60,10 +60,11 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
             if(Auth::user()->user_type == 'user'){                               
                 $msg = 'CustomerDashboard';
             }
+            Auth::user()->tokens()->delete(); 
             $user = Auth::user();
             $success['token'] =  $user->createToken('MyApp')->accessToken;
             $success['user'] =  $user;
-            return $this->sendResponse($success, $msg);         
+            return $this->sendResponse($success, $msg);
         }else{
             return $this->sendError('Unauthorised.', ['error'=>'Unauthorised username or password.']);
         }

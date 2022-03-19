@@ -55,8 +55,8 @@ Route::middleware('auth:api')->group( function () {
 
     // 'Products & Categories' section in API documentation
     Route::post('add-master-product', [ProductCategoryController::class, 'addMasterProduct']);
-    Route::get('all-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
     Route::post('all-category', [ProductCategoryController::class, 'categories']);
+    Route::post('create-category', [ProductCategoryController::class, 'createCategory']);
     Route::post('all-category-main', [ProductCategoryController::class, 'mainCategories']);
     Route::get('all-category-slide', [ProductCategoryController::class, 'categoriesSlide']);
     Route::get('all-category-top-menu', [ProductCategoryController::class, 'categoriesTopMenu']);
@@ -64,6 +64,10 @@ Route::middleware('auth:api')->group( function () {
     Route::get('get-product/{limit}', [ProductCategoryController::class, 'getProductsByLimit']);
     Route::post('all-product-by-category-id', [ProductCategoryController::class, 'productByCategoryID']);
     
+    // Brands
+    Route::get('all-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
+    Route::post('all-brand', [ProductCategoryController::class, 'newBrand']);
+
     // Get Outlets
     Route::get('get-all-outlet', [OutletController::class, 'getOutlet']);
     Route::get('get-outlet/{outletId}', [OutletController::class, 'getOutletById']);

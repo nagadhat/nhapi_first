@@ -458,6 +458,104 @@
                 ]
             }
         },
+        "/api/create-category": {
+            "post": {
+                "tags": [
+                    "Products & Categories"
+                ],
+                "summary": "Create new category",
+                "description": "Returns project data",
+                "operationId": "create-category",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Category Title Here"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "Category Slug Here"
+                                    },
+                                    "logo": {
+                                        "type": "file",
+                                        "example": "Logo.jpg"
+                                    },
+                                    "author_id": {
+                                        "type": "integer",
+                                        "example": "3121"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "title": {
+                                            "type": "string",
+                                            "example": "Brand Title Here"
+                                        },
+                                        "slug": {
+                                            "type": "string",
+                                            "example": "Brand Slug Here"
+                                        },
+                                        "author_id": {
+                                            "type": "integer",
+                                            "example": "3121"
+                                        },
+                                        "logo": {
+                                            "type": "file",
+                                            "example": "Logo.jpg"
+                                        },
+                                        "updated_at": {
+                                            "type": "timestamps",
+                                            "example": "2022-03-15T07:09:21.000000Z"
+                                        },
+                                        "created_at": {
+                                            "type": "timestamps",
+                                            "example": "2022-03-15T07:09:21.000000Z"
+                                        },
+                                        "id": {
+                                            "type": "integer",
+                                            "example": "44"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
         "/api/all-category-top-menu": {
             "get": {
                 "tags": [
@@ -764,7 +862,7 @@
         "/api/all-brand": {
             "get": {
                 "tags": [
-                    "Products & Categories"
+                    "Brand"
                 ],
                 "summary": "Get brand list with it's all data.",
                 "operationId": "dadeeaeed8ae5c45aae79d0fdafa8b27",
@@ -789,6 +887,94 @@
                     },
                     "404": {
                         "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Brand"
+                ],
+                "summary": "Store new brand",
+                "description": "Returns project data",
+                "operationId": "all-brand",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "username",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Brand Title Here"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "Brand Slug Here"
+                                    },
+                                    "logo": {
+                                        "type": "file",
+                                        "example": "Logo.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "title": {
+                                            "type": "string",
+                                            "example": "Brand Title Here"
+                                        },
+                                        "slug": {
+                                            "type": "string",
+                                            "example": "Brand Slug Here"
+                                        },
+                                        "logo": {
+                                            "type": "file",
+                                            "example": "Logo.jpg"
+                                        },
+                                        "updated_at": {
+                                            "type": "timestamps",
+                                            "example": "2022-03-15T07:09:21.000000Z"
+                                        },
+                                        "created_at": {
+                                            "type": "timestamps",
+                                            "example": "2022-03-15T07:09:21.000000Z"
+                                        },
+                                        "id": {
+                                            "type": "integer",
+                                            "example": "44"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
                     }
                 },
                 "security": [
