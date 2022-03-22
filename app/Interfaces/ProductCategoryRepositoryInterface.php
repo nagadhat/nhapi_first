@@ -17,4 +17,6 @@ interface ProductCategoryRepositoryInterface
     public function productPriceByProductId(Request $request);
     public function addMasterProduct(Request $request);
     public function getProductsByLimit(Request $request);
+    public function newBrand(Request $request);
+    public function createCategory(Request $request);
 }
