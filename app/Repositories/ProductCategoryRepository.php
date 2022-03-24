@@ -97,7 +97,9 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
     public function getProductsByLimit($limit) 
     {
         if($limit > 0 && $limit != 'all'){
-            return $this->product::where('live_status', 1)->orderBy('id', 'desc')->take($limit)->get();
+            // return $this->product::where('live_status', 1)->orderBy('id', 'desc')->take($limit)->get();
+            return $this->product::leftjoin('outlet_products', 'products.id', '=', 'outlet_products.product_id')
+            ->where('live_status', 1)->select('products.*', 'outlet_products.quantity AS stock_quantity')->orderBy('id', 'desc')->take(10)->get();
         }
         if($limit == 'all'){
             return $this->product::where('live_status', 1)->orderBy('id', 'desc')->get();

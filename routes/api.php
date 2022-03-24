@@ -13,6 +13,7 @@ use App\Http\Controllers\API\UserLoginController;
 use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\FlashSalesController;
 use App\Http\Controllers\API\OutletController;
+use App\Http\Controllers\API\RequisitionIssueController;
   
  
 
@@ -75,7 +76,10 @@ Route::middleware('auth:api')->group( function () {
     // Flash Sales Product Info
     Route::get('get-flashsale-info', [ProductCategoryController::class, 'flashSaleInfo']);
     Route::get('get-flashsale-status', [ProductCategoryController::class, 'flashSaleStatus']);
-    Route::get('get-flashsale-products', [ProductCategoryController::class, 'flashSaleProducts']);    
+    Route::get('get-flashsale-products', [ProductCategoryController::class, 'flashSaleProducts']);
+
+    // Product Requisitions Issues
+    Route::post('outlet-product-requisition', [RequisitionIssueController::class, 'newRequisition']);  
 });
 
 
