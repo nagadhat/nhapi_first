@@ -2,6 +2,17 @@
 
 return [
 
+    $base_url = storage_path('app');
+
+    if (config('app.env') == 'dev') {
+        $base_url = '/var/www/html';
+    } elseif (config('app.env') == 'production') {
+    
+    $base_url = '/home/nagadhat/public_html';
+    }
+
+
+
     /*
     |--------------------------------------------------------------------------
     | Default Filesystem Disk
@@ -37,7 +48,7 @@ return [
 
         'storage_in_customer' => [
             'driver' => 'local',
-            'root'   => 'D:\NH Git\nagadhat-customer\storage\app',
+            'root'   => $base_url,
         ],
 
         'public' => [
