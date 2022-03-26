@@ -1,11 +1,11 @@
 <?php
+$base_url = 'D:\NH Git\nagadhat-customer\storage\app';
 
-    $base_url = storage_path('app');
-    if (config('app.env') == 'dev') {
-        $base_url = '/var/www/html';
-    } elseif (config('app.env') == 'production') {
+if (config('app.env') == 'dev') {
+    $base_url = '/var/www/html/storage/app';
+} elseif (config('app.env') == 'production') {
     $base_url = '/home/nagadhat/public_html';
-    }
+}
 
 return [
 
