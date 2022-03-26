@@ -46,6 +46,14 @@ class RegisterControllerRepository extends BaseController implements RegisterCon
     }
 
     public function regOtpVerification(Request $req){
+        $validator = Validator::make($req->all(), [
+            'username' => 'required|unique:users,username',
+        ]);     
+   
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());       
+        }
+
         $otpVerify = $this->otpVerification($req);
 
         if(!empty($otpVerify['status']) && $otpVerify['status'] == true){
