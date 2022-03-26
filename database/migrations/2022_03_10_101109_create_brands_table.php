@@ -22,7 +22,6 @@ class CreateBrandsTable extends Migration
             $table->string('logo', 300)->nullable();
             $table->string('banner', 300)->nullable();
             $table->timestamps();
-            // $table->timestamps();
         });
     }
 
