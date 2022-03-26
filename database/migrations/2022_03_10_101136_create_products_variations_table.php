@@ -14,7 +14,7 @@ class CreateProductsVariationsTable extends Migration
     public function up()
     {
         Schema::create('products_variations', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->id();
             $table->integer('product_id')->nullable();
             $table->integer('size_id')->nullable();
             $table->integer('color_id')->nullable();

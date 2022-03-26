@@ -14,7 +14,7 @@ class CreateUserCustomersTable extends Migration
     public function up()
     {
         Schema::create('user_customers', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->id();
             $table->string('username', 100)->unique('username');
             $table->string('password');
             $table->string('first_name', 100)->nullable();
@@ -39,8 +39,8 @@ class CreateUserCustomersTable extends Migration
             $table->string('nominee_relation', 200)->nullable();
             $table->double('cash_balance')->nullable();
             $table->integer('status')->default(0);
-            $table->timestamps();
             $table->integer('user_id')->nullable();
+            $table->timestamps();
         });
     }
 

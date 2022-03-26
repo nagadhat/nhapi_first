@@ -14,7 +14,7 @@ class CreateCategoriesTable extends Migration
     public function up()
     {
         Schema::create('categories', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->id();
             $table->string('title');
             $table->string('description', 5000)->nullable();
             $table->string('slug')->nullable()->unique('slug');
@@ -33,6 +33,7 @@ class CreateCategoriesTable extends Migration
             $table->integer('on_slider_menu_view')->default(0);
             $table->integer('home_page_top_menu')->default(0);
             $table->integer('oldCategoriesId')->nullable();
+            $table->timestamps();
         });
     }
 

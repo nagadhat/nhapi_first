@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProductsVariationSizesTable extends Migration
+class CreateOauthPersonalAccessClientsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,9 @@ class CreateProductsVariationSizesTable extends Migration
      */
     public function up()
     {
-        Schema::create('products_variation_sizes', function (Blueprint $table) {
+        Schema::create('oauth_personal_access_clients', function (Blueprint $table) {
             $table->id();
-            $table->string('size_name', 50)->nullable();
-            $table->string('size_code', 50)->nullable();
+            $table->unsignedBigInteger('client_id');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ class CreateProductsVariationSizesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('products_variation_sizes');
+        Schema::dropIfExists('oauth_personal_access_clients');
     }
 }

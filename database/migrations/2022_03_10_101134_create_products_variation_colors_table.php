@@ -14,9 +14,10 @@ class CreateProductsVariationColorsTable extends Migration
     public function up()
     {
         Schema::create('products_variation_colors', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->id();
             $table->string('color_name', 150)->nullable();
             $table->string('color_code', 20)->nullable();
+            $table->timestamps();
         });
     }
 
