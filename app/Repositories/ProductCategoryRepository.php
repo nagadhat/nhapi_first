@@ -232,7 +232,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         $newProduct['discount_type'] = $request["discount_type"]; // discount_type = percentage/flat
         $newProduct['discount_amount'] = $request["discount_amount"];
 
-        if ($request->hasFile('covor_image')) {
+        if ($request->hasFile('cover_image')) {
             // uploadAndGetPath from NhTraits
             $newProduct['thumbnail_1'] = $this->uploadAndGetPath($request->file('covor_image'));
         }else{
