@@ -66,8 +66,8 @@ Route::middleware('auth:api')->group( function () {
     Route::post('all-product-by-category-id', [ProductCategoryController::class, 'productByCategoryID']);
     
     // Brands
-    Route::get('all-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
-    Route::post('all-brand', [ProductCategoryController::class, 'newBrand']);
+    Route::get('get-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
+    Route::post('create-brand', [ProductCategoryController::class, 'newBrand']);
 
     // Get Outlets
     Route::get('get-all-outlet', [OutletController::class, 'getOutlet']);
