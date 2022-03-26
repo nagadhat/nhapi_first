@@ -14,7 +14,7 @@ class CreateTempUserCustomersTable extends Migration
     public function up()
     {
         Schema::create('temp_user_customers', function (Blueprint $table) {
-            $table->integer('id')->primary();
+            $table->id();
             $table->string('username', 50)->nullable();
             $table->string('user_name', 100)->nullable();
             $table->string('gender', 100)->nullable();
