@@ -234,7 +234,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
 
         if ($request->hasFile('cover_image')) {
             // uploadAndGetPath from NhTraits
-            $newProduct['thumbnail_1'] = $this->uploadAndGetPath($request->file('covor_image'));
+            $newProduct['thumbnail_1'] = $this->uploadAndGetPath($request->file('cover_image'));
         }else{
             $newProduct['thumbnail_1'] = "";
         }
