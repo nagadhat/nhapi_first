@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOutletsTable extends Migration
+class Outlets extends Migration
 {
     /**
      * Run the migrations.
@@ -18,6 +18,7 @@ class CreateOutletsTable extends Migration
             $table->string('outlet_name', 50);
             $table->string('outlet_address')->nullable();
             $table->string('outlet_phone', 15)->nullable();
+            $table->integer('status');
             $table->timestamps();
         });
     }

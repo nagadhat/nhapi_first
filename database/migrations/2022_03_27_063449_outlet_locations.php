@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOutletRequisitionsTable extends Migration
+class OutletLocations extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateOutletRequisitionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('outlet_requisitions', function (Blueprint $table) {
+       Schema::create('outlet_locations', function (Blueprint $table) {
             $table->id();
-            $table->unsignedSmallInteger('outlet_id');
-            $table->tinyInteger('status')->default(0);
+            $table->integer('outlet_id');
+            $table->integer('location_id');
+            $table->integer('status');
             $table->timestamps();
         });
     }
@@ -28,6 +29,6 @@ class CreateOutletRequisitionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('outlet_requisitions');
+        //
     }
 }
