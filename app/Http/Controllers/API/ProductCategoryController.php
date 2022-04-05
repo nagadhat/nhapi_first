@@ -12,7 +12,7 @@ use Validator;
 class ProductCategoryController extends BaseController
 {
     protected $productCategoryRepository;
-    public function __construct(ProductCategoryRepository $productCategoryRepository) 
+    public function __construct(ProductCategoryRepository $productCategoryRepository)
     {
         $this->productCategoryRepository = $productCategoryRepository;
     }
@@ -62,7 +62,8 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function categories(Request $list_type){
+    function categories(Request $list_type)
+    {
         return response()->json([
             'data' => $this->productCategoryRepository->categories($list_type)
         ]);
@@ -113,7 +114,8 @@ class ProductCategoryController extends BaseController
      *      )
      * )
      */
-    function createCategory(Request $request){
+    function createCategory(Request $request)
+    {
         return response()->json([
             'data' => $this->productCategoryRepository->createCategory($request)
         ]);
@@ -156,7 +158,8 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function categoriesTopMenu(){
+    function categoriesTopMenu()
+    {
         return response()->json([
             'data' => $this->productCategoryRepository->categoriesTopMenu()
         ]);
@@ -198,7 +201,8 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function categoriesSlide(){
+    function categoriesSlide()
+    {
         return response()->json([
             'data' => $this->productCategoryRepository->categoriesSlide()
         ]);
@@ -240,13 +244,14 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function newProducts(){
+    function newProducts()
+    {
         return response()->json([
             'data' => $this->productCategoryRepository->newProducts()
         ]);
     }
 
-     /**
+    /**
      * @OA\Get(
      *     path="/api/all-product-flash-sale",
      *     tags={"Products & Categories"},
@@ -282,13 +287,14 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function flashSaleProducts(){
+    function flashSaleProducts()
+    {
         return response()->json([
             'data' => $this->productCategoryRepository->flashSaleProducts()
         ]);
     }
 
-     /**
+    /**
      * @OA\Get(
      *     path="/api/all-product-flashsale-info",
      *     tags={"Products & Categories"},
@@ -325,13 +331,15 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function flashSaleInfo(){
+    function flashSaleInfo()
+    {
         return response()->json([
             'data' => $this->productCategoryRepository->flashSaleInfo()
         ]);
     }
 
-    function flashSaleStatus(){
+    function flashSaleStatus()
+    {
         return response()->json([
             'data' => $this->productCategoryRepository->flashSaleStatus()
         ]);
@@ -382,7 +390,8 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function productByCategoryID(Request $request){
+    function productByCategoryID(Request $request)
+    {
         return response()->json([
             'data' => $this->productCategoryRepository->productByCategoryID($request)
         ]);
@@ -432,7 +441,8 @@ class ProductCategoryController extends BaseController
      *      )
      *
      */
-    function mainCategories(Request $req){
+    function mainCategories(Request $req)
+    {
         return response()->json([
             'data' => $this->productCategoryRepository->mainCategories($req)
         ]);
@@ -440,9 +450,10 @@ class ProductCategoryController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/all-brand",
+     *     path="/api/get-brand/{limit}",     *
      *     tags={"Brand"},
      *     summary="Get brand list with it's all data.",
+     *     description="By default the limit parameter is /all. use neumaric value to set limit",
      *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
@@ -474,17 +485,18 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function allBrands(Request $request){
+    function allBrands(Request $request)
+    {
         $limit = $request->route('limit');
         return response()->json([
             'data' => $this->productCategoryRepository->allBrands($limit)
         ]);
     }
 
-     /**
+    /**
      * @OA\Post(
-     *      path="/api/all-brand",
-     *      operationId="all-brand",
+     *      path="/api/create-brand",
+     *      operationId="create-brand",
      *      tags={"Brand"},
      *      summary="Store new brand",
      *      security={{"passport": {}}},
@@ -494,7 +506,6 @@ class ProductCategoryController extends BaseController
      *          @OA\JsonContent(
      *              required={"username","password"},
      *              @OA\Property(property="title", type="string", example="Brand Title Here"),
-     *              @OA\Property(property="slug", type="string", example="Brand Slug Here"),
      *              @OA\Property(property="logo", type="file", example="Logo.jpg"),
      *          ),
      *      ),
@@ -524,15 +535,15 @@ class ProductCategoryController extends BaseController
      *      )
      * )
      */
-    function newBrand(Request $request){
+    function newBrand(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'title' => 'required',
-            'slug'  => 'required',
-            'logo'  => 'required',
-        ]);       
-   
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            // 'logo'  => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
         }
 
         return response()->json([
@@ -540,7 +551,8 @@ class ProductCategoryController extends BaseController
         ]);
     }
 
-    function productPriceByProductId(Request $request){
+    function productPriceByProductId(Request $request)
+    {
         $productId = $request->route('productId');
 
         return response()->json([
@@ -548,17 +560,18 @@ class ProductCategoryController extends BaseController
         ]);
     }
 
-    public function addMasterProduct(Request $request){
+    public function addMasterProduct(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'outlet_id'             => 'required',
             'product_title'         => 'required',
             'product_sku'           => 'required',
             'short_description'     => 'required',
             'full_description'      => 'required',
-        ]);       
-   
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
         }
 
         return response()->json([
@@ -566,14 +579,14 @@ class ProductCategoryController extends BaseController
         ]);
     }
 
-    public function getProductsByLimit(Request $request) 
+    public function getProductsByLimit(Request $request)
     {
         // $validator = Validator::make($request->all(), [
         //     'limit' => 'required',
-        // ]);       
-   
+        // ]);
+
         // if($validator->fails()){
-        //     return $this->sendError('Validation Error.', $validator->errors());       
+        //     return $this->sendError('Validation Error.', $validator->errors());
         // }
 
         $limit = $request->route('limit');

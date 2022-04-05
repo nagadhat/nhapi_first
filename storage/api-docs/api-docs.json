@@ -859,13 +859,14 @@
                 ]
             }
         },
-        "/api/all-brand": {
+        "/api/get-brand/{limit}": {
             "get": {
                 "tags": [
                     "Brand"
                 ],
                 "summary": "Get brand list with it's all data.",
-                "operationId": "dadeeaeed8ae5c45aae79d0fdafa8b27",
+                "description": "By default the limit parameter is /all. use neumaric value to set limit",
+                "operationId": "5f3dfd270a7151425d25e293c664e293",
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -894,14 +895,16 @@
                         "passport": []
                     }
                 ]
-            },
+            }
+        },
+        "/api/create-brand": {
             "post": {
                 "tags": [
                     "Brand"
                 ],
                 "summary": "Store new brand",
                 "description": "Returns project data",
-                "operationId": "all-brand",
+                "operationId": "create-brand",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -915,10 +918,6 @@
                                     "title": {
                                         "type": "string",
                                         "example": "Brand Title Here"
-                                    },
-                                    "slug": {
-                                        "type": "string",
-                                        "example": "Brand Slug Here"
                                     },
                                     "logo": {
                                         "type": "file",

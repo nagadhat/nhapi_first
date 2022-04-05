@@ -1,5 +1,5 @@
 <?php
-$base_url = 'D:\NH Git\nagadhat-customer\storage\app';
+$base_url = 'I:\nagadhat-laravel\storage\app';
 
 if (config('app.env') == 'dev') {
     $base_url = '/var/www/html/storage/app';
