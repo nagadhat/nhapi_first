@@ -6,12 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Http\Request;
 use App\Repositories\CartRepository;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class CartController extends BaseController
 {
     protected $cartRepository;
-    public function __construct(CartRepository $cartRepository) 
+    public function __construct(CartRepository $cartRepository)
     {
         $this->cartRepository = $cartRepository;
     }
@@ -62,7 +62,8 @@ class CartController extends BaseController
      *      )
      * )
      */
-    public function allCartProductById(Request $request){
+    public function allCartProductById(Request $request)
+    {
         $userId = $request->route('userId');
 
         return response()->json([
@@ -100,7 +101,8 @@ class CartController extends BaseController
      *     )
      * )
      */
-    public function addToCart(Request $request){
+    public function addToCart(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
             'order_type' => 'required',
@@ -108,9 +110,9 @@ class CartController extends BaseController
             'quantity' => 'required',
             'product_variation_size' => 'required',
         ]);
-   
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
         }
 
         return response()->json([

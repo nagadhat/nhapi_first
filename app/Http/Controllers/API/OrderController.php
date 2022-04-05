@@ -6,21 +6,21 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 
-     /**
-     *     @SWG\SecurityScheme(
-     *          securityDefinition="passport",
-     *          type="apiKey",
-     *          in="header",
-     *          name="Authorization"
-     *      )
-     */
+/**
+ *     @SWG\SecurityScheme(
+ *          securityDefinition="passport",
+ *          type="apiKey",
+ *          in="header",
+ *          name="Authorization"
+ *      )
+ */
 class OrderController extends BaseController
 {
     protected $orderRepository;
-    public function __construct(OrderRepository $orderRepository) 
+    public function __construct(OrderRepository $orderRepository)
     {
         $this->orderRepository = $orderRepository;
     }
@@ -60,7 +60,7 @@ class OrderController extends BaseController
      *      )
      *
      */
-    public function index() 
+    public function index()
     {
         return response()->json([
             'data' => $this->orderRepository->getAllOrders()
@@ -98,26 +98,26 @@ class OrderController extends BaseController
      *      )
      * )
      */
-    public function store(Request $request) 
+    public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'user_id'           => 'required',
             'shipping_address'  => 'required',
             'delivery_address'  => 'required',
             'shipping_type'     => 'required',
-        ]);       
-   
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $orderDetails['user_id']            = $request->user_id; 
-        $orderDetails['shipping_address']   = $request->shipping_address; 
-        $orderDetails['delivery_address']   = $request->delivery_address; 
-        $orderDetails['shipping_type']      = $request->shipping_type; 
-        if($request->delivery_note){
+        $orderDetails['user_id']            = $request->user_id;
+        $orderDetails['shipping_address']   = $request->shipping_address;
+        $orderDetails['delivery_address']   = $request->delivery_address;
+        $orderDetails['shipping_type']      = $request->shipping_type;
+        if ($request->delivery_note) {
             $orderDetails['delivery_note']  = $request->delivery_note;
-        }        
+        }
         return response()->json(
             [
                 'data' => $this->orderRepository->createOrder($orderDetails)
@@ -139,7 +139,7 @@ class OrderController extends BaseController
         // $orderDetails = $request->only([
         //     'client',
         //     'details'
-        // ]);        
+        // ]);
     }
 
     /**
@@ -177,7 +177,7 @@ class OrderController extends BaseController
      *      )
      * )
      */
-    public function show(Request $request) 
+    public function show(Request $request)
     {
         $orderId = $request->route('id');
 
@@ -185,7 +185,7 @@ class OrderController extends BaseController
             'data' => $this->orderRepository->getOrderById($orderId)
         ]);
     }
-     /**
+    /**
      * @OA\Put(
      *      path="/api/orders/{id}",
      *      operationId="updateProject",
@@ -229,7 +229,7 @@ class OrderController extends BaseController
      *      )
      * )
      */
-    public function update(Request $request) 
+    public function update(Request $request)
     {
         $orderId = $request->route('id');
         $orderDetails = $request->only([
@@ -278,7 +278,7 @@ class OrderController extends BaseController
      *      )
      * )
      */
-    public function destroy(Request $request) 
+    public function destroy(Request $request)
     {
         $orderId = $request->route('id');
         $this->orderRepository->deleteOrder($orderId);
@@ -286,7 +286,8 @@ class OrderController extends BaseController
         return response()->json(null, Response::HTTP_NO_CONTENT);
     }
 
-    public function test_api(){
+    public function test_api()
+    {
         echo 'OKay';
         return true;
     }

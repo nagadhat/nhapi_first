@@ -1,18 +1,18 @@
 <?php
-   
+
 namespace App\Http\Controllers\API;
-   
+
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Repositories\RegisterControllerRepository;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
-use Validator;
-   
+use Illuminate\Support\Facades\Validator;
+
 class RegisterController extends BaseController
 {
     protected $registerControllerRepository;
-    public function __construct(RegisterControllerRepository $registerControllerRepository) 
+    public function __construct(RegisterControllerRepository $registerControllerRepository)
     {
         $this->registerControllerRepository = $registerControllerRepository;
     }
@@ -59,30 +59,30 @@ class RegisterController extends BaseController
             'password' => 'required',
             'c_password' => 'required|same:password',
         ]);
-   
-        if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
         }
-   
+
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
         $success['token'] =  $user->createToken('MyApp')->accessToken;
         $success['name'] =  $user->name;
-   
+
         return $this->sendResponse($success, 'User register successfully.');
     }
 
 
-    
-   
+
+
     /**
      * Login api
      *
      * @return \Illuminate\Http\Response
      */
 
-     
+
     /**
      * @OA\Post(
      * path="/api/login",
@@ -110,15 +110,15 @@ class RegisterController extends BaseController
      */
     public function login(Request $request)
     {
-        if(Auth::attempt(['email' => $request->email, 'password' => $request->password])){
-            $user = Auth::user(); 
-            $success['token'] =  $user->createToken('MyApp')->accessToken; 
+        if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            $user = Auth::user();
+            $success['token'] =  $user->createToken('MyApp')->accessToken;
             $success['user'] =  $user;
-   
+
             return $this->sendResponse($success, 'User login successfully.');
-        } else { 
-            return $this->sendError('Unauthorised.', ['error'=>'Unauthorised']);
-        } 
+        } else {
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised']);
+        }
     }
 
     /**
@@ -186,13 +186,14 @@ class RegisterController extends BaseController
      *      )
      * )
      */
-    function registration(Request $req){
+    function registration(Request $req)
+    {
         return response()->json([
             'data' => $this->registerControllerRepository->registration($req)
         ]);
     }
 
-     /**
+    /**
      * @OA\Post(
      *      path="/api/registration-otp-verify",
      *      operationId="registration-otp-verify",
@@ -225,13 +226,13 @@ class RegisterController extends BaseController
      *      )
      * )
      */
-    function regOtpVerification(Request $req){
+    function regOtpVerification(Request $req)
+    {
         $user_exist = User::where('username', $req->username)->first();
-        if($user_exist){
-            return $this->sendError('Failed.', ['error'=>'User already exist']);
+        if ($user_exist) {
+            return $this->sendError('Failed.', ['error' => 'User already exist']);
         } else return response()->json([
             'data' => $this->registerControllerRepository->regOtpVerification($req)
         ]);
     }
-
 }

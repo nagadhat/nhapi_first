@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Repositories\ProductCategoryRepository;
-use Validator;
+use Illuminate\Support\Facades\Validator;
 
 class ProductCategoryController extends BaseController
 {

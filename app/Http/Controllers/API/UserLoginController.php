@@ -12,7 +12,7 @@ use App\Models\User;
 class UserLoginController extends Controller
 {
     protected $userLoginRepository;
-    public function __construct(UserLoginRepository $userLoginRepository) 
+    public function __construct(UserLoginRepository $userLoginRepository)
     {
         $this->userLoginRepository = $userLoginRepository;
     }
@@ -42,7 +42,8 @@ class UserLoginController extends Controller
      *     )
      * )
      */
-    function userLogin(Request $req){
+    function userLogin(Request $req)
+    {
         // return $this->userLoginRepository->userLogin($req);
         return response()->json([
             'data' => $this->userLoginRepository->userLogin($req)
@@ -72,7 +73,8 @@ class UserLoginController extends Controller
      * )
      */
 
-    function userLogout(Request $req){
+    function userLogout(Request $req)
+    {
         return response()->json([
             'data' => $this->userLoginRepository->userLogout($req)
         ]);
@@ -101,7 +103,8 @@ class UserLoginController extends Controller
      *     )
      * )
      */
-    function forgetPasswordOTP(Request $req){
+    function forgetPasswordOTP(Request $req)
+    {
         return response()->json([
             'data' => $this->userLoginRepository->forgetPasswordOTP($req)
         ]);
@@ -131,7 +134,8 @@ class UserLoginController extends Controller
      *     )
      * )
      */
-    function forgetPasswordOtpVerification(Request $req){
+    function forgetPasswordOtpVerification(Request $req)
+    {
         return response()->json([
             'data' => $this->userLoginRepository->forgetPasswordOtpVerification($req)
         ]);
@@ -164,31 +168,36 @@ class UserLoginController extends Controller
      *     )
      * )
      */
-    function passwordReset(Request $req){
+    function passwordReset(Request $req)
+    {
         return response()->json([
             'data' => $this->userLoginRepository->passwordReset($req)
         ]);
     }
 
-    function userInfo(){
+    function userInfo()
+    {
         return response()->json([
             'data' => $this->userLoginRepository->userInfo()
         ]);
     }
 
-    function userAddressCodes(){
+    function userAddressCodes()
+    {
         return response()->json([
             'data' => $this->userLoginRepository->userAddressCodes()
         ]);
     }
 
-    function userAddress(){
+    function userAddress()
+    {
         return response()->json([
             'data' => $this->userLoginRepository->userAddress()
         ]);
     }
 
-    function userInfoById(Request $request){
+    function userInfoById(Request $request)
+    {
         // $userId = $request->userId;
         $userId = $request->route('userId');
 
@@ -197,27 +206,30 @@ class UserLoginController extends Controller
         ]);
     }
 
-    function userAddressCodesById(Request $request){
+    function userAddressCodesById(Request $request)
+    {
         // $userId = $request->userId;
         $userId = $request->route('userId');
-        
+
         return response()->json([
             'data' => $this->userLoginRepository->userAddressCodesById($userId)
         ]);
     }
 
-    function userAddressByAddressId(Request $request){
+    function userAddressByAddressId(Request $request)
+    {
         // $userId = $request->userId;
         $addressId = $request->route('addressId');
-        
+
         return response()->json([
             'data' => $this->userLoginRepository->userAddressByAddressId($addressId)
         ]);
     }
 
-    public function copyCustomersToUsers(){
+    public function copyCustomersToUsers()
+    {
         $users = UserCustomer::where('status', 1)->get();
-        if(!$users){
+        if (!$users) {
             return 'No user found!';
         }
         // return count($users);
@@ -228,9 +240,9 @@ class UserLoginController extends Controller
             $uniqId = uniqid($user->id);
 
             $duplicateUser = 0;
-            if($findUserExists){
-                $duplicateUser = $duplicateUser +1;
-            }else{
+            if ($findUserExists) {
+                $duplicateUser = $duplicateUser + 1;
+            } else {
                 $newUser = User::create([
                     'username'  => $user->username,
                     'password'  => $user->password,
@@ -238,14 +250,13 @@ class UserLoginController extends Controller
                     'phone'     => $user->username,
                     'user_type' => 'user',
                     'status'    => $user->status,
-                    'unique_key'=> $uniqId,
+                    'unique_key' => $uniqId,
                 ]);
-                
-                $updateUserCustomer = UserCustomer::where('id', $user->id) ->update(['user_id' => $newUser->id]);
+
+                $updateUserCustomer = UserCustomer::where('id', $user->id)->update(['user_id' => $newUser->id]);
                 $totalUsers[] = $newUser;
             }
         }
-        return 'Operation Done! Duplicate Users Found: '.$duplicateUser.', Total User: '.count($users).', Inserted User: '.count($totalUsers);
+        return 'Operation Done! Duplicate Users Found: ' . $duplicateUser . ', Total User: ' . count($users) . ', Inserted User: ' . count($totalUsers);
     }
-    
 }
