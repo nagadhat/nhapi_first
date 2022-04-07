@@ -566,7 +566,7 @@ class ProductCategoryController extends BaseController
             'outlet_id'             => 'required',
             'product_title'         => 'required',
             'product_sku'           => 'required',
-            'short_description'     => 'required',
+            // 'short_description'     => 'required',
             'full_description'      => 'required',
         ]);
 
