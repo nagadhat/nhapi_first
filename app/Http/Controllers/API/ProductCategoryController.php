@@ -116,6 +116,17 @@ class ProductCategoryController extends BaseController
      */
     function createCategory(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required',
+            'slug' => 'required|unique:categories,slug',
+            'author_id' => 'required',
+            // 'logo'  => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
         return response()->json([
             'data' => $this->productCategoryRepository->createCategory($request)
         ]);

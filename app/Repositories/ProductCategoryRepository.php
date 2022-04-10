@@ -61,7 +61,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         if (empty($req->list_type) && !empty($req->limit) && $req->limit > 0) {
             return $this->categorie::select('id', 'title', 'slug')->where('status', 1)->limit($req->limit)->get();
         }
-        return $this->categorie::select('id', 'title', 'slug')->get();
+        return $this->categorie::select('id', 'title', 'slug', 'pos_cat_id', 'description', 'logo', 'banner_image')->get();
     }
 
     public function createCategory(Request $request)
@@ -69,6 +69,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         $category_info['title'] = $request->title;
         $category_info['slug'] = $request->slug;
         $category_info['author_id'] = $request->author_id;
+        $category_info['pos_cat_id'] = $request->pos_cat_id;
 
         if ($request->hasFile('logo')) {
             $path = 'public/media/categories';
@@ -166,6 +167,8 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
     {
         $brand_info['title'] = $request->title;
         $brand_info['slug'] = uniqid();
+        $brand_info['pos_brand_id'] = $request->pos_brand_id;
+
 
         if ($request->hasFile('logo')) {
             $path = 'public/media/brands';
