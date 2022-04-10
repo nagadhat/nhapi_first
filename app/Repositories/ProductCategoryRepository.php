@@ -230,8 +230,6 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         $newProduct['price'] = $request['product_price'];
         $newProduct['quantity'] = $request['product_quantity'];
         $newProduct['author_id'] = $request['outlet_id'];
-        $newProduct['barcode_type'] = $request['barcode_type'];
-        $newProduct['outlet_id'] = $request['outlet_id'];
         $newProduct['discount_type'] = $request["discount_type"]; // discount_type = percentage/flat
         $newProduct['discount_amount'] = $request["discount_amount"];
 
