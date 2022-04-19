@@ -61,7 +61,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         if (empty($req->list_type) && !empty($req->limit) && $req->limit > 0) {
             return $this->categorie::select('id', 'title', 'slug')->where('status', 1)->limit($req->limit)->get();
         }
-        return $this->categorie::select('id', 'title', 'slug', 'pos_cat_id', 'description', 'logo', 'banner_image')->get();
+        return $this->categorie::select('id', 'title', 'slug', 'pos_cat_id', 'description', 'logo', 'banner_image')->where('status', 1)->get();
     }
 
     public function createCategory(Request $request)
