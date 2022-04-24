@@ -17,6 +17,7 @@ class CreateOutletRequisitionsTable extends Migration
             $table->id();
             $table->unsignedSmallInteger('outlet_id');
             $table->tinyInteger('status')->default(0);
+            $table->tinyInteger('partial_status')->nullable();
             $table->timestamps();
         });
     }
