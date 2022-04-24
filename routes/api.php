@@ -79,7 +79,8 @@ Route::middleware('auth:api')->group( function () {
     Route::get('get-flashsale-products', [ProductCategoryController::class, 'flashSaleProducts']);
 
     // Product Requisitions Issues
-    Route::post('outlet-product-requisition', [RequisitionIssueController::class, 'newRequisition']);  
+    Route::post('outlet-product-requisition', [RequisitionIssueController::class, 'newRequisition']);
+    Route::get('outlet-product-issues/{outletID}', [RequisitionIssueController::class, 'outletIssues']);
 });
 
 

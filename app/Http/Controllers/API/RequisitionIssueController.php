@@ -7,7 +7,8 @@ use App\Repositories\RequisitionIssueRepository;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Outlet;
-use Validator;
+use App\Models\OutletRequisition;
+use Illuminate\Validation\Validator;
 // use Illuminate\Http\Response;
 
 class RequisitionIssueController extends BaseController
@@ -45,6 +46,13 @@ class RequisitionIssueController extends BaseController
         // Execute after successfully validation =>
         return response()->json([
             'data' => $this->requisitionIssueRepository->newRequisition($request),
+        ]);
+    }
+    
+    public function outletIssues($outletID)
+    {   
+        return response()->json([
+            'data' => $this->requisitionIssueRepository->outletIssues($outletID),
         ]);
     }
 }
