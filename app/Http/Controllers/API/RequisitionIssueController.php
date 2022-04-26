@@ -56,4 +56,18 @@ class RequisitionIssueController extends BaseController
             'data' => $this->requisitionIssueRepository->outletIssues($outletID),
         ]);
     }
+
+    public function outletIssuesByRequisition($outletID, $reqID)
+    {
+        return response()->json([
+            'data' => $this->requisitionIssueRepository->outletIssuesByRequisition($outletID, $reqID),
+        ]);
+    }
+
+    public function outletRequisitionsStatus($outletID)
+    {
+        return response()->json([
+            'data' => $this->requisitionIssueRepository->outletRequisitionsStatus($outletID),
+        ]);
+    }
 }
