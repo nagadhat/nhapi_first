@@ -1,8 +1,8 @@
 <?php
-  
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-  
+
 use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\OrderController;
@@ -14,8 +14,8 @@ use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\FlashSalesController;
 use App\Http\Controllers\API\OutletController;
 use App\Http\Controllers\API\RequisitionIssueController;
-  
- 
+
+
 
 
 Route::get('/copy-customer', [UserLoginController::class, 'copyCustomersToUsers']);
@@ -64,7 +64,7 @@ Route::middleware('auth:api')->group( function () {
     Route::get('all-product-new', [ProductCategoryController::class, 'newProducts']);
     Route::get('get-product/{limit}', [ProductCategoryController::class, 'getProductsByLimit']);
     Route::post('all-product-by-category-id', [ProductCategoryController::class, 'productByCategoryID']);
-    
+
     // Brands
     Route::get('get-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
     Route::post('create-brand', [ProductCategoryController::class, 'newBrand']);
@@ -79,7 +79,10 @@ Route::middleware('auth:api')->group( function () {
     Route::get('get-flashsale-products', [ProductCategoryController::class, 'flashSaleProducts']);
 
     // Product Requisitions Issues
-    Route::post('outlet-product-requisition', [RequisitionIssueController::class, 'newRequisition']);  
+    Route::post('outlet-product-requisition', [RequisitionIssueController::class, 'newRequisition']);
+    Route::get('outlet-issue-details/{outletID}', [RequisitionIssueController::class, 'outletIssues']);
+    Route::get('outlet-issue-details/{outletID}/{reqID}', [RequisitionIssueController::class, 'outletIssuesByRequisition']);
+    Route::get('outlet-requisition-status/{outletID}', [RequisitionIssueController::class, 'outletRequisitionsStatus']);
 });
 
 
