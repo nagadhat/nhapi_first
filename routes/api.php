@@ -80,7 +80,9 @@ Route::middleware('auth:api')->group( function () {
 
     // Product Requisitions Issues
     Route::post('outlet-product-requisition', [RequisitionIssueController::class, 'newRequisition']);
+    Route::post('read-outlet-issue', [RequisitionIssueController::class, 'readOutletIssues']);
     Route::get('outlet-issue-details/{outletID}', [RequisitionIssueController::class, 'outletIssues']);
+    Route::get('new-outlet-issue-details/{outletID}', [RequisitionIssueController::class, 'newOutletIssues']);
     Route::get('outlet-issue-details/{outletID}/{reqID}', [RequisitionIssueController::class, 'outletIssuesByRequisition']);
     Route::get('outlet-requisition-status/{outletID}', [RequisitionIssueController::class, 'outletRequisitionsStatus']);
 });
