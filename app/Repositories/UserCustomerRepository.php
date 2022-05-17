@@ -24,25 +24,47 @@ class UserCustomerRepository implements UserCustomerRepositoryInterface
         leftjoin('user_customers', 'users.username', '=', 'user_customers.username')
         ->where('users.username', $userName)
         ->select('users.*', 'user_customers.first_name')
-        ->get();
+        ->first();
+        $newUser = $user->toArray();
 
-        for($i = 0; $i < count($user); $i++) {
-            $addresses = $this->address_assign::
-            leftjoin('address', 'address_assign.address_id', '=', 'address.id')
-            ->where('username', $userName)->get();
+        $addresses = $this->address_assign::
+        leftjoin('address', 'address_assign.address_id', '=', 'address.id')
+        ->where('username', $userName)->get();
 
-            $items = array();
-            foreach ($addresses as $address) {
-                $items[] = array(
-                    'address_1' => $address->address_1,
-                    'area' => $address->area,
-                    'postal_code' => $address->postal_code,
-                    'city' => $address->city,
-                    'country' => $address->country,
-                );
-            }
-            $user[$i]['addresses'] = $items;
+        $items = array();
+        foreach ($addresses as $address) {
+            $items[] = array(
+                'address_1' => $address->address_1,
+                'area' => $address->area,
+                'postal_code' => $address->postal_code,
+                'city' => $address->city,
+                'country' => $address->country,
+            );
+            $newUser['addresses'] = $items;
         }
-        return $user;
+        return $newUser;
+        
+        
+        
+        
+        // for($i = 0; $i < 1; $i++) {
+        //     $addresses = $this->address_assign::
+        //     leftjoin('address', 'address_assign.address_id', '=', 'address.id')
+        //     ->where('username', $userName)->get();
+
+        //     $items = array();
+        //     foreach ($addresses as $address) {
+        //         $items[] = array(
+        //             'address_1' => $address->address_1,
+        //             'area' => $address->area,
+        //             'postal_code' => $address->postal_code,
+        //             'city' => $address->city,
+        //             'country' => $address->country,
+        //         );
+        //     }
+        //     // $newUser[$i]['addresses'] = $items;
+        //     $newUser['addresses'] = $items;
+        // }
+        // return $newUser;
     }
 }
