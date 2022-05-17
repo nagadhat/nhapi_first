@@ -14,6 +14,7 @@ use App\Http\Controllers\API\CartController;
 use App\Http\Controllers\API\FlashSalesController;
 use App\Http\Controllers\API\OutletController;
 use App\Http\Controllers\API\RequisitionIssueController;
+use App\Http\Controllers\API\UserCustomerController;
 
 
 
@@ -39,6 +40,7 @@ Route::middleware('auth:api')->group( function () {
     Route::get('logged-in-user-address', [UserLoginController::class, 'userAddress']);
 
     Route::get('nh-user-info/{userId}', [UserLoginController::class, 'userInfoById']);
+    Route::get('nh-user-details/{userName}', [UserCustomerController::class, 'userDetailsByUserName']);
     Route::get('nh-user-address-codes/{userId}', [UserLoginController::class, 'userAddressCodesById']);
     Route::get('nh-user-address/{addressId}', [UserLoginController::class, 'userAddressByAddressId']);
 
