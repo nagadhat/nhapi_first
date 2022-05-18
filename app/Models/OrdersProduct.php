@@ -10,6 +10,7 @@ class OrdersProduct extends Model
     use HasFactory;
     protected $table = 'orders_products';
     protected $guarded = [];
+    public $timestamps = false;
 
     public function orderProductDetailsToProduct()
     {

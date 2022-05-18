@@ -119,6 +119,75 @@ class OrderRepository implements OrderRepositoryInterface
         // $this->cart::whereIn('product_id', $carts['productIds'])->delete();
         return ['status'=>true, 'msg'=>'Order has been placed successfully.'];
     }
+    
+    public function createPosOrder(array $orderDetails, $cartProducts, $sales_data) 
+    {
+        // If the POS order exist or not
+        $orderExist = $this->order::where('pos_sale_id', $sales_data['pos_sale_id'])->first();
+        if(!empty($orderExist)){
+            return ['status'=>false, 'msg'=>'The POS order already hs been placed.'];
+        }
+        
+        // return $sales_data['outlet_id'];
+        $user = $this->user::where('id', $orderDetails['user_id'])->first();
+
+        $orderDetails['user_id'] = $user->id;
+        $orderDetails['username'] = $user->username;
+        $orderDetails['customer_name'] = $user->username;
+        $orderDetails['customer_email_1'] = $user->email;
+        $orderDetails['customer_phone_1'] = $user->username;
+        $orderDetails['rand_code'] = rand(100, 999);
+        $orderDetails['order_status'] = 1;
+        $orderDetails['order_from'] = $sales_data['outlet_id'];
+        $orderDetails['pos_sale_id'] = $sales_data['pos_sale_id'];
+        $orderDetails['customer_email_2'] = '';
+        $orderDetails['customer_phone_2'] = '';
+
+        if ($orderDetails['shipping_type'] == 'inside_dhaka') {
+            // temproraly set delivery charge to 0( 60/100 )
+            $orderDetails['deliveryCrgPerShop'] = 0;
+        } else {
+            $orderDetails['deliveryCrgPerShop'] = 0;
+        }
+
+        $carts = $this->cartRepository->getCartProductsFromPos($sales_data, $orderDetails['user_id'], $cartProducts);
+        if($carts['status'] == false){
+            return ['status'=>false, 'msg'=>$carts['msg']];
+        }
+
+        $totalPrice = 0;
+        $totalQuantity = 0;
+        foreach ($carts['chartProducts'] as $cart) {
+            $totalQuantity += $cart['cartProductQuantity'];
+            $totalPrice += ($cart['cartProductUnitPrice'] * $cart['cartProductQuantity']);
+        }
+
+        $orderDetails['order_code'] = $carts['orderCode'];
+        $orderDetails['order_type'] = $carts['orderType'];
+        $orderDetails['total_quantity'] = $totalQuantity;
+        $orderDetails['total_products_price'] = $totalPrice;
+        $orderDetails['total_delivery_charge'] = $carts['totalVendors'] * $orderDetails['deliveryCrgPerShop'];        
+
+        // Place new order
+        $orderPlaced = $this->order::create($orderDetails);
+
+        // create an order timeline for the user to see
+        $newOrderTimeline = $this->orderTimeline::create([
+            "order_id" => $orderPlaced['id'],
+            "user_id" => $orderDetails['user_id'],
+            "placed_on" => Carbon::now()
+        ]);
+
+        $orderDetails['order_id'] = $orderPlaced['id'];
+        $invoice = $orderDetails['order_code'].$orderDetails['order_id'].$orderDetails['rand_code'];
+        $createOrdersProducts = $this->cartRepository->getCartProductsFromPos($sales_data, $orderDetails['user_id'], $cartProducts, $orderDetails['order_id']);
+        $smsContent = "Your order for " . $carts['totalQuantity']." product has been placed successfully on 'Nagadhat Bangladesh Ltd'."."\nInvoice: ".$invoice.".\nFor any query, Please call to 09602444444";
+        $smsSend = $this->sendSingleSms($orderDetails['username'], $smsContent);
+
+        // Afifiliate Post Order Task (Commission Distribute)
+        $apot = $this->afifiliatePostOrderTask($orderDetails['user_id'], $orderDetails['order_id']);
+        return ['status'=>true, 'msg'=>'Order has been placed successfully.', 'data'=>$orderPlaced];
+    }
 
     public function updateOrder($orderId, array $newDetails) 
     {
