@@ -208,7 +208,7 @@ class OrderRepository implements OrderRepositoryInterface
     }
 
     public function afifiliatePostOrderTask($userId, $orderId){
-        $userData = $this->userCustomer::where('user_id', $userId)->first();
+        $userData = $this->userCustomer::where('u_id', $userId)->first();
         $payoutDetails["withdrawable"] = 0;
         $payoutDetails["bonus_from"] = $userId;
 
