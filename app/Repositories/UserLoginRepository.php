@@ -161,7 +161,8 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
 
     public function userAddressCodesById($userId)
     {
-        $addressCode = $this->addressCodes::where('user_id', $userId)->pluck('address_id')->toArray();
+        $userCustomerId =  $this->customer::where('u_id', $userId)->first();
+        $addressCode = $this->addressCodes::where('user_id', $userCustomerId->id)->pluck('address_id')->toArray();
         if(!$addressCode || empty($addressCode)){
             return 'Address not found!';
         }
