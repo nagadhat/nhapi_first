@@ -165,6 +165,7 @@ class OrderController extends BaseController
             'shipping_type' => 'required',
             'total_product' => 'required|integer',
             'total_price' => 'required|integer',
+            'total_paid' => 'required|integer',
             'delivery_charge' => 'required|integer',
         ]);
 
