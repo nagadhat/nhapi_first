@@ -15,22 +15,22 @@ jobs:
       - name: Copy file via scp
         uses: appleboy/scp-action@master
         with:
-          host: ${{ secrets.NAGADHAT_PROD_HOST }}
-          username: ${{ secrets.NAGADHAT_PROD_USER }}
-          port: ${{ secrets.NAGADHAT_PROD_PORT }}
-          password: ${{ secrets.NAGADHAT_PROD_PASS }}
-          # KEY: ${{ secrets.NAGADHAT_PROD_SSH_SECRET_KEY }}
+          # host: ${{ secrets.NAGADHAT_PROD_HOST }}
+          # username: ${{ secrets.NAGADHAT_PROD_USER }}
+          # port: ${{ secrets.NAGADHAT_PROD_PORT }}
+          # password: ${{ secrets.NAGADHAT_PROD_PASS }}
+          KEY: ${{ secrets.NAGADHAT_PROD_SSH_SECRET_KEY }}
           source: "."
           target: "/home/nagadhat/public_html/live-api"
 
       - name: executing laravel deployement commands
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.NAGADHAT_PROD_HOST }}
-          username: ${{ secrets.NAGADHAT_PROD_USER }}
-          port: ${{ secrets.NAGADHAT_PROD_PORT }}
-          password: ${{ secrets.NAGADHAT_PROD_PASS }}
-          # KEY: ${{ secrets.NAGADHAT_PROD_SSH_SECRET_KEY }}
+          # host: ${{ secrets.NAGADHAT_PROD_HOST }}
+          # username: ${{ secrets.NAGADHAT_PROD_USER }}
+          # port: ${{ secrets.NAGADHAT_PROD_PORT }}
+          # password: ${{ secrets.NAGADHAT_PROD_PASS }}
+          KEY: ${{ secrets.NAGADHAT_PROD_SSH_SECRET_KEY }}
           script: |
             # cd /home/nagadhat/public_html/live-api
             cd /home/nagadhat/public_html/live-api
