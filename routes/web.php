@@ -20,6 +20,7 @@ Route::group(['middleware' => 'web'], function () {
 });
 
 
+
 Route::get('/', function () {
     return Redirect::to('api/nhapi-doc');
 });
