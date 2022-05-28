@@ -21,14 +21,14 @@ jobs:
           # username: ${{ secrets.DEV_USERNAME }}
           # port: ${{ secrets.DEV_PORT }}
           # password: ${{ secrets.DEV_SSHPASS }}
-          host: ${{ secrets.STAGING_HOST }}
-          username: ${{ secrets.STAGING_USER }}
-          port: ${{ secrets.STAGING_PORT }}
-          password: ${{ secrets.STAGING_PASS }}
+          host: ${{ secrets.LIVE_API_HOST }}
+          username: ${{ secrets.LIVE_API_USER }}
+          port: ${{ secrets.LIVE_API_PORT }}
+          password: ${{ secrets.LIVE_API_PASS }}
           # KEY: ${{ secrets.STAGING_SSH_SECRET_KEY }}
           source: "."
           # target: "/var/www/nhapi"
-          target: "/var/www/html/nhapi"
+          target: "/home/nagadhat/public_html/live-api"
       - run: |
           # remove .git files
           echo "removing .git folder"
@@ -43,14 +43,14 @@ jobs:
           # username: ${{ secrets.DEV_USERNAME }}
           # port: ${{ secrets.DEV_PORT }}
           # password: ${{ secrets.DEV_SSHPASS }}
-          host: ${{ secrets.STAGING_HOST }}
-          username: ${{ secrets.STAGING_USER }}
-          port: ${{ secrets.STAGING_PORT }}
-          password: ${{ secrets.STAGING_PASS }}
+          host: ${{ secrets.LIVE_API_HOST }}
+          username: ${{ secrets.LIVE_API_USER }}
+          port: ${{ secrets.LIVE_API_PORT }}
+          password: ${{ secrets.LIVE_API_PASS }}
           # KEY: ${{ secrets.STAGING_SSH_SECRET_KEY }}
           script: |
-            # cd /var/www/nhapi
-            cd /var/www/html/nhapi
+            # cd /home/nagadhat/public_html/live-api
+            cd /home/nagadhat/public_html/live-api
             echo "creating env file...."
             php -r "file_exists('.env') || copy('.env.example', '.env');"
             echo "executing composer install...."
