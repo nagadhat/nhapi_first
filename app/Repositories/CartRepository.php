@@ -194,6 +194,7 @@ class CartRepository implements CartRepositoryInterface
 
         $cartProductsDetails = array();
         $productIds = array();
+        $lastStock = array();
         foreach ($cartData as $data) {
             // Get product information
             $productData = $this->product::where("id", $data["product_id"])->first();
@@ -232,6 +233,11 @@ class CartRepository implements CartRepositoryInterface
                     ['quantity' => $newProductQuantity]
                 );
 
+                $lastStock = array(
+                    "productId" => $data["product_id"],
+                    "productQuantity" => $newProductQuantity
+                );
+
                 // Create record in Orders_Products table
                 $this->ordersProduct::create([
                     "order_id"              => $orderId,
@@ -247,13 +253,14 @@ class CartRepository implements CartRepositoryInterface
             }
 
             $cartProductsDetails[] = $firstArray;
+            $lastOutletStock[] = $lastStock;
             $productIds[] = $firstArray['productId'];
         }
 
         $vendors = $this->getVendorsListOfCart($productIds);
         $totalVendor = count($vendors);
         $totalQuantity = count($cartData);
-        return ['status'=>true, 'chartProducts'=> $cartProductsDetails, 'vendors'=> $vendors, 'totalVendors'=> $totalVendor, 'orderCode'=> $orderCode, 'orderType'=>$orderType, 'totalQuantity'=>$totalQuantity, 'productIds'=>$productIds];
+        return ['status'=>true, "outletId" => $sales_data['outlet_id'], 'lastOutletStock'=>$lastOutletStock, 'chartProducts'=> $cartProductsDetails, 'vendors'=> $vendors, 'totalVendors'=> $totalVendor, 'orderCode'=> $orderCode, 'orderType'=>$orderType, 'totalQuantity'=>$totalQuantity, 'productIds'=>$productIds, ];
     }
 
     function getVendorsListOfCart($productIds){
