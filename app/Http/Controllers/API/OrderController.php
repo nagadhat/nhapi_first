@@ -7,6 +7,7 @@ use App\Repositories\OrderRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Outlet;
 
 
 /**
@@ -20,9 +21,11 @@ use Illuminate\Support\Facades\Validator;
 class OrderController extends BaseController
 {
     protected $orderRepository;
-    public function __construct(OrderRepository $orderRepository)
+    protected $outlet;
+    public function __construct(OrderRepository $orderRepository, Outlet $outlet)
     {
         $this->orderRepository = $orderRepository;
+        $this->outlet = $outlet;
     }
 
     /**
@@ -140,6 +143,62 @@ class OrderController extends BaseController
         //     'client',
         //     'details'
         // ]);
+    }
+    
+    public function storePOSsale(Request $request)
+    {
+        // Validation Request Data
+        $outletID = $request['sales_data']['outlet_id'];
+        $sales_data = $request['sales_data'];
+        $cartProducts = $request['sales_data']['cart_products'];
+
+        if (empty($this->outlet::find($outletID))) {
+            return $this->sendError('Invalid Outlet ID', ['error' => 'Outlet Not Found!']);
+        }
+
+        $validator = Validator::make($sales_data, [
+            'user_id' => 'required|integer',
+            'outlet_id' => 'required|integer',
+            'pos_sale_id' => 'required|integer',
+            'shipping_address' => 'required',
+            'delivery_address' => 'required',
+            'shipping_type' => 'required',
+            'total_product' => 'required|integer',
+            'total_price' => 'required|integer',
+            'total_paid' => 'required|integer',
+            'delivery_charge' => 'required|integer',
+        ]);
+
+        if($validator->fails()){
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+        foreach($cartProducts as $product){
+            $validator = Validator::make($product, [
+                'product_id' => 'required|integer',
+                'product_quantity' => 'required|integer',
+                'product_unit_price' => 'required|integer',
+                'order_type' => 'required',
+                'product_variation_size' => 'required|integer',
+            ]);
+
+            if($validator->fails()){
+                return $this->sendError('Validation Error.', $validator->errors());
+            }
+        }
+
+        // Execute after successfully validation =>
+        $orderDetails['user_id']            = $sales_data['user_id'];
+        $orderDetails['shipping_address']   = $sales_data['shipping_address'];
+        $orderDetails['delivery_address']   = $sales_data['delivery_address'];
+        $orderDetails['shipping_type']      = $sales_data['shipping_type'];
+        if ($sales_data['delivery_note']) {
+            $orderDetails['delivery_note']  = $sales_data['delivery_note'];
+        }
+
+        return response()->json([
+            'data' => $this->orderRepository->createPosOrder($orderDetails, $cartProducts, $sales_data)
+        ]);
     }
 
     /**
