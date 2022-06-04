@@ -18,7 +18,6 @@ use App\Http\Controllers\API\UserCustomerController;
 
 
 
-
 Route::get('/copy-customer', [UserLoginController::class, 'copyCustomersToUsers']);
 // 'Customer Authentication & Authorization' section in API documentation
 Route::post('register', [RegisterController::class, 'register']);
