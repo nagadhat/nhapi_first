@@ -166,6 +166,7 @@ class RegisterController extends BaseController
      *              @OA\Property(property="password", type="string", format="password", example="123456"),
      *              @OA\Property(property="password_confirmation", type="string", format="password", example="123456"),
      *              @OA\Property(property="email", type="string", format="email", example="name@domain.com"),
+     *              @OA\Property(property="user_type", type="string", format="string", example="customer"),
      *          ),
      *      ),
      *      @OA\Response(
