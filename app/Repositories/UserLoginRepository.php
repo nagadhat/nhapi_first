@@ -23,7 +23,7 @@ use App\Models\Address;
 // use App\Models\NhCustomer;
 
 
-class UserLoginRepository extends BaseController implements UserLoginRepositoryInterface 
+class UserLoginRepository extends BaseController implements UserLoginRepositoryInterface
 {
     use NhTraits;
     use SmsTraits;
@@ -51,16 +51,16 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
         // Login from single table as well as multiple role
         if(Auth::attempt(['username' => $req->username,'password' => $req->password])){
             $msg = 'NagadhatUser';
-            if(Auth::user()->user_type == 'superAdmin'){             
+            if(Auth::user()->user_type == 'superAdmin'){
                 $msg = 'SuperAdminDashboard';
-            } 
-            if(Auth::user()->user_type == 'agent'){               
+            }
+            if(Auth::user()->user_type == 'agent'){
                 $msg = 'AgentDashboard';
             }
-            if(Auth::user()->user_type == 'user'){                               
+            if(Auth::user()->user_type == 'user'){
                 $msg = 'CustomerDashboard';
             }
-            Auth::user()->tokens()->delete(); 
+            Auth::user()->tokens()->delete();
             $user = Auth::user();
             $success['token'] =  $user->createToken('MyApp')->accessToken;
             $success['user'] =  $user;
@@ -72,7 +72,7 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
 
     public function userLogout(Request $req){
         $user = Auth::user();
-        Auth::user()->tokens()->delete();        
+        Auth::user()->tokens()->delete();
         return ['user'=>$user, 'login_status'=>false];
     }
 
@@ -80,9 +80,9 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
         $validator = Validator::make($req->all(), [
             'username' => 'required|min:11,max:15',
         ]);
-   
+
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $this->sendError('Validation Error.', $validator->errors());
         }
 
         $user = $this->user::where('username', $req->username)->first();
@@ -110,10 +110,10 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
         $validator = Validator::make($req->all(), [
             'username' => 'required',
             'password' => 'required|confirmed|min:6',
-        ]);     
-   
+        ]);
+
         if($validator->fails()){
-            return $this->sendError('Validation Error.', $validator->errors());       
+            return $this->sendError('Validation Error.', $validator->errors());
         }
         $user = $this->user::where('username', $req->username)->first();
         if (!$user) {
@@ -134,7 +134,7 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
     public function userInfo()
     {
         $user = Auth::user();
-        $user['first_name'] = $this->customer::where('username', Auth::user()->username)->pluck('first_name')->first();    
+        $user['first_name'] = $this->customer::where('username', Auth::user()->username)->pluck('first_name')->first();
         return $user;
     }
 
@@ -162,13 +162,16 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
     public function userAddressCodesById($userId)
     {
         $userCustomerId =  $this->customer::where('u_id', $userId)->first();
-        $addressCode = $this->addressCodes::where('user_id', $userCustomerId->id)->pluck('address_id')->toArray();
-        if(!$addressCode || empty($addressCode)){
-            return 'Address not found!';
+        if (isset($userCustomerId)) {
+            $addressCode = $this->addressCodes::where('user_id', $userCustomerId->id)->pluck('address_id')->toArray();
+            if(!$addressCode || empty($addressCode)){
+                return 'Address not found!';
+            }
+            return $addressCode;
+        } else {
+            return "Invalid userId";
         }
-        return $addressCode;
 
-        // return $this->addressCodes::where('user_id', $userId)->pluck('address_id');
     }
 
     public function userAddressByAddressId($addressId)
@@ -186,12 +189,12 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
     // function createNewUser($userDetails)
     // {
     //     $userCreate = User::create([
-    //         "name" => $userDetails["username"],            
-    //         "email" => $userDetails["user_email"],            
+    //         "name" => $userDetails["username"],
+    //         "email" => $userDetails["user_email"],
     //         "password" => $userDetails["user_password"],
     //     ]);
 
-    //     $userExtraInfo = NhCustomer::create([            
+    //     $userExtraInfo = NhCustomer::create([
     //         "gender" => $userDetails["gender"],
     //         "first_name" => $userDetails["first_name"],
     //         "first_name" => $userDetails["last_name"],

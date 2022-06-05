@@ -16,12 +16,12 @@ use App\Models\AffiliatePayout;
 use App\Models\UserCustomer;
 use Illuminate\Support\Carbon;
 
-class OrderRepository implements OrderRepositoryInterface 
+class OrderRepository implements OrderRepositoryInterface
 {
     use SmsTraits;
     protected $user;
     protected $order;
-    protected $cartRepository;    
+    protected $cartRepository;
     protected $cart;
     protected $orderTimeline;
     protected $affiliateUser;
@@ -42,22 +42,22 @@ class OrderRepository implements OrderRepositoryInterface
         $this->affiliatePayout = $affiliatePayout;
     }
 
-    public function getAllOrders() 
+    public function getAllOrders()
     {
         return $this->order::orderBy('id', 'desc')->get();
     }
 
-    public function getOrderById($orderId) 
+    public function getOrderById($orderId)
     {
         return $this->order::findOrFail($orderId);
     }
 
-    public function deleteOrder($orderId) 
+    public function deleteOrder($orderId)
     {
         $this->order::destroy($orderId);
     }
 
-    public function createOrder(array $orderDetails) 
+    public function createOrder(array $orderDetails)
     {
         $user = $this->user::where('id', $orderDetails['user_id'])->first();
         $userCustomer = $this->userCustomer::where('u_id', $orderDetails['user_id'])->first();
@@ -95,7 +95,7 @@ class OrderRepository implements OrderRepositoryInterface
         $orderDetails['order_type'] = $carts['orderType'];
         $orderDetails['total_quantity'] = $totalQuantity;
         $orderDetails['total_products_price'] = $totalPrice;
-        $orderDetails['total_delivery_charge'] = $carts['totalVendors'] * $orderDetails['deliveryCrgPerShop'];        
+        $orderDetails['total_delivery_charge'] = $carts['totalVendors'] * $orderDetails['deliveryCrgPerShop'];
 
         $orderPlaced = $this->order::create($orderDetails);
 
@@ -120,15 +120,15 @@ class OrderRepository implements OrderRepositoryInterface
         // $this->cart::whereIn('product_id', $carts['productIds'])->delete();
         return ['status'=>true, 'msg'=>'Order has been placed successfully.'];
     }
-    
-    public function createPosOrder(array $orderDetails, $cartProducts, $sales_data) 
+
+    public function createPosOrder(array $orderDetails, $cartProducts, $sales_data)
     {
         // If the POS order exist or not
         $orderExist = $this->order::where('pos_sale_id', $sales_data['pos_sale_id'])->first();
         if(!empty($orderExist)){
-            return ['status'=>false, 'msg'=>'The POS order already hs been placed.'];
+            return ['status'=>false, 'msg'=>'The POS order already has been placed.'];
         }
-        
+
         // return $sales_data['outlet_id'];
         $user = $this->user::where('id', $orderDetails['user_id'])->first();
         $userCustomer = $this->userCustomer::where('u_id', $orderDetails['user_id'])->first();
@@ -175,7 +175,7 @@ class OrderRepository implements OrderRepositoryInterface
         $orderDetails['order_type'] = $carts['orderType'];
         $orderDetails['total_quantity'] = $totalQuantity;
         $orderDetails['total_products_price'] = $totalPrice;
-        $orderDetails['total_delivery_charge'] = $carts['totalVendors'] * $orderDetails['deliveryCrgPerShop'];        
+        $orderDetails['total_delivery_charge'] = $carts['totalVendors'] * $orderDetails['deliveryCrgPerShop'];
 
         // Place new order
         $orderPlaced = $this->order::create($orderDetails);
@@ -190,32 +190,33 @@ class OrderRepository implements OrderRepositoryInterface
         $orderDetails['order_id'] = $orderPlaced['id'];
         $invoice = $orderDetails['order_code'].$orderDetails['order_id'].$orderDetails['rand_code'];
         $createOrdersProducts = $this->cartRepository->getCartProductsFromPos($sales_data, $userCustomer->id, $cartProducts, $orderDetails['order_id']);
+        
         $smsContent = "Your order for " . $carts['totalQuantity']." product has been placed successfully on 'Nagadhat Bangladesh Ltd'."."\nInvoice: ".$invoice.".\nFor any query, Please call to 09602444444";
         $smsSend = $this->sendSingleSms($orderDetails['username'], $smsContent);
 
         // Afifiliate Post Order Task (Commission Distribute)
         $apot = $this->afifiliatePostOrderTask($userCustomer->id, $orderDetails['order_id']);
-        
+
         return ['status'=>true, 'msg'=>'Order has been placed successfully.', 'outlet_id'=>$sales_data['outlet_id'], 'id'=>$orderPlaced->id, 'pos_sale_id'=>$orderPlaced->pos_sale_id, 'stock'=>$createOrdersProducts['lastOutletStock']];
-        
+
         // return ['status'=>true, 'msg'=>'Order has been placed successfully.', 'data'=>collect($orderPlaced->toArray())->except(['user_id']), 'stock'=>$createOrdersProducts];
         // return ['status'=>true, 'msg'=>'Order has been placed successfully.', 'data'=>$orderPlaced];
     }
 
-    public function updateOrder($orderId, array $newDetails) 
+    public function updateOrder($orderId, array $newDetails)
     {
         return $this->order::whereId($orderId)->update($newDetails);
     }
 
-    public function getFulfilledOrders() 
+    public function getFulfilledOrders()
     {
         return $this->order::where('is_fulfilled', true);
     }
-    public function getOrders() 
+    public function getOrders()
     {
         return $this->order::all();
     }
-    public function createNewOrder($data) 
+    public function createNewOrder($data)
     {
         return $this->order::create($data);
     }
@@ -265,7 +266,7 @@ class OrderRepository implements OrderRepositoryInterface
                     // return $this->createPayoutRecord($payoutDetails);
 
                     $newPayout = $this->createPayoutRecord($payoutDetails);
-                    
+
                     // Create a new payout record  and save to database
                     // $affiliateController = new AffiliateController();
                     // $newPayout = $affiliateController->createPayoutRecord($payoutDetails);

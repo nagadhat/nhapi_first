@@ -72,14 +72,14 @@ Route::middleware('auth:api')->group( function () {
     Route::get('get-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
     Route::post('create-brand', [ProductCategoryController::class, 'newBrand']);
 
-    // Get Outlets
-    Route::get('get-all-outlet', [OutletController::class, 'getOutlet']);
-    Route::get('get-outlet/{outletId}', [OutletController::class, 'getOutletById']);
-
     // Flash Sales Product Info
     Route::get('get-flashsale-info', [ProductCategoryController::class, 'flashSaleInfo']);
     Route::get('get-flashsale-status', [ProductCategoryController::class, 'flashSaleStatus']);
     Route::get('get-flashsale-products', [ProductCategoryController::class, 'flashSaleProducts']);
+
+    // Get Outlets
+    Route::get('get-all-outlet', [OutletController::class, 'getOutlet']);
+    Route::get('get-outlet/{outletId}', [OutletController::class, 'getOutletById']);
 
     // Product Requisitions Issues
     Route::post('outlet-product-requisition', [RequisitionIssueController::class, 'newRequisition']);

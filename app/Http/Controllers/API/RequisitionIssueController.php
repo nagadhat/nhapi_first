@@ -26,7 +26,6 @@ class RequisitionIssueController extends BaseController
 
     public function newRequisition(Request $request)
     {
-        return $request['requisition']['outlet_id'];
         // Valodation Request Data
         $outletID = $request['requisition']['outlet_id'];
         $requisitionProduct = $request['requisition']['product'];
@@ -52,22 +51,22 @@ class RequisitionIssueController extends BaseController
             'data' => $this->requisitionIssueRepository->newRequisition($request),
         ]);
     }
-    
+
     public function readOutletIssues(Request $request)
-    {        
+    {
         // $validator = Validator::make($request->all(), [
         //     'issue_id' => 'required',
         // ]);
-   
+
         // if($validator->fails()){
-        //     return $this->sendError('Validation Error.', $validator->errors());       
-        // }
-        
-        // if(empty($request->input('issue_id'))){
-        //     return $this->sendError('Validation Error.', 'Issue ID can not be null'); 
+        //     return $this->sendError('Validation Error.', $validator->errors());
         // }
 
-        // return 'OK';
+        // if(empty($request->input('issue_id'))){
+        //     return $this->sendError('Validation Error.', 'Issue ID can not be null');
+        // }
+
+        // return $request->all();
         $issueID = $request['receive_data']['issue_id'];
         $receiveProducts = $request['receive_data']['productInfos'];
 
@@ -85,7 +84,7 @@ class RequisitionIssueController extends BaseController
         //         return $this->sendError('Validation Error.', $validator->errors());
         //     }
         // }
-        
+
         // Execute after successfully validation =>
         return response()->json([
             'data' => $this->requisitionIssueRepository->readOutletIssues($request),
@@ -98,7 +97,7 @@ class RequisitionIssueController extends BaseController
             'data' => $this->requisitionIssueRepository->outletIssues($outletID),
         ]);
     }
-    
+
     public function newOutletIssues($outletID)
     {
         return response()->json([
