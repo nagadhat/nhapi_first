@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\TempUserCustomer;
 use App\Models\User;
+use App\Models\UserCustomer;
 use Illuminate\Support\Facades\Validator;
 
 trait NhTraits
@@ -26,6 +27,9 @@ trait NhTraits
         $input['user_password'] = bcrypt($req->password);
         $input['user_otp_code'] = rand(11111, 99999);
         $input['user_type'] = $req->user_type;
+        $input['ref_id'] = $req->ref_id;
+        $input['user_name'] = $req->name;
+        $input['gender'] = $req->gender;
         if ($req->email) {
             $input['user_email'] = $req->email;
         }
@@ -51,6 +55,16 @@ trait NhTraits
             $input['email'] = $req->user_email;
         }
         $user = User::create($input);
+        if ($req->user_type == 'customer') {
+            $newCustomer = UserCustomer::create([
+                'u_id' => $user->id,
+                'username' => $req->username,
+                'email' => $req->user_email,
+                'referrer_id' => isset($req->ref_id) ? $req->ref_id : '8',
+                'first_name' => $req->user_name,
+                'gender' => $req->gender,
+            ]);
+        }
         $token =  $user->createToken('MyApp')->accessToken;
         $deleteTempUser = TempUserCustomer::where('username', $req->username)->delete();
         return ['user_info' => $user, 'token' => $token];

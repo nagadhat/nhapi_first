@@ -80,6 +80,7 @@ class RegisterController extends BaseController
      * Login api
      *
      * @return \Illuminate\Http\Response
+     *
      */
 
 
@@ -142,6 +143,7 @@ class RegisterController extends BaseController
      * )
      * )
      */
+
 
     public function logout(Request $request)
     {
