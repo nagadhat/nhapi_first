@@ -9,4 +9,5 @@ class FlashSaleProduct extends Model
 {
     use HasFactory;
     protected $table = "flash_sales_products";
+    protected $guarded = [];
 }

@@ -17,7 +17,7 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
+    protected $guarded = [];
 
     /**
      * @OA\Property(
@@ -40,5 +40,4 @@ class Order extends Model
      * @var string
      */
     protected $details;
-
 }

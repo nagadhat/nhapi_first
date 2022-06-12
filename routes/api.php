@@ -15,9 +15,7 @@ use App\Http\Controllers\API\FlashSalesController;
 use App\Http\Controllers\API\OutletController;
 use App\Http\Controllers\API\RequisitionIssueController;
 use App\Http\Controllers\API\UserCustomerController;
-
-
-
+use App\Http\Controllers\API\OutletOrderController;
 
 Route::get('/copy-customer', [UserLoginController::class, 'copyCustomersToUsers']);
 // 'Customer Authentication & Authorization' section in API documentation
@@ -51,6 +49,11 @@ Route::middleware('auth:api')->group( function () {
     Route::post('store-pos-sale', [OrderController::class, 'storePOSsale']);
     // Route::put('orders/{id}', [OrderController::class, 'update']);
     Route::delete('orders/{id}', [OrderController::class, 'destroy']);
+
+    // outlet order management
+    Route::get('orders-list/{outlet_id}', [OutletOrderController::class, 'orderList']);
+    Route::get('orders-list/{outlet_id}/{status}', [OutletOrderController::class, 'orderListByStatus']);
+
 
     //Get cart products and prices
     Route::get('get-cart-product/{userId}', [CartController::class, 'allCartProductById']);

@@ -190,7 +190,7 @@ class OrderRepository implements OrderRepositoryInterface
         $orderDetails['order_id'] = $orderPlaced['id'];
         $invoice = $orderDetails['order_code'].$orderDetails['order_id'].$orderDetails['rand_code'];
         $createOrdersProducts = $this->cartRepository->getCartProductsFromPos($sales_data, $userCustomer->id, $cartProducts, $orderDetails['order_id']);
-        
+
         $smsContent = "Your order for " . $carts['totalQuantity']." product has been placed successfully on 'Nagadhat Bangladesh Ltd'."."\nInvoice: ".$invoice.".\nFor any query, Please call to 09602444444";
         $smsSend = $this->sendSingleSms($orderDetails['username'], $smsContent);
 
