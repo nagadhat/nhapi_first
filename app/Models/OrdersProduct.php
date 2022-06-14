@@ -12,8 +12,14 @@ class OrdersProduct extends Model
     protected $guarded = [];
     public $timestamps = false;
 
-    public function orderProductDetailsToProduct()
+    // function to create relationship between orders_product table and product table
+    public function ordersProductToProduct()
     {
         return $this->belongsTo(product::class, 'product_id', 'id');
+    }
+    // function to create relationship between orders_product table and order table
+    public function ordersProductToOrder()
+    {
+        return $this->belongsTo(order::class, 'order_id', 'id');
     }
 }

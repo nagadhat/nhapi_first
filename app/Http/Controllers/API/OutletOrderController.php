@@ -6,6 +6,7 @@ use App\Http\Controllers\API\BaseController;
 use App\Http\Controllers\Controller;
 use App\Repositories\OutletOrderRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class OutletOrderController extends BaseController
 {
@@ -17,7 +18,7 @@ class OutletOrderController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/orders-list/{outlet_id}",
-     *     tags={"Orders CRUD"},
+     *     tags={"Outlet Orders"},
      *     summary="Get outlet orders list",
      *     security={{"passport": {}}},
      *     @OA\Response(
@@ -62,8 +63,8 @@ class OutletOrderController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/orders-list/{outlet_id}/{status}",
-     *     tags={"Orders CRUD"},
-     *     summary="Get outlet orders list",
+     *     tags={"Outlet Orders"},
+     *     summary="Get outlet orders list by status",
      *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
@@ -102,5 +103,56 @@ class OutletOrderController extends BaseController
         return response()->json([
             'data' => $this->outletOrderRepository->getOutletOrderByStatus($outletId, $status)
         ]);
+    }
+
+
+    /**
+     * @OA\Post(
+     *      path="/api/order-process",
+     *      operationId="update",
+     *      tags={"Outlet Orders"},
+     *      summary="Update order",
+     *      security={{"passport": {}}},
+     *      description="Returns project data",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(ref="#/components/schemas/Order")
+     *      ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Successful operation",
+     *          @OA\JsonContent(ref="#/components/schemas/Order")
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad Request"
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
+    public function updateOrderByStatus(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'order_id' => 'required',
+            'outlet_id' => 'required',
+            'status' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+        return response()->json(
+            [
+                'data' => $this->outletOrderRepository->updateOutletOrder($request->all())
+            ]
+        );
     }
 }

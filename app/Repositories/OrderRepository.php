@@ -274,7 +274,7 @@ class OrderRepository implements OrderRepositoryInterface
                 }
 
                 // condition to destribute commission to 5 generation of referers if the product is global affiliate product
-                if ($orderProduct->orderProductDetailsToProduct->target_audience == 1) {
+                if ($orderProduct->ordersProductToProduct->target_audience == 1) {
 
                     $secondLevAffiliate = $this->userCustomer::find($findAffiliateUser->user_id);
                     $findSecondLevAffiliate = $this->affiliateUser::where('user_id', $secondLevAffiliate->referrer_id)->first();

@@ -5,4 +5,6 @@ interface OutletOrderRepositoryInterface
 {
     public function getOutletOrder($outletId);
     public function getOutletOrderByStatus($outletId, $status);
+    public function updateOutletOrder($orderDetails);
+
 }

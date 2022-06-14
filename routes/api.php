@@ -29,7 +29,7 @@ Route::post('nh-forget-password-otp', [UserLoginController::class, 'forgetPasswo
 Route::post('forget-password-otp-verify', [UserLoginController::class, 'forgetPasswordOtpVerification']);
 Route::post('password-reset', [UserLoginController::class, 'passwordReset']);
 
-Route::middleware('auth:api')->group( function () {
+Route::middleware('auth:api')->group(function () {
     Route::post('logout', [RegisterController::class, 'logout']);
     Route::post('nh-logout', [UserLoginController::class, 'userLogout']);
 
@@ -53,6 +53,7 @@ Route::middleware('auth:api')->group( function () {
     // outlet order management
     Route::get('orders-list/{outlet_id}', [OutletOrderController::class, 'orderList']);
     Route::get('orders-list/{outlet_id}/{status}', [OutletOrderController::class, 'orderListByStatus']);
+    Route::post('order-process', [OutletOrderController::class, 'updateOrderByStatus']);
 
 
     //Get cart products and prices
@@ -92,8 +93,3 @@ Route::middleware('auth:api')->group( function () {
     Route::get('outlet-issue-details/{outletID}/{reqID}', [RequisitionIssueController::class, 'outletIssuesByRequisition']);
     Route::get('outlet-requisition-status/{outletID}', [RequisitionIssueController::class, 'outletRequisitionsStatus']);
 });
-
-
-
-
-

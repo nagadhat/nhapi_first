@@ -5,16 +5,24 @@ namespace App\Repositories;
 use App\Interfaces\OutletOrderRepositoryInterface;
 use App\Models\Order;
 use App\Models\OrdersProduct;
+use App\Models\OrderTimeline;
 use App\Models\Outlet;
+use App\Models\Payment;
+use App\Traits\AffiliateTraits;
+use Carbon\Carbon;
 
 class OutletOrderRepository implements OutletOrderRepositoryInterface
 {
+    use AffiliateTraits;
+
     protected $outlet;
-    public function __construct(Outlet $outlet, Order $order, OrdersProduct $ordersProduct)
+    public function __construct(Outlet $outlet, Order $order, OrdersProduct $ordersProduct, OrderTimeline $orderTimeline, Payment $payment)
     {
         $this->outlet = $outlet;
         $this->order = $order;
         $this->ordersProduct = $ordersProduct;
+        $this->orderTimeline = $orderTimeline;
+        $this->payment = $payment;
     }
 
     public function getOutletOrder($outletId)
@@ -79,5 +87,98 @@ class OutletOrderRepository implements OutletOrderRepositoryInterface
         }
 
         return $orders;
+    }
+
+    public function updateOutletOrder($orderDetails)
+    {
+        $status = $orderDetails['status'];
+        $order_id = $orderDetails['order_id'];
+        $outlet_id = $orderDetails['outlet_id'];
+
+
+        $order = $this->order::find($order_id);
+        if (!isset($order) || $order->outlet_id != $outlet_id) {
+            return 'Invalid order_id !!';
+        }
+
+        $orderTimeline = $this->orderTimeline::where('order_id', $order_id)->first();
+
+        $approvedAmount = $this->payment::approvedAmountByOrder($order_id);
+        $paidAmount = $this->payment::paidAmountByOrder($order_id);
+
+        if ($order->outlet_id != $outlet_id) {
+            return 'Invalid outlet_id';
+        }
+        $status_list = [2, 3, 4, 5, 6, 8];
+        if (!in_array($status, $status_list) || $status <= $order->order_status) {
+            return 'Invalid status request !!';
+        }
+        if ($status == 4 || $status == 5 || $status == 6) {
+            if ($approvedAmount < ($order->total_products_price + $order->total_delivery_charge)) {
+                return 'Order not fully paid by the customer !!';
+            }
+        }
+        if ($status == 8 && $paidAmount > 0) {
+            return 'This order is already processing, can not Cancel this order !!';
+        }
+
+        // process
+        if ($status == 4) {
+            if (in_array($order->order_status, [1, 2, 3])) {
+                // ************************************************************************************************************
+
+                $orderTimeline->update([
+                    'processing_on' => Carbon::now(),
+                ]);
+
+                // condition to create affiliate buyback policy package if any product in the order contains special audience
+                $this->createBuybackPolicy($order);
+
+                // ************************************************************************************************************
+            } else {
+                return 'Invalid status request !!';
+            }
+        }
+        if ($status == 5) {
+            if ($order->order_status == 4) {
+                $orderTimeline->update([
+                    'shipped_on' => Carbon::now(),
+                ]);
+            } else {
+                return 'Invalid status request !!';
+            }
+        }
+        if ($status == 6) {
+            if (in_array($order->order_status, [4, 5])) {
+                if (!isset($orderTimeline->shipped_on)) {
+                    $orderTimeline->update([
+                        'shipped_on' => Carbon::now(),
+                    ]);
+                }
+
+                $orderTimeline->update([
+                    'delivered_on' => Carbon::now(),
+                ]);
+            } else {
+                return 'Invalid status request !!';
+            }
+        }
+        if ($status == 8) {
+            $orderTimeline->update([
+                'canceled_on' => Carbon::now()
+            ]);
+
+            // restore product stock
+            $this->restoreProductStock($order);
+
+            // cancel affiliate bonus record when admin cancel and save to database , only for 1st generation will get affiliate bonus
+            $this->cancelAffiliateBonusRecord($order);
+        }
+
+        $order->update([
+            "order_status" => $status,
+        ]);
+
+        return $order;
     }
 }

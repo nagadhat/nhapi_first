@@ -400,6 +400,126 @@
                 ]
             }
         },
+        "/api/orders-list/{outlet_id}": {
+            "get": {
+                "tags": [
+                    "Outlet Orders"
+                ],
+                "summary": "Get outlet orders list",
+                "operationId": "672b144754dbd5c7addc81e9e04d9d93",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorize Access, Invalid Token or Token has expired",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/orders-list/{outlet_id}/{status}": {
+            "get": {
+                "tags": [
+                    "Outlet Orders"
+                ],
+                "summary": "Get outlet orders list by status",
+                "operationId": "8fa117a852b06a6ef520a62eee003454",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorize Access, Invalid Token or Token has expired",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/order-process": {
+            "post": {
+                "tags": [
+                    "Outlet Orders"
+                ],
+                "summary": "Update order",
+                "description": "Returns project data",
+                "operationId": "update",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Order"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Order"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
         "/api/all-category": {
             "post": {
                 "tags": [
@@ -1139,6 +1259,11 @@
                                         "type": "string",
                                         "format": "email",
                                         "example": "name@domain.com"
+                                    },
+                                    "user_type": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "customer"
                                     }
                                 },
                                 "type": "object"
