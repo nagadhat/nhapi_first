@@ -10,6 +10,7 @@ use App\Models\OutletIssue;
 use App\Models\OutletIssueProduct;
 use App\Models\OutletReceive;
 use App\Models\OutletReceiveProduct;
+use App\Models\Product;
 use Illuminate\Http\Request;
 // use Illuminate\Http\Response;
 
@@ -20,13 +21,14 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
     protected $outletProduct;
     protected $outletIssue;
     protected $outletIssueProduct;
-    public function __construct(OutletRequisition $outletRequisition, OutletRequisitionProduct $outletRequisitionProduct, OutletProduct $outletProduct, OutletIssue $outletIssue, OutletIssueProduct $outletIssueProduct)
+    public function __construct(OutletRequisition $outletRequisition, OutletRequisitionProduct $outletRequisitionProduct, OutletProduct $outletProduct, OutletIssue $outletIssue, OutletIssueProduct $outletIssueProduct, Product $product)
     {
         $this->outletRequisition = $outletRequisition;
         $this->outletRequisitionProduct = $outletRequisitionProduct;
         $this->outletProduct = $outletProduct;
         $this->outletIssue = $outletIssue;
         $this->outletIssueProduct = $outletIssueProduct;
+        $this->product = $product;
     }
 
     public function newRequisition($request)
@@ -34,7 +36,25 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
         $outletID =  $request['requisition']['outlet_id'];
         $requisitionProduct = $request['requisition']['product'];
 
-        $createRequisition = $this->outletRequisition::create($request['requisition']);
+        // check if product_id valid or not
+        $noProduct = [];
+        foreach ($requisitionProduct as $requisition) {
+            $requisition['product_id'];
+            $checkProduct = $this->product::find($requisition['product_id']);
+            if (!$checkProduct) {
+                $noProduct[] = $requisition['product_id'];
+            }
+        }
+        if (!empty($noProduct)) {
+            return [
+                'msg' => 'Product not found !!',
+                'product_id' => $noProduct
+            ];
+        }
+
+        $createRequisition = $this->outletRequisition::create([
+            'outlet_id' => $request['requisition']['outlet_id']
+        ]);
 
         $newRequisition = array();
         foreach ($requisitionProduct as $requisition) {
@@ -44,7 +64,7 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
             $requisition['remaining_quantity'] = 0;
             $newRequisition[] = $this->outletRequisitionProduct::create($requisition);
 
-            $exist_in_outlet = $this->outletProduct::where('product_id', $requisition['product_id'])->first();
+            $exist_in_outlet = $this->outletProduct::where('product_id', $requisition['product_id'])->where('outlet_id', $outletID)->first();
             if (empty($exist_in_outlet)) {
                 $outlet_product['outlet_id'] = $outletID;
                 $outlet_product['product_id'] = $requisition['product_id'];
