@@ -16,6 +16,7 @@ use App\Http\Controllers\API\OutletController;
 use App\Http\Controllers\API\RequisitionIssueController;
 use App\Http\Controllers\API\UserCustomerController;
 use App\Http\Controllers\API\OutletOrderController;
+use App\Http\Controllers\API\PaymentController;
 
 Route::get('/copy-customer', [UserLoginController::class, 'copyCustomersToUsers']);
 // 'Customer Authentication & Authorization' section in API documentation
@@ -53,6 +54,7 @@ Route::middleware('auth:api')->group(function () {
     // outlet order management
     Route::get('orders-list/{outlet_id}', [OutletOrderController::class, 'orderList']);
     Route::get('orders-list/{outlet_id}/{status}', [OutletOrderController::class, 'orderListByStatus']);
+    Route::get('orders-details/{outlet_id}/{order_id}', [OutletOrderController::class, 'orderDetailsById']);
     Route::post('order-process', [OutletOrderController::class, 'updateOrderByStatus']);
 
 
@@ -92,4 +94,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('new-outlet-issue-details/{outletID}', [RequisitionIssueController::class, 'newOutletIssues']);
     Route::get('outlet-issue-details/{outletID}/{reqID}', [RequisitionIssueController::class, 'outletIssuesByRequisition']);
     Route::get('outlet-requisition-status/{outletID}', [RequisitionIssueController::class, 'outletRequisitionsStatus']);
+
+    // order payment
+    Route::post('online-order/payment', [PaymentController::class, 'reciveOnlinePayment']);
 });

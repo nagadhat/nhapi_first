@@ -10,9 +10,7 @@ use App\Models\OrdersProduct;
 use App\Models\Product;
 use App\Models\Cart;
 use App\Models\OutletProduct;
-use Validator;
-use Auth;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class CartRepository implements CartRepositoryInterface
 {
@@ -33,14 +31,14 @@ class CartRepository implements CartRepositoryInterface
 
     public function addToCart(Request $request) {
         $productExist = $this->cart::where('user_id', $request->user_id)->where('product_id', $request->product_id)->first();
-        
+
         if($productExist){
             $productExist->quantity = $productExist->quantity + $request->quantity;
             $productExist->save();
             $cartProduct = $productExist;
 
         } else $cartProduct = $this->cart::create($request->all());
-        
+
         return ['status'=>true, 'msg'=>'Product added to cart successfully', 'data'=>$cartProduct];
     }
 
@@ -85,7 +83,7 @@ class CartRepository implements CartRepositoryInterface
         return ['chartProducts'=> $cartProductsDetails, 'vendors'=> $vendors, 'totalVendors'=> $totalVendor];
     }
 
-    public function getCartProducts($userId, $orderId=0) 
+    public function getCartProducts($userId, $orderId=0)
     {
         $cartData = $this->cart::where("user_id", $userId)->get()->toArray();
         if(empty($cartData)){
@@ -121,7 +119,7 @@ class CartRepository implements CartRepositoryInterface
             $firstArray = array(
                 "cartId" => $data["id"],
                 "productId" => $data["product_id"],
-                "orderType" => $data["order_type"],                
+                "orderType" => $data["order_type"],
                 "cartProductImage" => $productData["thumbnail_1"],
                 "cartProductName" => $productData["title"],
                 "cartProductQuantity" => $data["quantity"],
@@ -161,11 +159,11 @@ class CartRepository implements CartRepositoryInterface
         $totalQuantity = count($cartData);
         return ['status'=>true, 'chartProducts'=> $cartProductsDetails, 'vendors'=> $vendors, 'totalVendors'=> $totalVendor, 'orderCode'=> $orderCode, 'orderType'=>$orderType, 'totalQuantity'=>$totalQuantity, 'productIds'=>$productIds];
     }
-    
-    public function getCartProductsFromPos($sales_data, $userId, $cartData, $orderId=0) 
+
+    public function getCartProductsFromPos($sales_data, $userId, $cartData, $orderId=0)
     {
         // return count($cartData);
-        // return $orderId;        
+        // return $orderId;
         // $cartData = $this->cart::where("user_id", $userId)->get()->toArray();
 
         if(empty($cartData)){
@@ -202,7 +200,7 @@ class CartRepository implements CartRepositoryInterface
             $firstArray = array(
                 // "cartId" => $data["id"],
                 "productId" => $data["product_id"],
-                "orderType" => $data["order_type"],                
+                "orderType" => $data["order_type"],
                 "cartProductImage" => $productData["thumbnail_1"],
                 "cartProductName" => $productData["title"],
                 "cartProductQuantity" => $data["product_quantity"],
@@ -227,7 +225,7 @@ class CartRepository implements CartRepositoryInterface
                 } else {
                     return ['status'=>false, 'msg'=>'Insufficient one of product.'];
                 }
-                
+
                 $outletProduct = $this->outletProduct::updateOrCreate(
                     ['outlet_id' => $sales_data['outlet_id'], 'product_id' => $data['product_id']],
                     ['quantity' => $newProductQuantity]
@@ -268,10 +266,4 @@ class CartRepository implements CartRepositoryInterface
         ->whereIn("products.id", $productIds)->select("vendors.id AS vendorId", "vendors.shop_name", DB::raw('count(vendors.id) as totalProduct'))
         ->groupBy("vendors.id", 'vendors.shop_name')->get();
     }
-    // function getVendorsListOfCart($userId){
-    //     return $this->cart::join("products", "carts.product_id", "=", "products.id")
-    //     ->join("vendors", "vendors.id", "=", "products.vendor")
-    //     ->where("carts.user_id", $userId)->select("vendors.id AS vendorId", "vendors.shop_name", DB::raw('count(vendors.id) as totalProduct'))
-    //     ->groupBy("vendors.id", 'vendors.shop_name')->get();
-    // }
 }

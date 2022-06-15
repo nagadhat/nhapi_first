@@ -105,6 +105,50 @@ class OutletOrderController extends BaseController
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/orders-list/{outlet_id}/{status}",
+     *     tags={"Outlet Orders"},
+     *     summary="Get outlet orders list by status",
+     *     security={{"passport": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *         response=401,
+     *         description="Unauthorize Access, Invalid Token or Token has expired",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *           response=400,
+     *           description="Bad Request"
+     *          ),
+     *      @OA\Response(
+     *           response=404,
+     *           description="not found"
+     *          ),
+     *      )
+     *
+     */
+    public function orderDetailsById(Request $request)
+    {
+        $outlet_id = $request->route('outlet_id');
+        $order_id = $request->route('order_id');
+
+        return response()->json([
+            'data' => $this->outletOrderRepository->getOutletOrderDetailsById($outlet_id, $order_id)
+        ]);
+    }
 
     /**
      * @OA\Post(

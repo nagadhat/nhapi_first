@@ -36,12 +36,14 @@ class OutletOrderRepository implements OutletOrderRepositoryInterface
             ->where('restricted', 0)
             ->get();
 
+        // product info
         for ($i = 0; $i < count($orders); $i++) {
             $orderProducts = $this->ordersProduct::where('order_id', $orders[$i]->id)->get();
 
             $items = array();
             foreach ($orderProducts as $orderProduct) {
                 $items[] = array(
+                    'id' => $orderProduct->id,
                     'product_id' => $orderProduct->product_id,
                     'product_quantity' => $orderProduct->product_quantity,
                     'product_unit_price' => $orderProduct->product_unit_price,
@@ -49,6 +51,25 @@ class OutletOrderRepository implements OutletOrderRepositoryInterface
             }
 
             $orders[$i]['products'] = $items;
+        }
+        // payment info
+        for ($i = 0; $i < count($orders); $i++) {
+            $payments = $this->payment::where('order_id', $orders[$i]->id)->where('transaction_status', 1)->get();
+
+            $items = array();
+            foreach ($payments as $payment) {
+                $items[] = array(
+                    'id' => $payment->id,
+                    'payer_name' => $payment->payer_name,
+                    'payer_phone' => $payment->payer_phone,
+                    'date_time' => $payment->date_time,
+                    'transaction_amound' => $payment->transaction_amound,
+                    'payment_getway' => $payment->payment_getway,
+                    'bank_name' => $payment->bank_name,
+                    'payment_slip' => $payment->payment_slip
+                );
+            }
+            $orders[$i]['payments'] = $items;
         }
 
         return $orders;
@@ -71,24 +92,46 @@ class OutletOrderRepository implements OutletOrderRepositoryInterface
             ->where('restricted', 0)
             ->get();
 
+        // product info
         for ($i = 0; $i < count($orders); $i++) {
             $orderProducts = $this->ordersProduct::where('order_id', $orders[$i]->id)->get();
 
             $items = array();
             foreach ($orderProducts as $orderProduct) {
                 $items[] = array(
+                    'id' => $orderProduct->id,
                     'product_id' => $orderProduct->product_id,
                     'product_quantity' => $orderProduct->product_quantity,
                     'product_unit_price' => $orderProduct->product_unit_price,
                 );
             }
-
             $orders[$i]['products'] = $items;
+        }
+
+        // payment info
+        for ($i = 0; $i < count($orders); $i++) {
+            $payments = $this->payment::where('order_id', $orders[$i]->id)->where('transaction_status', 1)->get();
+
+            $items = array();
+            foreach ($payments as $payment) {
+                $items[] = array(
+                    'id' => $payment->id,
+                    'payer_name' => $payment->payer_name,
+                    'payer_phone' => $payment->payer_phone,
+                    'date_time' => $payment->date_time,
+                    'transaction_amound' => $payment->transaction_amound,
+                    'payment_getway' => $payment->payment_getway,
+                    'bank_name' => $payment->bank_name,
+                    'payment_slip' => $payment->payment_slip
+                );
+            }
+            $orders[$i]['payments'] = $items;
         }
 
         return $orders;
     }
 
+    // function to update outlet orders
     public function updateOutletOrder($orderDetails)
     {
         $status = $orderDetails['status'];
@@ -178,6 +221,52 @@ class OutletOrderRepository implements OutletOrderRepositoryInterface
         $order->update([
             "order_status" => $status,
         ]);
+
+        return [
+            'status' => true,
+            'msg' => 'Order updated successfully.'
+        ];
+    }
+
+    // function to show outlet order details by order id
+    public function getOutletOrderDetailsById($outlet_id, $order_id)
+    {
+        $order = $this->order::find($order_id);
+        if ($order->outlet_id != $outlet_id) {
+            return 'Invalid outlet_id';
+        }
+
+        // product info
+
+        $orderProducts = $this->ordersProduct::where('order_id', $order->id)->get();
+        $items = array();
+        foreach ($orderProducts as $orderProduct) {
+            $items[] = array(
+                'id' => $orderProduct->id,
+                'product_id' => $orderProduct->product_id,
+                'product_quantity' => $orderProduct->product_quantity,
+                'product_unit_price' => $orderProduct->product_unit_price,
+            );
+        }
+        $order['products'] = $items;
+
+        // payment info
+        $payments = $this->payment::where('order_id', $order->id)->where('transaction_status', 1)->get();
+        $items = array();
+        foreach ($payments as $payment) {
+            $items[] = array(
+                'id' => $payment->id,
+                'payer_name' => $payment->payer_name,
+                'payer_phone' => $payment->payer_phone,
+                'date_time' => $payment->date_time,
+                'transaction_amound' => $payment->transaction_amound,
+                'payment_getway' => $payment->payment_getway,
+                'bank_name' => $payment->bank_name,
+                'payment_slip' => $payment->payment_slip
+            );
+        }
+        $order['payments'] = $items;
+
 
         return $order;
     }
