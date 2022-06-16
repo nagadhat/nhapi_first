@@ -34,13 +34,13 @@ class RequisitionIssueController extends BaseController
             return $this->sendError('Invalid Outlet ID', ['error' => 'Outlet Not Found!']);
         }
 
-        foreach($requisitionProduct as $requisition){
+        foreach ($requisitionProduct as $requisition) {
             $validator = Validator::make($requisition, [
                 'product_id' => 'required|integer',
                 'product_quantity' => 'required|integer',
             ]);
 
-            if($validator->fails()){
+            if ($validator->fails()) {
                 return $this->sendError('Validation Error.', $validator->errors());
             }
         }
@@ -54,36 +54,25 @@ class RequisitionIssueController extends BaseController
 
     public function readOutletIssues(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'issue_id' => 'required',
-        // ]);
+        $validator = Validator::make($request['receive_data'], [
+            'issue_id' => 'required',
+            'productInfos' => 'required',
+        ]);
 
-        // if($validator->fails()){
-        //     return $this->sendError('Validation Error.', $validator->errors());
-        // }
-
-        // if(empty($request->input('issue_id'))){
-        //     return $this->sendError('Validation Error.', 'Issue ID can not be null');
-        // }
-
-        // return $request->all();
-        $issueID = $request['receive_data']['issue_id'];
-        $receiveProducts = $request['receive_data']['productInfos'];
-
-        if (empty($this->outletIssue::find($issueID))) {
-            return $this->sendError('Invalid Issue ID', ['error' => 'Issue Not Found!']);
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        // foreach($receiveProducts as $receiveProduct){
-        //     $validator = Validator::make($receiveProduct, [
-        //         'product_id' => 'required|integer',
-        //         'product_quantity' => 'required|integer',
-        //     ]);
+        foreach ($request['receive_data']['productInfos'] as $receiveProduct) {
+            $validator = Validator::make($receiveProduct, [
+                'product_id' => 'required|integer',
+                'product_quantity' => 'required|integer',
+            ]);
 
-        //     if($validator->fails()){
-        //         return $this->sendError('Validation Error.', $validator->errors());
-        //     }
-        // }
+            if ($validator->fails()) {
+                return $this->sendError('Validation Error.', $validator->errors());
+            }
+        }
 
         // Execute after successfully validation =>
         return response()->json([

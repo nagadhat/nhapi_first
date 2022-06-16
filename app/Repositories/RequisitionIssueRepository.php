@@ -21,7 +21,7 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
     protected $outletProduct;
     protected $outletIssue;
     protected $outletIssueProduct;
-    public function __construct(OutletRequisition $outletRequisition, OutletRequisitionProduct $outletRequisitionProduct, OutletProduct $outletProduct, OutletIssue $outletIssue, OutletIssueProduct $outletIssueProduct, Product $product)
+    public function __construct(OutletRequisition $outletRequisition, OutletRequisitionProduct $outletRequisitionProduct, OutletProduct $outletProduct, OutletIssue $outletIssue, OutletIssueProduct $outletIssueProduct, Product $product, OutletReceive $outletReceive, OutletReceiveProduct $outletReceiveProduct)
     {
         $this->outletRequisition = $outletRequisition;
         $this->outletRequisitionProduct = $outletRequisitionProduct;
@@ -29,6 +29,8 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
         $this->outletIssue = $outletIssue;
         $this->outletIssueProduct = $outletIssueProduct;
         $this->product = $product;
+        $this->outletReceive = $outletReceive;
+        $this->outletReceiveProduct = $outletReceiveProduct;
     }
 
     public function newRequisition($request)
@@ -39,7 +41,6 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
         // check if product_id valid or not
         $noProduct = [];
         foreach ($requisitionProduct as $requisition) {
-            $requisition['product_id'];
             $checkProduct = $this->product::find($requisition['product_id']);
             if (!$checkProduct) {
                 $noProduct[] = $requisition['product_id'];
@@ -83,6 +84,26 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
         $productInfos = $request['receive_data']['productInfos'];
         $issue = $this->outletIssue::find($issue_id);
 
+        if (empty($issue)) {
+            return 'Issue Not Found!';
+        }
+
+
+        // check if product_id valid or not
+        $noProduct = [];
+        foreach ($productInfos as $issueProduct) {
+            $checkProduct = $this->outletIssueProduct::where('issue_id', $issue_id)->where('product_id', $issueProduct['product_id'])->first();
+            if (!$checkProduct) {
+                $noProduct[] = $issueProduct['product_id'];
+            }
+        }
+        if (!empty($noProduct)) {
+            return [
+                'msg' => 'Product not found !!',
+                'product_id' => $noProduct
+            ];
+        }
+
         // Find, If the issue already received or not
         if ($issue->read_by_pos == 1) {
             return 'Sorry, You have already received the issue!';
@@ -95,29 +116,31 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
         $receiveDatas['requisition_id'] = $issue->requisition_id;
         $receiveDatas['outlet_id'] = $issue->outlet_id;
         $receiveDatas['amount'] = $issue->amount;
-        $outletReceive = OutletReceive::create($receiveDatas);
+        $outletReceive = $this->outletReceive::create($receiveDatas);
 
         foreach ($productInfos as $issuedProduct) {
-            $outletProduct = OutletProduct::where('outlet_id', $issue->outlet_id)->where('product_id', $issuedProduct['product_id'])->first();
-            if (!empty($outletProduct)) {
-                $newProductQuantity = $outletProduct->quantity + $issuedProduct['product_quantity'];
+            $outletProductdata = $this->outletProduct::where('outlet_id', $issue->outlet_id)->where('product_id', $issuedProduct['product_id'])->first();
+            if (!empty($outletProductdata)) {
+                // Increase outlet products in Outlet_Products table
+                $outletProductdata->update([
+                    'quantity' => $outletProductdata->quantity + $issuedProduct['product_quantity'],
+                ]);
             } else {
-                $newProductQuantity = $issuedProduct['product_quantity'];
+                // oe create initial quantity
+                $this->outletProduct->create([
+                    'outlet_id' => $issue->outlet_id,
+                    'product_id' => $issuedProduct['product_id'],
+                    'quantity' => $issuedProduct['product_quantity']
+                ]);
             }
-
-            // Increase outlet products in Outlet_Products table
-            $outletProduct = OutletProduct::updateOrCreate(
-                ['outlet_id' => $issue->outlet_id, 'product_id' => $issuedProduct['product_id']],
-                ['quantity' => $newProductQuantity]
-            );
 
             // Create record in Outlet_Receive_Products table
             $receiveProductDatas['issue_id'] = $issue_id;
             $receiveProductDatas['receive_id'] = $outletReceive->id;
             $receiveProductDatas['product_id'] = $issuedProduct['product_id'];
-            $receiveProductDatas['product_quantity'] = $newProductQuantity;
+            $receiveProductDatas['product_quantity'] = $issuedProduct['product_quantity'];
             $receiveProductDatas['purchase_price'] = $issuedProduct['purchase_price'];
-            $outletReceiveProduct = OutletReceiveProduct::create($receiveProductDatas);
+            $outletReceiveProduct = $this->outletReceiveProduct::create($receiveProductDatas);
         }
         return "Successfully received the issue and updated product quantity!";
     }
