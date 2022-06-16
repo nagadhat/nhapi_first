@@ -61,7 +61,7 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
             // $requisition['outlet_id'] = $outletID;
             $requisition['requisition_id'] = $createRequisition->id;
             $requisition['issued_quantity'] = 0;
-            $requisition['remaining_quantity'] = 0;
+            $requisition['remaining_quantity'] = $requisition['product_quantity'];
             $newRequisition[] = $this->outletRequisitionProduct::create($requisition);
 
             $exist_in_outlet = $this->outletProduct::where('product_id', $requisition['product_id'])->where('outlet_id', $outletID)->first();
