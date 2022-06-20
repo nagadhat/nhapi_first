@@ -29,7 +29,8 @@ class OrderRepository implements OrderRepositoryInterface
     protected $product;
     protected $userCustomer;
     protected $affiliatePayout;
-    public function __construct(Order $order, CartRepository $cartRepository, User $user, Cart $cart, OrderTimeline $orderTimeline, AffiliateUser $affiliateUser, OrdersProduct $ordersProduct, Product $product, UserCustomer $userCustomer, AffiliatePayout $affiliatePayout){
+    public function __construct(Order $order, CartRepository $cartRepository, User $user, Cart $cart, OrderTimeline $orderTimeline, AffiliateUser $affiliateUser, OrdersProduct $ordersProduct, Product $product, UserCustomer $userCustomer, AffiliatePayout $affiliatePayout)
+    {
         $this->order = $order;
         $this->cartRepository = $cartRepository;
         $this->user = $user;
@@ -80,8 +81,8 @@ class OrderRepository implements OrderRepositoryInterface
         }
 
         $carts = $this->cartRepository->getCartProducts($orderDetails['user_id']);
-        if($carts['status'] == false){
-            return ['status'=>false, 'msg'=>'Cart is empty.'];
+        if ($carts['status'] == false) {
+            return ['status' => false, 'msg' => 'Cart is empty.'];
         }
 
         $totalPrice = 0;
@@ -107,26 +108,26 @@ class OrderRepository implements OrderRepositoryInterface
         ]);
 
         $orderDetails['order_id'] = $orderPlaced['id'];
-        $invoice = $orderDetails['order_code'].$orderDetails['order_id'].$orderDetails['rand_code'];
+        $invoice = $orderDetails['order_code'] . $orderDetails['order_id'] . $orderDetails['rand_code'];
 
         $createOrdersProducts = $this->cartRepository->getCartProducts($orderDetails['user_id'], $orderDetails['order_id']);
 
-        $smsContent = "Your order for " . $carts['totalQuantity']." product has been placed successfully on 'Nagadhat Bangladesh Ltd'."."\nInvoice: ".$invoice.".\nFor any query, Please call to 09602444444";
+        $smsContent = "Your order for " . $carts['totalQuantity'] . " product has been placed successfully on 'Nagadhat Bangladesh Ltd'." . "\nInvoice: " . $invoice . ".\nFor any query, Please call to 09602444444";
         $smsSend = $this->sendSingleSms($orderDetails['username'], $smsContent);
 
         $apot = $this->afifiliatePostOrderTask($orderDetails['user_id'], $orderDetails['order_id']);
         // return $apot;
 
         // $this->cart::whereIn('product_id', $carts['productIds'])->delete();
-        return ['status'=>true, 'msg'=>'Order has been placed successfully.'];
+        return ['status' => true, 'msg' => 'Order has been placed successfully.'];
     }
 
     public function createPosOrder(array $orderDetails, $cartProducts, $sales_data)
     {
         // If the POS order exist or not
         $orderExist = $this->order::where('pos_sale_id', $sales_data['pos_sale_id'])->first();
-        if(!empty($orderExist)){
-            return ['status'=>false, 'msg'=>'The POS order already has been placed.'];
+        if (!empty($orderExist)) {
+            return ['status' => false, 'msg' => 'The POS order already has been placed.'];
         }
 
         // return $sales_data['outlet_id'];
@@ -134,10 +135,10 @@ class OrderRepository implements OrderRepositoryInterface
         $userCustomer = $this->userCustomer::where('u_id', $orderDetails['user_id'])->first();
         $customerName = $userCustomer->first_name;
         $customerPhone = $user->username;
-        if($user->username == '01906198500' && isset($sales_data['walk_in_customer_name'])){
+        if ($user->username == '01906198500' && isset($sales_data['walk_in_customer_name'])) {
             $customerName = $sales_data['walk_in_customer_name'];
         }
-        if($user->username == '01906198500' && isset($sales_data['walk_in_customer_phone'])){
+        if ($user->username == '01906198500' && isset($sales_data['walk_in_customer_phone'])) {
             $customerPhone = $sales_data['walk_in_customer_phone'];
         }
         $orderDetails['user_id'] = $userCustomer->id;
@@ -147,7 +148,7 @@ class OrderRepository implements OrderRepositoryInterface
         $orderDetails['customer_phone_1'] = $customerPhone;
         $orderDetails['rand_code'] = rand(100, 999);
         $orderDetails['order_status'] = 1;
-        $orderDetails['order_from'] = $sales_data['outlet_id'];
+        $orderDetails['outlet_id'] = $sales_data['outlet_id'];
         $orderDetails['pos_sale_id'] = $sales_data['pos_sale_id'];
         $orderDetails['customer_email_2'] = '';
         $orderDetails['customer_phone_2'] = '';
@@ -159,9 +160,10 @@ class OrderRepository implements OrderRepositoryInterface
             $orderDetails['deliveryCrgPerShop'] = 0;
         }
 
+
         $carts = $this->cartRepository->getCartProductsFromPos($sales_data, $userCustomer->id, $cartProducts);
-        if($carts['status'] == false){
-            return ['status'=>false, 'msg'=>$carts['msg']];
+        if ($carts['status'] == false) {
+            return ['status' => false, 'msg' => $carts['msg']];
         }
 
         $totalPrice = 0;
@@ -177,6 +179,10 @@ class OrderRepository implements OrderRepositoryInterface
         $orderDetails['total_products_price'] = $totalPrice;
         $orderDetails['total_delivery_charge'] = $carts['totalVendors'] * $orderDetails['deliveryCrgPerShop'];
 
+
+        unset($orderDetails['shipping_type']);
+        unset($orderDetails['deliveryCrgPerShop']);
+
         // Place new order
         $orderPlaced = $this->order::create($orderDetails);
 
@@ -188,16 +194,17 @@ class OrderRepository implements OrderRepositoryInterface
         ]);
 
         $orderDetails['order_id'] = $orderPlaced['id'];
-        $invoice = $orderDetails['order_code'].$orderDetails['order_id'].$orderDetails['rand_code'];
+        $invoice = $orderDetails['order_code'] . $orderDetails['order_id'] . $orderDetails['rand_code'];
+        
         $createOrdersProducts = $this->cartRepository->getCartProductsFromPos($sales_data, $userCustomer->id, $cartProducts, $orderDetails['order_id']);
 
-        $smsContent = "Your order for " . $carts['totalQuantity']." product has been placed successfully on 'Nagadhat Bangladesh Ltd'."."\nInvoice: ".$invoice.".\nFor any query, Please call to 09602444444";
+        $smsContent = "Your order for " . $carts['totalQuantity'] . " product has been placed successfully on 'Nagadhat Bangladesh Ltd'." . "\nInvoice: " . $invoice . ".\nFor any query, Please call to 09602444444";
         $smsSend = $this->sendSingleSms($orderDetails['username'], $smsContent);
 
         // Afifiliate Post Order Task (Commission Distribute)
         $apot = $this->afifiliatePostOrderTask($userCustomer->id, $orderDetails['order_id']);
 
-        return ['status'=>true, 'msg'=>'Order has been placed successfully.', 'outlet_id'=>$sales_data['outlet_id'], 'id'=>$orderPlaced->id, 'pos_sale_id'=>$orderPlaced->pos_sale_id, 'stock'=>$createOrdersProducts['lastOutletStock']];
+        return ['status' => true, 'msg' => 'Order has been placed successfully.', 'outlet_id' => $sales_data['outlet_id'], 'id' => $orderPlaced->id, 'pos_sale_id' => $orderPlaced->pos_sale_id, 'stock' => $createOrdersProducts['lastOutletStock']];
 
         // return ['status'=>true, 'msg'=>'Order has been placed successfully.', 'data'=>collect($orderPlaced->toArray())->except(['user_id']), 'stock'=>$createOrdersProducts];
         // return ['status'=>true, 'msg'=>'Order has been placed successfully.', 'data'=>$orderPlaced];
@@ -221,7 +228,8 @@ class OrderRepository implements OrderRepositoryInterface
         return $this->order::create($data);
     }
 
-    public function afifiliatePostOrderTask($userId, $orderId){
+    public function afifiliatePostOrderTask($userId, $orderId)
+    {
         // $userData = $this->userCustomer::where('u_id', $userId)->first();
         $userData = $this->userCustomer::find($userId);
         $payoutDetails["withdrawable"] = 0;

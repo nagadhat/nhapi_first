@@ -223,7 +223,8 @@ class CartRepository implements CartRepositoryInterface
                 if(!empty($outletProduct && $outletProduct->quantity >= $data["product_quantity"])){
                     $newProductQuantity = $outletProduct->quantity - $data['product_quantity'];
                 } else {
-                    return ['status'=>false, 'msg'=>'Insufficient one of product.'];
+                    $newProductQuantity = 0;
+                    // return ['status'=>false, 'msg'=>'Insufficient one of product.'];
                 }
 
                 $outletProduct = $this->outletProduct::updateOrCreate(
