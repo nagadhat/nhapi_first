@@ -9,7 +9,7 @@ use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Categorie;
 use App\Models\FlashSaleProduct;
-use App\Models\ProductsCategorie;
+use App\Models\ProductsCategory;
 use App\Models\ProductsVariations;
 use App\Models\ProductsVariationColor;
 use App\Models\ProductsVariationSize;
@@ -29,7 +29,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
     protected $products_variation;
     protected $products_variation_color;
     protected $products_variation_size;
-    public function __construct(Brand $brand, Product $product, Categorie $categorie, FlashSaleProduct $flashSaleProduct, FlashSale $flashSale, ProductsCategorie $productsCategorie, ProductsVariations $productsVariations, ProductsVariationColor $productsVariationColor, ProductsVariationSize $productsVariationSize)
+    public function __construct(Brand $brand, Product $product, Categorie $categorie, FlashSaleProduct $flashSaleProduct, FlashSale $flashSale, ProductsCategory $productsCategorie, ProductsVariations $productsVariations, ProductsVariationColor $productsVariationColor, ProductsVariationSize $productsVariationSize)
     {
         $this->product = $product;
         $this->brand = $brand;
@@ -91,27 +91,32 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         return $this->categorie::where("on_slider_menu_view", 1)->where('status', 1)->limit(10)->get();
     }
 
-    public function newProducts()
+    public function getLocalProducts()
     {
-        return $this->product::where('target_audience', 0)->orderBy('id', 'desc')->take(10)->get();
+        return $this->product::where('target_audience', 0)->orderBy('id', 'desc')->get();
     }
 
     public function getProductsByLimit($limit)
     {
         if ($limit > 0 && $limit != 'all') {
-            // return $this->product::where('live_status', 1)->orderBy('id', 'desc')->take($limit)->get();
-            return $this->product::leftjoin('outlet_products', 'products.id', '=', 'outlet_products.product_id')
-                ->where('live_status', 1)->select('products.*', 'outlet_products.quantity AS stock_quantity')->orderBy('id', 'desc')->take(10)->get();
+            return $this->product::leftJoin('outlet_products', 'products.id', 'outlet_products.product_id')
+                // ->select('products.*', 'outlet_products.quantity AS stock_quantity')
+                ->where('products.live_status', 1)
+                ->limit(10)
+                ->inRandomOrder()
+                ->get();
         }
         if ($limit == 'all') {
-            return $this->product::where('live_status', 1)->orderBy('id', 'desc')->get();
+            return $this->product::where('live_status', 1)
+                ->inRandomOrder()
+                ->get();
         }
         return 'Invalid input!!';
     }
 
     public function flashSaleProducts()
     {
-        return $this->flash_sale_product::leftjoin('products', 'flash_sales_products.product_id', '=', 'products.id')
+        return $this->flash_sale_product::leftJoin('products', 'flash_sales_products.product_id', '=', 'products.id')
             ->select('products.*', 'flash_sales_products.status AS d_status', 'flash_sales_products.discount_type AS d_type', 'flash_sales_products.discount_amount AS d_amount')
             ->where("flash_sales_products.status", 1)->limit(10)->inRandomOrder()->get();
     }
@@ -182,19 +187,27 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
 
     public function productByCategoryID(Request $req)
     {
-        // return $req->category_id;
-        $req->validate(['category_id' => 'required']);
-        $max = 10;
-        $random = false;
         $catId = $req->category_id;
+        if ($req->limit) {
+            $limit = $req->limit;
+        } else {
+            $limit = 10000;
+        }
 
-        if ($req->number_of_records > 0) {
-            $max = $req->number_of_records;
+        if (isset($req->random) && $req->random == true) {
+            return ProductsCategory::join("products", "products_categories.product_id", "products.id")
+                ->where("products_categories.category_id", $catId)
+                ->where("products.target_audience", 0)
+                ->limit($limit)
+                ->inRandomOrder()
+                ->get();
         }
-        if (!empty($req->random) && $req->random == true) {
-            return ProductsCategorie::join("products", "products_categories.product_id", "=", "products.id")->where("category_id", $catId)->where("products.target_audience", 0)->limit($max)->inRandomOrder()->get();
-        }
-        return ProductsCategorie::join("products", "products_categories.product_id", "=", "products.id")->where("category_id", $catId)->where("products.target_audience", 0)->limit($max)->get();
+
+        return ProductsCategory::join("products", "products_categories.product_id", "products.id")
+            ->where("products_categories.category_id", $catId)
+            ->where("products.target_audience", 0)
+            ->limit($limit)
+            ->get();
     }
 
     public function productPriceByProductId($productId)

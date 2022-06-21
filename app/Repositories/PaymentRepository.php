@@ -53,7 +53,7 @@ class PaymentRepository implements PaymentRepositoryInterface
 
         return [
             'status' => true,
-            'msg' => 'Payment recived successfully.'
+            'msg' => 'Payment received successfully.'
         ];
     }
 }

@@ -5,10 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @OA\Schema(
+ *      title="Payment Model",
+ *      description="Store payment request body data",
+ *      type="object"
+ * )
+ */
+
 class Payment extends Model
 {
     use HasFactory;
     protected $guarded = [];
+
 
     // function to sum total amount pending and approved paid
     public static function paidAmountByOrder($order_id)

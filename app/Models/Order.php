@@ -23,7 +23,7 @@ class Order extends Model
      * @OA\Property(
      *      title="client",
      *      description="Name of the new client",
-     *      example="Dr solayman"
+     *      example="Dr SalaryMan"
      * )
      *
      * @var string
@@ -34,7 +34,7 @@ class Order extends Model
      * @OA\Property(
      *      title="details",
      *      description="details of the order",
-     *      example="Dr solayman"
+     *      example="Dr SalaryMan"
      * )
      *
      * @var string

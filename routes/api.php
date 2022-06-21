@@ -4,24 +4,21 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\RegisterController;
-use App\Http\Controllers\API\ProductController;
 use App\Http\Controllers\API\OrderController;
-use App\Http\Controllers\API\TestController;
-use App\Http\Controllers\API\HomePageController;
 use App\Http\Controllers\API\ProductCategoryController;
 use App\Http\Controllers\API\UserLoginController;
 use App\Http\Controllers\API\CartController;
-use App\Http\Controllers\API\FlashSalesController;
 use App\Http\Controllers\API\OutletController;
 use App\Http\Controllers\API\RequisitionIssueController;
 use App\Http\Controllers\API\UserCustomerController;
 use App\Http\Controllers\API\OutletOrderController;
 use App\Http\Controllers\API\PaymentController;
 
-Route::get('/copy-customer', [UserLoginController::class, 'copyCustomersToUsers']);
+Route::get('copy-customer', [UserLoginController::class, 'copyCustomersToUsers']);
 // 'Customer Authentication & Authorization' section in API documentation
 Route::post('register', [RegisterController::class, 'register']);
 Route::post('login', [RegisterController::class, 'login']);
+// ==========================================================
 
 Route::post('nh-registration', [RegisterController::class, 'registration']);
 Route::post('registration-otp-verify', [RegisterController::class, 'regOtpVerification']);
@@ -34,10 +31,12 @@ Route::middleware('auth:api')->group(function () {
     Route::post('logout', [RegisterController::class, 'logout']);
     Route::post('nh-logout', [UserLoginController::class, 'userLogout']);
 
+    // user info
     Route::get('logged-in-user-info', [UserLoginController::class, 'userInfo']);
     Route::get('logged-in-user-address-codes', [UserLoginController::class, 'userAddressCodes']);
     Route::get('logged-in-user-address', [UserLoginController::class, 'userAddress']);
 
+    // other user info
     Route::get('nh-user-info/{userId}', [UserLoginController::class, 'userInfoById']);
     Route::get('nh-user-details/{userName}', [UserCustomerController::class, 'userDetailsByUserName']);
     Route::get('nh-user-address-codes/{userId}', [UserLoginController::class, 'userAddressCodesById']);
@@ -57,31 +56,34 @@ Route::middleware('auth:api')->group(function () {
     Route::get('orders-details/{outlet_id}/{order_id}', [OutletOrderController::class, 'orderDetailsById']);
     Route::post('order-process', [OutletOrderController::class, 'updateOrderByStatus']);
 
-
-    //Get cart products and prices
-    Route::get('get-cart-product/{userId}', [CartController::class, 'allCartProductById']);
-    Route::post('add-to-cart', [CartController::class, 'addToCart']);
-    Route::get('get-product-price/{productId}', [ProductCategoryController::class, 'productPriceByProductId']);
-
-    // 'Products & Categories' section in API documentation
-    Route::post('add-master-product', [ProductCategoryController::class, 'addMasterProduct']);
+    // Categories
     Route::post('all-category', [ProductCategoryController::class, 'categories']);
     Route::post('create-category', [ProductCategoryController::class, 'createCategory']);
     Route::post('all-category-main', [ProductCategoryController::class, 'mainCategories']);
     Route::get('all-category-slide', [ProductCategoryController::class, 'categoriesSlide']);
     Route::get('all-category-top-menu', [ProductCategoryController::class, 'categoriesTopMenu']);
-    Route::get('all-product-new', [ProductCategoryController::class, 'newProducts']);
-    Route::get('get-product/{limit}', [ProductCategoryController::class, 'getProductsByLimit']);
+
+    // Products
+    Route::get('all-local-product', [ProductCategoryController::class, 'localProducts']);
+    Route::get('get-products/{limit}', [ProductCategoryController::class, 'getProductsByLimit']);
     Route::post('all-product-by-category-id', [ProductCategoryController::class, 'productByCategoryID']);
+    Route::get('get-product-price/{productId}', [ProductCategoryController::class, 'productPriceByProductId']);
+
+    // Flash Sales Product Info
+    Route::get('get-flash-sale-info', [ProductCategoryController::class, 'flashSaleInfo']);
+    Route::get('get-flash-sale-status', [ProductCategoryController::class, 'flashSaleStatus']);
+    Route::get('get-flash-sale-products', [ProductCategoryController::class, 'flashSaleProducts']);
+
+    // outlet product
+    Route::post('add-master-product', [ProductCategoryController::class, 'addMasterProduct']);
 
     // Brands
     Route::get('get-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
     Route::post('create-brand', [ProductCategoryController::class, 'newBrand']);
 
-    // Flash Sales Product Info
-    Route::get('get-flashsale-info', [ProductCategoryController::class, 'flashSaleInfo']);
-    Route::get('get-flashsale-status', [ProductCategoryController::class, 'flashSaleStatus']);
-    Route::get('get-flashsale-products', [ProductCategoryController::class, 'flashSaleProducts']);
+    //Get cart products and prices
+    Route::post('add-to-cart', [CartController::class, 'addToCart']);
+    Route::get('get-cart-product/{userId}', [CartController::class, 'allCartProductById']);
 
     // Get Outlets
     Route::get('get-all-outlet', [OutletController::class, 'getOutlet']);
@@ -96,5 +98,5 @@ Route::middleware('auth:api')->group(function () {
     Route::get('outlet-requisition-status/{outletID}', [RequisitionIssueController::class, 'outletRequisitionsStatus']);
 
     // order payment
-    Route::post('online-order/payment', [PaymentController::class, 'reciveOnlinePayment']);
+    Route::post('online-order/payment', [PaymentController::class, 'receiveOnlinePayment']);
 });

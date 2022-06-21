@@ -18,7 +18,7 @@ use App\Models\Address;
 // use App\Models\Brand;
 // use App\Models\categorie;
 // use App\Models\FlashSaleProduct;
-// use App\Models\ProductsCategorie;
+// use App\Models\ProductsCategory;
 // use App\Models\FlashSale;
 // use App\Models\NhCustomer;
 

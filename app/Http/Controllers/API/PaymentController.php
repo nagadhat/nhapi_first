@@ -19,17 +19,26 @@ class PaymentController extends BaseController
      *      path="/api/payment",
      *      operationId="payment",
      *      tags={"Outlet Payment"},
-     *      summary="Recive Online payment",
+     *      summary="Receive Online payment",
      *      security={{"passport": {}}},
-     *      description="Returns project data",
+     *      description="Receive online payment when customer comes to the outlet for order pickup",
      *      @OA\RequestBody(
      *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/Payment")
+     *          @OA\JsonContent(
+     *              required={"order_id", "outlet_id", "transaction_amount", "payer_name", "payer_phone"},
+     *              @OA\Property(property="order_id", type="integer", example="39753"),
+     *              @OA\Property(property="outlet_id", type="integer", example="2"),
+     *              @OA\Property(property="transaction_amount", type="double", example="5156.25"),
+     *              @OA\Property(property="payer_name", type="string", example="Md Frank"),
+     *              @OA\Property(property="payer_phone", type="string", example="0123456789"),
+     *              @OA\Property(property="note", type="string", example="something"),
+     *          ),
      *      ),
      *      @OA\Response(
      *          response=201,
      *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/Payment")
+     *              @OA\Property(property="status", type="string", example="true"),
+     *              @OA\Property(property="msg", type="string", example="Payment received successfully."),
      *       ),
      *      @OA\Response(
      *          response=400,
@@ -45,7 +54,8 @@ class PaymentController extends BaseController
      *      )
      * )
      */
-    public function reciveOnlinePayment(Request $request)
+
+    public function receiveOnlinePayment(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'order_id' => 'required',

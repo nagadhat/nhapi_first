@@ -5,7 +5,7 @@ return [
     'documentations' => [
         'default' => [
             'api' => [
-                'title' => 'L5 Swagger UI',
+                'title' => 'Nagadhat Bangladesh Ltd',
             ],
 
             'routes' => [
@@ -226,7 +226,7 @@ return [
          * Default is the order returned by the server unchanged.
         */
         'operations_sort' => env('L5_SWAGGER_OPERATIONS_SORT', null),
-        
+
         /*
          * Pass the validatorUrl parameter to SwaggerUi init on the JS side.
          * A null value here disables validation.

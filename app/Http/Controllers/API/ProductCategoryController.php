@@ -20,8 +20,8 @@ class ProductCategoryController extends BaseController
     /**
      * @OA\Post(
      *     path="/api/all-category",
-     *     tags={"Products & Categories"},
-     *     summary="Get category full list or short list as your requirment.",
+     *     tags={"Category"},
+     *     summary="Get category full list or short list as your requirement.",
      *     description="By default this end-point will provide a short list of category with three column ('id', 'title', 'slug'). For full list you have to provide a body param with the key 'list_type' and value = full_list. Pass body param with the key 'slider_menu' and value = 'menu_view' to get all the categories for Slider-Menu.  Used in: index",
      *     @OA\RequestBody(
      *     required=true,
@@ -33,7 +33,7 @@ class ProductCategoryController extends BaseController
      *     ),
      *     security={{"passport": {}}},
      *     @OA\Response(
-     *         response=200,
+     *         response=201,
      *         description="Success",
      *          @OA\MediaType(
      *             mediaType="application/json",
@@ -73,7 +73,7 @@ class ProductCategoryController extends BaseController
      * @OA\Post(
      *      path="/api/create-category",
      *      operationId="create-category",
-     *      tags={"Products & Categories"},
+     *      tags={"Category"},
      *      summary="Create new category",
      *      security={{"passport": {}}},
      *      description="Returns project data",
@@ -88,7 +88,7 @@ class ProductCategoryController extends BaseController
      *          ),
      *      ),
      *      @OA\Response(
-     *          response=200,
+     *          response=201,
      *          description="Successful operation",
      *          @OA\JsonContent(
      *              @OA\Property(property="title", type="string", example="Brand Title Here"),
@@ -135,7 +135,7 @@ class ProductCategoryController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/all-category-top-menu",
-     *     tags={"Products & Categories"},
+     *     tags={"Category"},
      *     summary="Get category list for home_page_top_menu.",
      *     description="By default this end-point will provide category list where 'home_page_top_menu' = 1. This response used in just beneath the main slide  Used in: index",
      *     security={{"passport": {}}},
@@ -179,7 +179,7 @@ class ProductCategoryController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/all-category-slide",
-     *     tags={"Products & Categories"},
+     *     tags={"Category"},
      *     summary="Get category list for the menu just left side in the main slider.",
      *     security={{"passport": {}}},
      *     @OA\Response(
@@ -221,9 +221,10 @@ class ProductCategoryController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/all-product-new",
-     *     tags={"Products & Categories"},
-     *     summary="Get new product list with target audience 0.",
+     *     path="/api/all-local-product",
+     *     tags={"Products"},
+     *     summary="Get local product list with target audience 0.",
+     *     description="Get local product list where global audience is 0.",
      *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
@@ -255,18 +256,19 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function newProducts()
+    function localProducts()
     {
         return response()->json([
-            'data' => $this->productCategoryRepository->newProducts()
+            'data' => $this->productCategoryRepository->getLocalProducts()
         ]);
     }
 
     /**
      * @OA\Get(
      *     path="/api/all-product-flash-sale",
-     *     tags={"Products & Categories"},
+     *     tags={"Flash Sale & Products"},
      *     summary="Get Flash Sale product list.",
+     *     description="Get Flash Sale product list.",
      *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
@@ -307,8 +309,8 @@ class ProductCategoryController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/all-product-flashsale-info",
-     *     tags={"Products & Categories"},
+     *     path="/api/all-product-flash-sale-info",
+     *     tags={"Flash Sale & Products"},
      *     summary="Get Flash Sale info.",
      *     description="Get Flash Sale info like, Flash Sale active or not, Flash Sale start and end date.",
      *     security={{"passport": {}}},
@@ -349,6 +351,43 @@ class ProductCategoryController extends BaseController
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/get-flash-sale-status",
+     *     tags={"Flash Sale & Products"},
+     *     summary="Get Flash active status.",
+     *     description="Get Flash Sale active status.",
+     *     security={{"passport": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *         response=401,
+     *         description="Unauthorize Access, Invalid Token or Token has expired",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *           response=400,
+     *           description="Bad Request"
+     *          ),
+     *      @OA\Response(
+     *           response=404,
+     *           description="not found"
+     *          ),
+     *      )
+     *
+     */
+
     function flashSaleStatus()
     {
         return response()->json([
@@ -359,15 +398,17 @@ class ProductCategoryController extends BaseController
     /**
      * @OA\Post(
      *     path="/api/all-product-by-category-id",
-     *     tags={"Products & Categories"},
+     *     tags={"Products"},
      *     summary="Get product list according to category ID.",
-     *     description="By default this end-point will provide 10 record according to given category ID. Giving an integer category ID with key 'category_id' is must. Then you can get custom number of record by providing a body param with the key 'number_of_records' & an integer as value. You may also get random record back by providing a body param with the key 'random' = true. Used in: index",
+     *     description="By default this end-point will provide all records according to given category ID. Required parameter 'category_id', optional parameters 'random', 'limit;. Then you can get custom number of record by providing a body param with the key 'limit'. Also get random records by 'random' = true.",
      *     @OA\RequestBody(
      *     required=true,
      *     description="Pass user credentials",
      *          @OA\JsonContent(
-     *              required={"list_type"},
-     *              @OA\Property(property="list_type", type="string", example="short_list"),
+     *              required={"category_id"},
+     *              @OA\Property(property="category_id", type="string", example="114"),
+     *              @OA\Property(property="random", type="string", example="true"),
+     *              @OA\Property(property="limit", type="string", example="10"),
      *          ),
      *     ),
      *     security={{"passport": {}}},
@@ -403,15 +444,68 @@ class ProductCategoryController extends BaseController
 
     function productByCategoryID(Request $request)
     {
+        $request->validate([
+            'category_id' => 'required',
+            'random' => 'nullable',
+            'limit' => 'nullable',
+        ]);
+
         return response()->json([
             'data' => $this->productCategoryRepository->productByCategoryID($request)
+        ]);
+    }
+
+
+    /**
+     * @OA\Get(
+     *     path="/api/get-product-price/{productId}",
+     *     tags={"Products"},
+     *     summary="Get product price by product_id.",
+     *     security={{"passport": {}}},
+     *     description="Returns product price by product_id as parameter",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *         response=401,
+     *         description="Unauthorize Access, Invalid Token or Token has expired",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *           response=400,
+     *           description="Bad Request"
+     *          ),
+     *      @OA\Response(
+     *           response=404,
+     *           description="not found"
+     *          ),
+     *      )
+     *
+     */
+
+    function productPriceByProductId(Request $request)
+    {
+        $productId = $request->route('productId');
+
+        return response()->json([
+            'data' => $this->productCategoryRepository->productPriceByProductId($productId)
         ]);
     }
 
     /**
      * @OA\Post(
      *     path="/api/all-category-main",
-     *     tags={"Products & Categories"},
+     *     tags={"Category"},
      *     summary="Get only mother category from categories table.",
      *     description="By default this end-point will provide 10 mother category from categories table. For custom number of records you have to provide a body param with the key 'limit' and value must be an integer.  Used in: index",
      *     @OA\RequestBody(
@@ -562,14 +656,60 @@ class ProductCategoryController extends BaseController
         ]);
     }
 
-    function productPriceByProductId(Request $request)
-    {
-        $productId = $request->route('productId');
 
-        return response()->json([
-            'data' => $this->productCategoryRepository->productPriceByProductId($productId)
-        ]);
-    }
+
+
+    /**
+     * @OA\Post(
+     *      path="/api/add-master-product",
+     *      operationId="outlet-product",
+     *      tags={"Outlet Products"},
+     *      summary="Add master products from outlet with product description",
+     *      security={{"passport": {}}},
+     *      description="Add master product from outlet. Enter product details as required parameters",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              required={"product_title", "product_sku", "outlet_id", "full_description", "outlet_id", "payer_phone"},
+     *              @OA\Property(property="product_title", type="string", example="Test Title"),
+     *              @OA\Property(property="product_sku", type="string", example="sku123332"),
+     *              @OA\Property(property="short_description", type="string", example="Some description"),
+     *              @OA\Property(property="full_description", type="string", example="Some more description"),
+     *              @OA\Property(property="brand_id", type="integer", example="192"),
+     *              @OA\Property(property="category_id[0]", type="integer", example="1589"),
+     *              @OA\Property(property="category_id[1]", type="integer", example="1598"),
+     *              @OA\Property(property="model", type="string", example="rs-20"),
+     *              @OA\Property(property="product_price", type="double", example="19500.00"),
+     *              @OA\Property(property="product_quantity", type="integer", example="50"),
+     *              @OA\Property(property="outlet_id", type="integer", example="2"),
+     *              @OA\Property(property="discount_type", type="string", example="percentage/flat"),
+     *              @OA\Property(property="discount_amount", type="double", example="20.00"),
+     *              @OA\Property(property="cover_image", type="file", example="image file"),
+     *              @OA\Property(property="image_1", type="file", example="another image file"),
+     *              @OA\Property(property="image_2", type="file", example="again image file"),
+     *              @OA\Property(property="image_3", type="file", example="also image file"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *          response=201,
+     *          description="Successful operation",
+     *              @OA\Property(property="status", type="string", example="true"),
+     *              @OA\Property(property="msg", type="string", example="Added successfully."),
+     *       ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad Request"
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
 
     public function addMasterProduct(Request $request)
     {
@@ -590,16 +730,45 @@ class ProductCategoryController extends BaseController
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/get-products/{limit}",
+     *     tags={"Products"},
+     *     summary="Get product list with with limit in random order where target audience is 0.",
+     *     security={{"passport": {}}},
+     *     description="Returns project data in random order by limit, pass parameter 'all' to get all products in random order",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *         response=401,
+     *         description="Unauthorize Access, Invalid Token or Token has expired",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *           response=400,
+     *           description="Bad Request"
+     *          ),
+     *      @OA\Response(
+     *           response=404,
+     *           description="not found"
+     *          ),
+     *      )
+     *
+     */
+
     public function getProductsByLimit(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'limit' => 'required',
-        // ]);
-
-        // if($validator->fails()){
-        //     return $this->sendError('Validation Error.', $validator->errors());
-        // }
-
         $limit = $request->route('limit');
 
         return response()->json([

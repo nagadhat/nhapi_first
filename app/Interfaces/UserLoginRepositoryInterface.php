@@ -2,7 +2,7 @@
 namespace App\Interfaces;
 use Illuminate\Http\Request;
 
-interface UserLoginRepositoryInterface 
+interface UserLoginRepositoryInterface
 {
     public function userLogin(Request $req);
     public function userLogout(Request $req);

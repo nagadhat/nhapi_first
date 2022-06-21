@@ -107,9 +107,9 @@ class OutletOrderController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/orders-list/{outlet_id}/{status}",
+     *     path="/api/orders-details/{outlet_id}/{order_id}",
      *     tags={"Outlet Orders"},
-     *     summary="Get outlet orders list by status",
+     *     summary="Get order details by outlet id and order id",
      *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
@@ -160,12 +160,20 @@ class OutletOrderController extends BaseController
      *      description="Returns project data",
      *      @OA\RequestBody(
      *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/Order")
+     *          @OA\JsonContent(
+     *              required={"order_id", "outlet_id", "status"},
+     *              @OA\Property(property="order_id", type="integer", example="39753"),
+     *              @OA\Property(property="outlet_id", type="integer", example="2"),
+     *              @OA\Property(property="status", type="integer", example="5")
+     *          ),
      *      ),
      *      @OA\Response(
      *          response=201,
      *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/Order")
+     *          @OA\JsonContent(
+     *              @OA\Property(property="status", type="bool", example="true"),
+     *              @OA\Property(property="msg", type="string", example="Order updated successfully."),
+     *          ),
      *       ),
      *      @OA\Response(
      *          response=400,

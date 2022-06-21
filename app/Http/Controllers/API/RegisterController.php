@@ -27,7 +27,7 @@ class RegisterController extends BaseController
      * @OA\Post(
      *      path="/api/register",
      *      operationId="register",
-     *      tags={"Authentication"},
+     *      tags={"Xample"},
      *      summary="Register",
      *      description="Returns project data",
      *      @OA\RequestBody(
@@ -90,7 +90,7 @@ class RegisterController extends BaseController
      * summary="Sign in",
      * description="Login by email, password",
      * operationId="login",
-     * tags={"Authentication"},
+     * tags={"Xample"},
      * @OA\RequestBody(
      *    required=true,
      *    description="Pass user credentials",
@@ -128,7 +128,7 @@ class RegisterController extends BaseController
      * summary="Logout",
      * description="Logout user and invalidate token",
      * operationId="logout",
-     * tags={"Authentication"},
+     * tags={"Xample"},
      * security={ {"bearer": {} }},
      * @OA\Response(
      *    response=200,

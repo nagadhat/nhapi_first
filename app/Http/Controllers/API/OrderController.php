@@ -31,7 +31,7 @@ class OrderController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/orders",
-     *     tags={"Orders CRUD"},
+     *     tags={"Xample"},
      *     summary="Get orders list",
      *     security={{"passport": {}}},
      *     @OA\Response(
@@ -74,7 +74,7 @@ class OrderController extends BaseController
      * @OA\Post(
      *      path="/api/orders",
      *      operationId="store",
-     *      tags={"Orders CRUD"},
+     *      tags={"Xample"},
      *      summary="Store new order",
      *      security={{"passport": {}}},
      *      description="Returns project data",
@@ -204,7 +204,7 @@ class OrderController extends BaseController
     /**
      * @OA\Get(
      *      path="/api/orders/{id}",
-     *      tags={"Orders CRUD"},
+     *      tags={"Xample"},
      *      summary="Get order information",
      *      security={{"passport": {}}},
      *      description="Returns order data",
@@ -248,7 +248,7 @@ class OrderController extends BaseController
      * @OA\Put(
      *      path="/api/orders/{id}",
      *      operationId="updateProject",
-     *      tags={"Orders CRUD"},
+     *      tags={"Xample"},
      *      summary="Update existing order",
      *      security={{"bearer":{}}},
      *      description="Returns updated project data",
@@ -305,7 +305,7 @@ class OrderController extends BaseController
      * @OA\Delete(
      *      path="/api/orders/{id}",
      *      operationId="destroy",
-     *      tags={"Orders CRUD"},
+     *      tags={"Xample"},
      *      summary="Delete existing order",
      *      security={{"bearer":{}}},
      *      description="Deletes a record and returns no content",
