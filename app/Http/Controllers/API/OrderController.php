@@ -144,7 +144,7 @@ class OrderController extends BaseController
         //     'details'
         // ]);
     }
-    
+
     public function storePOSsale(Request $request)
     {
         // Validation Request Data
@@ -159,7 +159,7 @@ class OrderController extends BaseController
         $validator = Validator::make($sales_data, [
             'user_id' => 'required|integer',
             'outlet_id' => 'required|integer',
-            'pos_sale_id' => 'required|integer',
+            'pos_sale_id' => 'required',
             'shipping_address' => 'required',
             'delivery_address' => 'required',
             'shipping_type' => 'required',

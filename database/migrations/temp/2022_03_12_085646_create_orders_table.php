@@ -31,7 +31,7 @@ class CreateOrdersTable extends Migration
             $table->timestamp('order_time');
             $table->integer('order_status')->default(1);
             $table->string('order_from', 100)->nullable();
-            $table->integer('pos_sale_id')->nullable();
+            $table->string('pos_sale_id')->nullable();
             $table->integer('total_vendors')->default(1);
             $table->integer('total_delivery_charge')->default(60);
             $table->integer('total_products_price')->nullable();
