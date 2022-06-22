@@ -174,7 +174,7 @@
         "/api/orders": {
             "get": {
                 "tags": [
-                    "Xample"
+                    "Xample Demo"
                 ],
                 "summary": "Get orders list",
                 "operationId": "803fc5d32177a888e12dd7a8f9d0e6d4",
@@ -209,7 +209,7 @@
             },
             "post": {
                 "tags": [
-                    "Xample"
+                    "Xample Demo"
                 ],
                 "summary": "Store new order",
                 "description": "Returns project data",
@@ -255,7 +255,7 @@
         "/api/orders/{id}": {
             "get": {
                 "tags": [
-                    "Xample"
+                    "Xample Demo"
                 ],
                 "summary": "Get order information",
                 "description": "Returns order data",
@@ -300,7 +300,7 @@
             },
             "put": {
                 "tags": [
-                    "Xample"
+                    "Xample Demo"
                 ],
                 "summary": "Update existing order",
                 "description": "Returns updated project data",
@@ -358,7 +358,7 @@
             },
             "delete": {
                 "tags": [
-                    "Xample"
+                    "Xample Demo"
                 ],
                 "summary": "Delete existing order",
                 "description": "Deletes a record and returns no content",
@@ -396,6 +396,196 @@
                 "security": [
                     {
                         "bearer": []
+                    }
+                ]
+            }
+        },
+        "/api/get-all-outlet": {
+            "get": {
+                "tags": [
+                    "Outlet & Location"
+                ],
+                "summary": "Get outlet list",
+                "description": "Get outlet list",
+                "operationId": "7efe8880ef119ed94c93013b4c97388a",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorize Access, Invalid Token or Token has expired",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/get-outlet/{outletId}": {
+            "get": {
+                "tags": [
+                    "Outlet & Location"
+                ],
+                "summary": "Get outlet details by id",
+                "description": "Get outlet details by outlet_id",
+                "operationId": "6b8477c0fe4bf86389652c647603e78b",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorize Access, Invalid Token or Token has expired",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/outlet-delivery-location": {
+            "get": {
+                "tags": [
+                    "Outlet & Location"
+                ],
+                "summary": "Get outlet delivery location list",
+                "description": "Get outlet delivery location list",
+                "operationId": "f5d06c6f613e66cb100c919669d065e3",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorize Access, Invalid Token or Token has expired",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/outlet-delivery-location/{outletId}": {
+            "get": {
+                "tags": [
+                    "Outlet & Location"
+                ],
+                "summary": "Get outlet delivery location list by outlet_id",
+                "description": "Get outlet delivery location list by outlet_id, When a customer selects one of these location, they will only see the products of that specific outlets throughout the whole website...",
+                "operationId": "e42f44523eaa7e00398f9a2962ebf532",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorize Access, Invalid Token or Token has expired",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/outlet/{locationId}": {
+            "get": {
+                "tags": [
+                    "Outlet & Location"
+                ],
+                "summary": "Get outlet info by delivery_id",
+                "description": "Get outlet info by delivery location id, When a customer selects a location, they will only see the products of that specific outlets throughout the whole website...",
+                "operationId": "2468415b94c165d53654ac5994c88eb6",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorize Access, Invalid Token or Token has expired",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
                     }
                 ]
             }
@@ -890,14 +1080,14 @@
                 ]
             }
         },
-        "/api/all-local-product": {
+        "/api/all-local-product/{outletId}": {
             "get": {
                 "tags": [
                     "Products"
                 ],
-                "summary": "Get local product list with target audience 0.",
-                "description": "Get local product list where global audience is 0.",
-                "operationId": "5f0996f6e4252fecb214f0ad35eeabe0",
+                "summary": "Get local product list by outlet with target audience 0.",
+                "description": "Get local product list by outlet_id where global audience is 0.",
+                "operationId": "c20c1dad6c0853cb3c18305c1dc23982",
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -1048,7 +1238,7 @@
                     "Products"
                 ],
                 "summary": "Get product list according to category ID.",
-                "description": "By default this end-point will provide all records according to given category ID. Required parameter 'category_id', optional parameters 'random', 'limit;. Then you can get custom number of record by providing a body param with the key 'limit'. Also get random records by 'random' = true.",
+                "description": "By default this end-point will provide all records according to given category_id and outlet_id. Required parameter 'category_id' and 'outlet_id', optional parameters 'random', 'limit;. Then you can get custom number of record by providing a body param with the key 'limit'. Also get random records by 'random' = true.",
                 "operationId": "8b92ea52795cc61a328375be99b699b7",
                 "requestBody": {
                     "description": "Pass user credentials",
@@ -1057,12 +1247,17 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "category_id"
+                                    "category_id",
+                                    "outlet_id"
                                 ],
                                 "properties": {
                                     "category_id": {
-                                        "type": "string",
+                                        "type": "integer",
                                         "example": "114"
+                                    },
+                                    "outlet_id": {
+                                        "type": "integer",
+                                        "example": "1"
                                     },
                                     "random": {
                                         "type": "string",
@@ -1447,14 +1642,14 @@
                 ]
             }
         },
-        "/api/get-products/{limit}": {
+        "/api/get-products/{outletId}/{limit}": {
             "get": {
                 "tags": [
                     "Products"
                 ],
-                "summary": "Get product list with with limit in random order where target audience is 0.",
-                "description": "Returns project data in random order by limit, pass parameter 'all' to get all products in random order",
-                "operationId": "8203dff7a7476315c4ce3422d3c2cb32",
+                "summary": "Get product list by outlet_id with limit in random order where target audience is 0.",
+                "description": "Returns project data in random order by outlet_id with limit, pass parameter 'all' to get all products in random order",
+                "operationId": "cb7239784c65c32ac03c17f9d46a578b",
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -1488,7 +1683,7 @@
         "/api/register": {
             "post": {
                 "tags": [
-                    "Xample"
+                    "Xample Demo"
                 ],
                 "summary": "Register",
                 "description": "Returns project data",
@@ -1515,7 +1710,7 @@
         "/api/login": {
             "post": {
                 "tags": [
-                    "Xample"
+                    "Xample Demo"
                 ],
                 "summary": "Sign in",
                 "description": "Login by email, password",
@@ -1570,7 +1765,7 @@
         "/api/logout": {
             "post": {
                 "tags": [
-                    "Xample"
+                    "Xample Demo"
                 ],
                 "summary": "Logout",
                 "description": "Logout user and invalidate token",

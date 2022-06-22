@@ -7,13 +7,14 @@ use App\Http\Controllers\API\FlashSalesController;
 use App\Traits\NhTraits;
 use App\Models\Product;
 use App\Models\Brand;
-use App\Models\Categorie;
+use App\Models\Category;
 use App\Models\FlashSaleProduct;
 use App\Models\ProductsCategory;
 use App\Models\ProductsVariations;
 use App\Models\ProductsVariationColor;
 use App\Models\ProductsVariationSize;
 use App\Models\FlashSale;
+use App\Models\Outlet;
 use Illuminate\Http\Request;
 
 class ProductCategoryRepository implements ProductCategoryRepositoryInterface
@@ -22,46 +23,57 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
 
     protected $product;
     protected $brand;
-    protected $categorie;
+    protected $category;
     protected $flash_sale;
     protected $flash_sale_product;
-    protected $products_categorie;
+    protected $products_category;
     protected $products_variation;
     protected $products_variation_color;
     protected $products_variation_size;
-    public function __construct(Brand $brand, Product $product, Categorie $categorie, FlashSaleProduct $flashSaleProduct, FlashSale $flashSale, ProductsCategory $productsCategorie, ProductsVariations $productsVariations, ProductsVariationColor $productsVariationColor, ProductsVariationSize $productsVariationSize)
-    {
+    public function __construct(
+        Brand $brand,
+        Product $product,
+        Category $category,
+        FlashSaleProduct $flashSaleProduct,
+        FlashSale $flashSale,
+        ProductsCategory $productsCategory,
+        ProductsVariations $productsVariations,
+        ProductsVariationColor $productsVariationColor,
+        ProductsVariationSize $productsVariationSize,
+        Outlet $outlet,
+    ) {
         $this->product = $product;
         $this->brand = $brand;
-        $this->categorie = $categorie;
+        $this->category = $category;
         $this->flash_sale = $flashSale;
         $this->flash_sale_product = $flashSaleProduct;
-        $this->products_categorie = $productsCategorie;
+        $this->products_category = $productsCategory;
         $this->products_variation = $productsVariations;
         $this->products_variation_color = $productsVariationColor;
         $this->products_variation_size = $productsVariationSize;
+        $this->outlet = $outlet;
     }
 
     public function categories(Request $req)
     {
         if (!empty($req->list_type) && $req->list_type == 'full_list') {
             if (!empty($req->limit) && $req->limit > 0) {
-                return $this->categorie::where('status', 1)->limit($req->limit)->get();
+                return $this->category::where('status', 1)->limit($req->limit)->get();
             }
-            return $this->categorie::where('status', 1)->get();
+            return $this->category::where('status', 1)->get();
         }
 
         if (!empty($req->slider_menu) && $req->slider_menu == 'menu_view') {
             if (!empty($req->limit) && $req->limit > 0) {
-                return $this->categorie::where('on_slider_menu_view', 1)->where('status', 1)->limit($req->limit)->get();
+                return $this->category::where('on_slider_menu_view', 1)->where('status', 1)->limit($req->limit)->get();
             }
-            return $this->categorie::where('on_slider_menu_view', 1)->where('status', 1)->get();
+            return $this->category::where('on_slider_menu_view', 1)->where('status', 1)->get();
         }
 
         if (empty($req->list_type) && !empty($req->limit) && $req->limit > 0) {
-            return $this->categorie::select('id', 'title', 'slug')->where('status', 1)->limit($req->limit)->get();
+            return $this->category::select('id', 'title', 'slug')->where('status', 1)->limit($req->limit)->get();
         }
-        return $this->categorie::select('id', 'title', 'slug', 'pos_cat_id', 'description', 'logo', 'banner_image')->where('status', 1)->get();
+        return $this->category::select('id', 'title', 'slug', 'pos_cat_id', 'description', 'logo', 'banner_image')->where('status', 1)->get();
     }
 
     public function createCategory(Request $request)
@@ -78,40 +90,64 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         } else {
             $category_info['logo'] = '';
         }
-        return $this->categorie::create($category_info);
+        return $this->category::create($category_info);
     }
 
     public function categoriesTopMenu()
     {
-        return $this->categorie::where("home_page_top_menu", 1)->where('status', 1)->get();
+        return $this->category::where("home_page_top_menu", 1)->where('status', 1)->get();
     }
 
     public function categoriesSlide()
     {
-        return $this->categorie::where("on_slider_menu_view", 1)->where('status', 1)->limit(10)->get();
+        return $this->category::where("on_slider_menu_view", 1)->where('status', 1)->limit(10)->get();
     }
 
-    public function getLocalProducts()
+    public function getLocalProducts($outlet_id)
     {
-        return $this->product::where('target_audience', 0)->orderBy('id', 'desc')->get();
-    }
-
-    public function getProductsByLimit($limit)
-    {
-        if ($limit > 0 && $limit != 'all') {
-            return $this->product::leftJoin('outlet_products', 'products.id', 'outlet_products.product_id')
-                // ->select('products.*', 'outlet_products.quantity AS stock_quantity')
+        $outlet = $this->outlet::find($outlet_id);
+        if ($outlet) {
+            $products = $this->product::join('outlet_products', 'outlet_products.product_id', 'products.id')
+                ->select('products.*', 'outlet_products.outlet_id', 'outlet_products.quantity as outlet_stock_quantity')
+                ->where('outlet_products.outlet_id', $outlet_id)
+                ->where('products.target_audience', 0)
                 ->where('products.live_status', 1)
-                ->limit(10)
-                ->inRandomOrder()
+                ->orderBy('id', 'desc')
                 ->get();
+
+            return $products;
+        } else {
+            return 'invalid outlet_id';
         }
-        if ($limit == 'all') {
-            return $this->product::where('live_status', 1)
-                ->inRandomOrder()
-                ->get();
+    }
+
+    public function getProductsByLimit($outlet_id, $limit)
+    {
+        $outlet = $this->outlet::find($outlet_id);
+        if ($outlet) {
+            if ($limit > 0 && $limit != 'all') {
+                return $this->product::join('outlet_products', 'outlet_products.product_id', 'products.id')
+                    ->select('products.*', 'outlet_products.outlet_id', 'outlet_products.quantity as outlet_stock_quantity')
+                    ->where('outlet_products.outlet_id', $outlet_id)
+                    ->where('products.target_audience', 0)
+                    ->where('products.live_status', 1)
+                    ->limit(10)
+                    ->inRandomOrder()
+                    ->get();
+            }
+            if ($limit == 'all') {
+                return $this->product::join('outlet_products', 'outlet_products.product_id', 'products.id')
+                    ->select('products.*', 'outlet_products.outlet_id', 'outlet_products.quantity as outlet_stock_quantity')
+                    ->where('outlet_products.outlet_id', $outlet_id)
+                    ->where('products.target_audience', 0)
+                    ->where('products.live_status', 1)
+                    ->inRandomOrder()
+                    ->get();
+            }
+            return 'Invalid input!!';
+        } else {
+            return 'invalid outlet_id';
         }
-        return 'Invalid input!!';
     }
 
     public function flashSaleProducts()
@@ -154,7 +190,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         if (!empty($req->limit) && $req->limit > 0) {
             $limit = $req->limit;
         }
-        return $this->categorie::where('parent_id', 0)->where('status', 1)->limit($limit)->get();
+        return $this->category::where('parent_id', 0)->where('status', 1)->limit($limit)->get();
     }
 
     public function allBrands($limit)
@@ -185,29 +221,43 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         return $this->brand::create($brand_info);
     }
 
-    public function productByCategoryID(Request $req)
+    public function productByCategoryID(Request $request)
     {
-        $catId = $req->category_id;
-        if ($req->limit) {
-            $limit = $req->limit;
-        } else {
-            $limit = 10000;
-        }
+        $outlet_id = $request->outlet_id;
+        $outlet = $this->outlet::find($outlet_id);
+        if ($outlet) {
+            $catId = $request->category_id;
+            if ($request->limit) {
+                $limit = $request->limit;
+            } else {
+                $limit = 10000;
+            }
 
-        if (isset($req->random) && $req->random == true) {
+            if (isset($request->random) && $request->random == true) {
+                return ProductsCategory::join("products", "products_categories.product_id", "products.id")
+                    ->join('outlet_products', 'outlet_products.product_id', 'products.id')
+                    ->select('products.*', 'outlet_products.outlet_id', 'outlet_products.quantity as outlet_stock_quantity')
+                    ->where('outlet_products.outlet_id', $outlet_id)
+                    ->where("products_categories.category_id", $catId)
+                    ->where("products.target_audience", 0)
+                    ->where('products.live_status', 1)
+                    ->limit($limit)
+                    ->inRandomOrder()
+                    ->get();
+            }
+
             return ProductsCategory::join("products", "products_categories.product_id", "products.id")
+                ->join('outlet_products', 'outlet_products.product_id', 'products.id')
+                ->select('products.*', 'outlet_products.outlet_id', 'outlet_products.quantity as outlet_stock_quantity')
+                ->where('outlet_products.outlet_id', $outlet_id)
                 ->where("products_categories.category_id", $catId)
                 ->where("products.target_audience", 0)
+                ->where('products.live_status', 1)
                 ->limit($limit)
-                ->inRandomOrder()
                 ->get();
+        } else {
+            return 'invalid outlet_id';
         }
-
-        return ProductsCategory::join("products", "products_categories.product_id", "products.id")
-            ->where("products_categories.category_id", $catId)
-            ->where("products.target_audience", 0)
-            ->limit($limit)
-            ->get();
     }
 
     public function productPriceByProductId($productId)
@@ -287,7 +337,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
 
         if (is_array($request['category_id'])) {
             foreach ($request["category_id"] as $category) {
-                $addCategories = $this->products_categorie::create([
+                $addCategories = $this->products_category::create([
                     'product_id' => $addNewProduct->id,
                     'category_id' => $category,
                     'author_id' => $request['author_id'],
@@ -328,14 +378,14 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
 
     function colorDetailsById($id)
     {
-        // This function will return color inforemation with a array limit 1
+        // This function will return color inforamation with a array limit 1
         $color = $this->products_variation_color::where("id", $id)->get();
         return $color[0];
     }
 
     function sizeDetailsById($id)
     {
-        // This function will return size inforemation with a array limit 1
+        // This function will return size inforamation with a array limit 1
         $size = $this->products_variation_size::where("id", $id)->get();
         return $size[0];
     }

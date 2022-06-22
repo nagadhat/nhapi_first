@@ -27,7 +27,7 @@ class RegisterController extends BaseController
      * @OA\Post(
      *      path="/api/register",
      *      operationId="register",
-     *      tags={"Xample"},
+     *      tags={"Xample Demo"},
      *      summary="Register",
      *      description="Returns project data",
      *      @OA\RequestBody(
@@ -53,6 +53,7 @@ class RegisterController extends BaseController
      */
     public function register(Request $request)
     {
+        return 'test api';
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email',
@@ -90,7 +91,7 @@ class RegisterController extends BaseController
      * summary="Sign in",
      * description="Login by email, password",
      * operationId="login",
-     * tags={"Xample"},
+     * tags={"Xample Demo"},
      * @OA\RequestBody(
      *    required=true,
      *    description="Pass user credentials",
@@ -111,6 +112,7 @@ class RegisterController extends BaseController
      */
     public function login(Request $request)
     {
+        return 'test api';
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
             $user = Auth::user();
             $success['token'] =  $user->createToken('MyApp')->accessToken;
@@ -128,7 +130,7 @@ class RegisterController extends BaseController
      * summary="Logout",
      * description="Logout user and invalidate token",
      * operationId="logout",
-     * tags={"Xample"},
+     * tags={"Xample Demo"},
      * security={ {"bearer": {} }},
      * @OA\Response(
      *    response=200,
@@ -147,6 +149,7 @@ class RegisterController extends BaseController
 
     public function logout(Request $request)
     {
+        return 'test api';
         $user = Auth::user();
         $success['name'] =  $user->name;
         Auth::user()->tokens()->delete();

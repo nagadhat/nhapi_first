@@ -221,10 +221,10 @@ class ProductCategoryController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/all-local-product",
+     *     path="/api/all-local-product/{outletId}",
      *     tags={"Products"},
-     *     summary="Get local product list with target audience 0.",
-     *     description="Get local product list where global audience is 0.",
+     *     summary="Get local product list by outlet with target audience 0.",
+     *     description="Get local product list by outlet_id where global audience is 0.",
      *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
@@ -256,10 +256,10 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function localProducts()
+    function localProducts($outlet_id)
     {
         return response()->json([
-            'data' => $this->productCategoryRepository->getLocalProducts()
+            'data' => $this->productCategoryRepository->getLocalProducts($outlet_id)
         ]);
     }
 
@@ -400,13 +400,14 @@ class ProductCategoryController extends BaseController
      *     path="/api/all-product-by-category-id",
      *     tags={"Products"},
      *     summary="Get product list according to category ID.",
-     *     description="By default this end-point will provide all records according to given category ID. Required parameter 'category_id', optional parameters 'random', 'limit;. Then you can get custom number of record by providing a body param with the key 'limit'. Also get random records by 'random' = true.",
+     *     description="By default this end-point will provide all records according to given category_id and outlet_id. Required parameter 'category_id' and 'outlet_id', optional parameters 'random', 'limit;. Then you can get custom number of record by providing a body param with the key 'limit'. Also get random records by 'random' = true.",
      *     @OA\RequestBody(
      *     required=true,
      *     description="Pass user credentials",
      *          @OA\JsonContent(
-     *              required={"category_id"},
-     *              @OA\Property(property="category_id", type="string", example="114"),
+     *              required={"category_id", "outlet_id"},
+     *              @OA\Property(property="category_id", type="integer", example="114"),
+     *              @OA\Property(property="outlet_id", type="integer", example="1"),
      *              @OA\Property(property="random", type="string", example="true"),
      *              @OA\Property(property="limit", type="string", example="10"),
      *          ),
@@ -446,6 +447,7 @@ class ProductCategoryController extends BaseController
     {
         $request->validate([
             'category_id' => 'required',
+            'outlet_id' => 'required',
             'random' => 'nullable',
             'limit' => 'nullable',
         ]);
@@ -732,11 +734,11 @@ class ProductCategoryController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/get-products/{limit}",
+     *     path="/api/get-products/{outletId}/{limit}",
      *     tags={"Products"},
-     *     summary="Get product list with with limit in random order where target audience is 0.",
+     *     summary="Get product list by outlet_id with limit in random order where target audience is 0.",
      *     security={{"passport": {}}},
-     *     description="Returns project data in random order by limit, pass parameter 'all' to get all products in random order",
+     *     description="Returns project data in random order by outlet_id with limit, pass parameter 'all' to get all products in random order",
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -767,12 +769,10 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    public function getProductsByLimit(Request $request)
+    public function productsByLimit($outlet_id, $limit)
     {
-        $limit = $request->route('limit');
-
         return response()->json([
-            'data' => $this->productCategoryRepository->getProductsByLimit($limit)
+            'data' => $this->productCategoryRepository->getProductsByLimit($outlet_id, $limit)
         ]);
     }
 }

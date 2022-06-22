@@ -5,13 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Category extends Model
 {
     use HasFactory;
-    protected $table = "products";
     protected $guarded = [];
-    /**
-     * The attributes that should be hidden for arrays.
-     */
-    protected $hidden = ['quantity'];
+    public $timestamps = false;
 }

@@ -31,7 +31,7 @@ class OrderController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/orders",
-     *     tags={"Xample"},
+     *     tags={"Xample Demo"},
      *     summary="Get orders list",
      *     security={{"passport": {}}},
      *     @OA\Response(
@@ -65,6 +65,7 @@ class OrderController extends BaseController
      */
     public function index()
     {
+        return 'test api';
         return response()->json([
             'data' => $this->orderRepository->getAllOrders()
         ]);
@@ -74,7 +75,7 @@ class OrderController extends BaseController
      * @OA\Post(
      *      path="/api/orders",
      *      operationId="store",
-     *      tags={"Xample"},
+     *      tags={"Xample Demo"},
      *      summary="Store new order",
      *      security={{"passport": {}}},
      *      description="Returns project data",
@@ -103,6 +104,7 @@ class OrderController extends BaseController
      */
     public function store(Request $request)
     {
+        return 'test api';
         $validator = Validator::make($request->all(), [
             'user_id'           => 'required',
             'shipping_address'  => 'required',
@@ -204,7 +206,7 @@ class OrderController extends BaseController
     /**
      * @OA\Get(
      *      path="/api/orders/{id}",
-     *      tags={"Xample"},
+     *      tags={"Xample Demo"},
      *      summary="Get order information",
      *      security={{"passport": {}}},
      *      description="Returns order data",
@@ -238,6 +240,7 @@ class OrderController extends BaseController
      */
     public function show(Request $request)
     {
+        return 'test api';
         $orderId = $request->route('id');
 
         return response()->json([
@@ -248,7 +251,7 @@ class OrderController extends BaseController
      * @OA\Put(
      *      path="/api/orders/{id}",
      *      operationId="updateProject",
-     *      tags={"Xample"},
+     *      tags={"Xample Demo"},
      *      summary="Update existing order",
      *      security={{"bearer":{}}},
      *      description="Returns updated project data",
@@ -290,6 +293,7 @@ class OrderController extends BaseController
      */
     public function update(Request $request)
     {
+        return 'test api';
         $orderId = $request->route('id');
         $orderDetails = $request->only([
             'client',
@@ -305,7 +309,7 @@ class OrderController extends BaseController
      * @OA\Delete(
      *      path="/api/orders/{id}",
      *      operationId="destroy",
-     *      tags={"Xample"},
+     *      tags={"Xample Demo"},
      *      summary="Delete existing order",
      *      security={{"bearer":{}}},
      *      description="Deletes a record and returns no content",
@@ -339,6 +343,7 @@ class OrderController extends BaseController
      */
     public function destroy(Request $request)
     {
+        return 'test api';
         $orderId = $request->route('id');
         $this->orderRepository->deleteOrder($orderId);
 

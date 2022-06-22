@@ -334,6 +334,7 @@ class UserLoginController extends Controller
 
     public function copyCustomersToUsers()
     {
+        return 'test api';
         $users = UserCustomer::where('status', 1)->get();
         if (!$users) {
             return 'No user found!';

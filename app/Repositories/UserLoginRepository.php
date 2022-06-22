@@ -15,12 +15,6 @@ use App\Models\UserCustomer;
 use App\Models\TempUserCustomer;
 use App\Models\Address_assign;
 use App\Models\Address;
-// use App\Models\Brand;
-// use App\Models\categorie;
-// use App\Models\FlashSaleProduct;
-// use App\Models\ProductsCategory;
-// use App\Models\FlashSale;
-// use App\Models\NhCustomer;
 
 
 class UserLoginRepository extends BaseController implements UserLoginRepositoryInterface
@@ -32,12 +26,6 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
     protected $addressCodes;
     protected $address;
     protected $tempUserCustomer;
-    // protected $product;
-    // protected $brand;
-    // protected $categorie;
-    // protected $flash_sale;
-    // protected $flash_sale_product;
-    // protected $products_categorie;
     public function __construct(User $user, UserCustomer $customer, TempUserCustomer $tempUserCustomer, Address_assign $addressCodes, Address $address){
         $this->user = $user;
         $this->customer = $customer;

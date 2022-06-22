@@ -28,7 +28,15 @@ Route::post('forget-password-otp-verify', [UserLoginController::class, 'forgetPa
 Route::post('password-reset', [UserLoginController::class, 'passwordReset']);
 
 Route::middleware('auth:api')->group(function () {
+    // 'Orders' section in API documentation
+    Route::get('orders', [OrderController::class, 'index']);
+    Route::post('orders', [OrderController::class, 'store']);
+    Route::get('orders/{id}', [OrderController::class, 'show']);
+    Route::put('orders/{id}', [OrderController::class, 'update']);
+    Route::delete('orders/{id}', [OrderController::class, 'destroy']);
     Route::post('logout', [RegisterController::class, 'logout']);
+    // =============================================================
+
     Route::post('nh-logout', [UserLoginController::class, 'userLogout']);
 
     // user info
@@ -42,13 +50,6 @@ Route::middleware('auth:api')->group(function () {
     Route::get('nh-user-address-codes/{userId}', [UserLoginController::class, 'userAddressCodesById']);
     Route::get('nh-user-address/{addressId}', [UserLoginController::class, 'userAddressByAddressId']);
 
-    // 'Orders' section in API documentation
-    Route::get('orders', [OrderController::class, 'index']);
-    Route::get('orders/{id}', [OrderController::class, 'show']);
-    Route::post('orders', [OrderController::class, 'store']);
-    Route::post('store-pos-sale', [OrderController::class, 'storePOSsale']);
-    // Route::put('orders/{id}', [OrderController::class, 'update']);
-    Route::delete('orders/{id}', [OrderController::class, 'destroy']);
 
     // outlet order management
     Route::get('orders-list/{outlet_id}', [OutletOrderController::class, 'orderList']);
@@ -64,8 +65,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('all-category-top-menu', [ProductCategoryController::class, 'categoriesTopMenu']);
 
     // Products
-    Route::get('all-local-product', [ProductCategoryController::class, 'localProducts']);
-    Route::get('get-products/{limit}', [ProductCategoryController::class, 'getProductsByLimit']);
+    Route::get('all-local-product/{outletId}', [ProductCategoryController::class, 'localProducts']);
+    Route::get('get-products/{outletId}/{limit}', [ProductCategoryController::class, 'productsByLimit']);
     Route::post('all-product-by-category-id', [ProductCategoryController::class, 'productByCategoryID']);
     Route::get('get-product-price/{productId}', [ProductCategoryController::class, 'productPriceByProductId']);
 
@@ -76,6 +77,7 @@ Route::middleware('auth:api')->group(function () {
 
     // outlet product
     Route::post('add-master-product', [ProductCategoryController::class, 'addMasterProduct']);
+    Route::post('store-pos-sale', [OrderController::class, 'storePOSsale']);
 
     // Brands
     Route::get('get-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
@@ -88,6 +90,9 @@ Route::middleware('auth:api')->group(function () {
     // Get Outlets
     Route::get('get-all-outlet', [OutletController::class, 'getOutlet']);
     Route::get('get-outlet/{outletId}', [OutletController::class, 'getOutletById']);
+    Route::get('outlet-delivery-location', [OutletController::class, 'outletDeliveryLocation']);
+    Route::get('outlet-delivery-location/{outletId}', [OutletController::class, 'outletDeliveryLocationByOutlet']);
+    Route::get('outlet/{locationId}', [OutletController::class, 'outletByDeliveryLocation']);
 
     // Product Requisitions Issues
     Route::post('outlet-product-requisition', [RequisitionIssueController::class, 'newRequisition']);

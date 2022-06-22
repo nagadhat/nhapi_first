@@ -29,8 +29,18 @@ class OrderRepository implements OrderRepositoryInterface
     protected $product;
     protected $userCustomer;
     protected $affiliatePayout;
-    public function __construct(Order $order, CartRepository $cartRepository, User $user, Cart $cart, OrderTimeline $orderTimeline, AffiliateUser $affiliateUser, OrdersProduct $ordersProduct, Product $product, UserCustomer $userCustomer, AffiliatePayout $affiliatePayout)
-    {
+    public function __construct(
+        Order $order,
+        CartRepository $cartRepository,
+        User $user,
+        Cart $cart,
+        OrderTimeline $orderTimeline,
+        AffiliateUser $affiliateUser,
+        OrdersProduct $ordersProduct,
+        Product $product,
+        UserCustomer $userCustomer,
+        AffiliatePayout $affiliatePayout
+    ) {
         $this->order = $order;
         $this->cartRepository = $cartRepository;
         $this->user = $user;
@@ -74,7 +84,7 @@ class OrderRepository implements OrderRepositoryInterface
         $orderDetails['customer_phone_2'] = '';
 
         if ($orderDetails['shipping_type'] == 'inside_dhaka') {
-            // temproraly set delivery charge to 0( 60/100 )
+            // temporarily set delivery charge to 0( 60/100 )
             $orderDetails['deliveryCrgPerShop'] = 0;
         } else {
             $orderDetails['deliveryCrgPerShop'] = 0;
@@ -154,7 +164,7 @@ class OrderRepository implements OrderRepositoryInterface
         $orderDetails['customer_phone_2'] = '';
 
         if ($orderDetails['shipping_type'] == 'inside_dhaka') {
-            // temproraly set delivery charge to 0( 60/100 )
+            // temporarily set delivery charge to 0( 60/100 )
             $orderDetails['deliveryCrgPerShop'] = 0;
         } else {
             $orderDetails['deliveryCrgPerShop'] = 0;
@@ -195,7 +205,7 @@ class OrderRepository implements OrderRepositoryInterface
 
         $orderDetails['order_id'] = $orderPlaced['id'];
         $invoice = $orderDetails['order_code'] . $orderDetails['order_id'] . $orderDetails['rand_code'];
-        
+
         $createOrdersProducts = $this->cartRepository->getCartProductsFromPos($sales_data, $userCustomer->id, $cartProducts, $orderDetails['order_id']);
 
         $smsContent = "Your order for " . $carts['totalQuantity'] . " product has been placed successfully on 'Nagadhat Bangladesh Ltd'." . "\nInvoice: " . $invoice . ".\nFor any query, Please call to 09602444444";
