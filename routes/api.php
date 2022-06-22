@@ -73,7 +73,7 @@ Route::middleware('auth:api')->group(function () {
     // Flash Sales Product Info
     Route::get('get-flash-sale-info', [ProductCategoryController::class, 'flashSaleInfo']);
     Route::get('get-flash-sale-status', [ProductCategoryController::class, 'flashSaleStatus']);
-    Route::get('get-flash-sale-products', [ProductCategoryController::class, 'flashSaleProducts']);
+    Route::get('get-flash-sale-products/{outletId}', [ProductCategoryController::class, 'flashSaleProducts']);
 
     // outlet product
     Route::post('add-master-product', [ProductCategoryController::class, 'addMasterProduct']);

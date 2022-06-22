@@ -265,10 +265,10 @@ class ProductCategoryController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/all-product-flash-sale",
+     *     path="/api/all-product-flash-sale/{outletId}",
      *     tags={"Flash Sale & Products"},
-     *     summary="Get Flash Sale product list.",
-     *     description="Get Flash Sale product list.",
+     *     summary="Get Flash Sale product list in random order.",
+     *     description="Get Flash Sale product list in random order with detailed product flash discount and price.",
      *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
@@ -300,10 +300,10 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function flashSaleProducts()
+    function flashSaleProducts($outlet_id)
     {
         return response()->json([
-            'data' => $this->productCategoryRepository->flashSaleProducts()
+            'data' => $this->productCategoryRepository->getFlashSaleProducts($outlet_id)
         ]);
     }
 

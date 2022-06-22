@@ -150,11 +150,20 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         }
     }
 
-    public function flashSaleProducts()
+    public function getFlashSaleProducts($outlet_id)
     {
-        return $this->flash_sale_product::leftJoin('products', 'flash_sales_products.product_id', '=', 'products.id')
-            ->select('products.*', 'flash_sales_products.status AS d_status', 'flash_sales_products.discount_type AS d_type', 'flash_sales_products.discount_amount AS d_amount')
-            ->where("flash_sales_products.status", 1)->limit(10)->inRandomOrder()->get();
+        $outlet = $this->outlet::find($outlet_id);
+        if ($outlet) {
+            return $this->flash_sale_product::join('products', 'flash_sales_products.product_id', 'products.id')
+                ->join('outlet_products', 'outlet_products.product_id', 'products.id')
+                ->select('products.*', 'outlet_products.outlet_id', 'outlet_products.quantity as outlet_stock_quantity', 'flash_sales_products.status AS flash_discount_status', 'flash_sales_products.discount_type AS flash_discount_type', 'flash_sales_products.discount_amount AS flash_discount_amount')
+                ->where("flash_sales_products.status", 1)
+                ->where('outlet_products.outlet_id', $outlet_id)
+                ->inRandomOrder()
+                ->get();
+        } else {
+            return 'invalid outlet_id';
+        }
     }
 
     public function flashSaleInfo()

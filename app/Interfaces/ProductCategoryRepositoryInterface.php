@@ -10,7 +10,7 @@ interface ProductCategoryRepositoryInterface
     public function categoriesTopMenu();
     public function categoriesSlide();
     public function getLocalProducts($outlet_id);
-    public function flashSaleProducts();
+    public function getFlashSaleProducts($outlet_id);
     public function flashSaleInfo();
     public function flashSaleStatus();
     public function productByCategoryID(Request $req);

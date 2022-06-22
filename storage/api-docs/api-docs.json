@@ -1118,14 +1118,14 @@
                 ]
             }
         },
-        "/api/all-product-flash-sale": {
+        "/api/all-product-flash-sale/{outletId}": {
             "get": {
                 "tags": [
                     "Flash Sale & Products"
                 ],
-                "summary": "Get Flash Sale product list.",
-                "description": "Get Flash Sale product list.",
-                "operationId": "7995f25006d826152c3328d9bfc08827",
+                "summary": "Get Flash Sale product list in random order.",
+                "description": "Get Flash Sale product list in random order with detailed product flash discount and price.",
+                "operationId": "0e2295a5bb9cf8907be4cef848084a75",
                 "responses": {
                     "200": {
                         "description": "Success",
