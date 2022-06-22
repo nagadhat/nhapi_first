@@ -22,7 +22,7 @@ class ProductCategoryController extends BaseController
      *     path="/api/all-category",
      *     tags={"Category"},
      *     summary="Get category full list or short list as your requirement.",
-     *     description="By default this end-point will provide a short list of category with three column ('id', 'title', 'slug'). For full list you have to provide a body param with the key 'list_type' and value = full_list. Pass body param with the key 'slider_menu' and value = 'menu_view' to get all the categories for Slider-Menu.  Used in: index",
+     *     description="By default this end-point will provide a short list of category with three column 'id', 'title', 'slug'). For full list you have to provide a body param with the key 'list_type' and value = full_list. Pass body param with the key 'slider_menu' and value = 'menu_view' to get all the categories for Slider-Menu.  Used in: index",
      *     @OA\RequestBody(
      *     required=true,
      *     description="Pass user credentials",
