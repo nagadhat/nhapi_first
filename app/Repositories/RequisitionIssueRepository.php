@@ -11,8 +11,6 @@ use App\Models\OutletIssueProduct;
 use App\Models\OutletReceive;
 use App\Models\OutletReceiveProduct;
 use App\Models\Product;
-use Illuminate\Http\Request;
-// use Illuminate\Http\Response;
 
 class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
 {

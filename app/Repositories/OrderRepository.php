@@ -29,18 +29,8 @@ class OrderRepository implements OrderRepositoryInterface
     protected $product;
     protected $userCustomer;
     protected $affiliatePayout;
-    public function __construct(
-        Order $order,
-        CartRepository $cartRepository,
-        User $user,
-        Cart $cart,
-        OrderTimeline $orderTimeline,
-        AffiliateUser $affiliateUser,
-        OrdersProduct $ordersProduct,
-        Product $product,
-        UserCustomer $userCustomer,
-        AffiliatePayout $affiliatePayout
-    ) {
+    public function __construct(Order $order, CartRepository $cartRepository, User $user, Cart $cart, OrderTimeline $orderTimeline, AffiliateUser $affiliateUser, OrdersProduct $ordersProduct, Product $product, UserCustomer $userCustomer, AffiliatePayout $affiliatePayout)
+    {
         $this->order = $order;
         $this->cartRepository = $cartRepository;
         $this->user = $user;

@@ -30,18 +30,8 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
     protected $products_variation;
     protected $products_variation_color;
     protected $products_variation_size;
-    public function __construct(
-        Brand $brand,
-        Product $product,
-        Category $category,
-        FlashSaleProduct $flashSaleProduct,
-        FlashSale $flashSale,
-        ProductsCategory $productsCategory,
-        ProductsVariations $productsVariations,
-        ProductsVariationColor $productsVariationColor,
-        ProductsVariationSize $productsVariationSize,
-        Outlet $outlet,
-    ) {
+    public function __construct(Brand $brand, Product $product, Category $category, FlashSaleProduct $flashSaleProduct, FlashSale $flashSale, ProductsCategory $productsCategory, ProductsVariations $productsVariations, ProductsVariationColor $productsVariationColor, ProductsVariationSize $productsVariationSize, Outlet $outlet)
+    {
         $this->product = $product;
         $this->brand = $brand;
         $this->category = $category;
