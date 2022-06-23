@@ -11,6 +11,13 @@ use Illuminate\Support\Facades\Validator;
 
 class ProductCategoryController extends BaseController
 {
+    /**
+     * Store a new user.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+
     protected $productCategoryRepository;
     public function __construct(ProductCategoryRepository $productCategoryRepository)
     {
@@ -62,10 +69,10 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function categories(Request $list_type)
+    function categories(Request $request)
     {
         return response()->json([
-            'data' => $this->productCategoryRepository->categories($list_type)
+            'data' => $this->productCategoryRepository->categories($request)
         ]);
     }
 
@@ -181,6 +188,7 @@ class ProductCategoryController extends BaseController
      *     path="/api/all-category-slide",
      *     tags={"Category"},
      *     summary="Get category list for the menu just left side in the main slider.",
+     *     description="Get category list for the menu just left side in the main slider.",
      *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
@@ -224,7 +232,7 @@ class ProductCategoryController extends BaseController
      *     path="/api/all-local-product/{outletId}",
      *     tags={"Products"},
      *     summary="Get local product list by outlet with target audience 0.",
-     *     description="Get local product list by outlet_id where global audience is 0.",
+     *     description="Get local product list by outlet_id where global audience is 0. use parameter page_size=5 to set pagination '/api/all-local-product/{outletId}?per_page=2' value, by default per_page=15",
      *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
@@ -256,10 +264,12 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function localProducts($outlet_id)
+    function localProducts(Request $request, $outlet_id)
     {
+        $page_size = $request->page_size ?? 15;
+
         return response()->json([
-            'data' => $this->productCategoryRepository->getLocalProducts($outlet_id)
+            'data' => $this->productCategoryRepository->getLocalProducts($page_size, $outlet_id)
         ]);
     }
 
@@ -268,7 +278,7 @@ class ProductCategoryController extends BaseController
      *     path="/api/all-product-flash-sale/{outletId}",
      *     tags={"Flash Sale & Products"},
      *     summary="Get Flash Sale product list in random order.",
-     *     description="Get Flash Sale product list in random order with detailed product flash discount and price.",
+     *     description="Get Flash Sale product list in random order with detailed product flash discount and price.use parameter page_size=5 to set pagination '/api/all-product-flash-sale/{outletId}?per_page=2' value, by default per_page=15",
      *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
@@ -300,10 +310,12 @@ class ProductCategoryController extends BaseController
      *
      */
 
-    function flashSaleProducts($outlet_id)
+    function flashSaleProducts(Request $request, $outlet_id)
     {
+        $page_size = $request->page_size ?? 15;
+
         return response()->json([
-            'data' => $this->productCategoryRepository->getFlashSaleProducts($outlet_id)
+            'data' => $this->productCategoryRepository->getFlashSaleProducts($page_size, $outlet_id)
         ]);
     }
 
@@ -400,7 +412,7 @@ class ProductCategoryController extends BaseController
      *     path="/api/all-product-by-category-id",
      *     tags={"Products"},
      *     summary="Get product list according to category ID.",
-     *     description="By default this end-point will provide all records according to given category_id and outlet_id. Required parameter 'category_id' and 'outlet_id', optional parameters 'random', 'limit;. Then you can get custom number of record by providing a body param with the key 'limit'. Also get random records by 'random' = true.",
+     *     description="By default this end-point will provide all records according to given category_id and outlet_id. Required parameter 'category_id' and 'outlet_id', optional parameters 'random', 'page_size;. Then you can get custom number of records per page by providing a body param with the key 'page_size'. Also get random records by 'random' = true.",
      *     @OA\RequestBody(
      *     required=true,
      *     description="Pass user credentials",
@@ -408,8 +420,8 @@ class ProductCategoryController extends BaseController
      *              required={"category_id", "outlet_id"},
      *              @OA\Property(property="category_id", type="integer", example="114"),
      *              @OA\Property(property="outlet_id", type="integer", example="1"),
-     *              @OA\Property(property="random", type="string", example="true"),
-     *              @OA\Property(property="limit", type="string", example="10"),
+     *              @OA\Property(property="random", type="boolean", example="true"),
+     *              @OA\Property(property="page_size", type="integer", example="10"),
      *          ),
      *     ),
      *     security={{"passport": {}}},
@@ -450,6 +462,7 @@ class ProductCategoryController extends BaseController
             'outlet_id' => 'required',
             'random' => 'nullable',
             'limit' => 'nullable',
+            'page_size' => 'nullable',
         ]);
 
         return response()->json([

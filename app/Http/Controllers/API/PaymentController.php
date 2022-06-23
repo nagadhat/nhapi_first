@@ -16,7 +16,7 @@ class PaymentController extends BaseController
 
     /**
      * @OA\Post(
-     *      path="/api/payment",
+     *      path="/api/online-order/payment",
      *      operationId="payment",
      *      tags={"Outlet Payment"},
      *      summary="Receive Online payment",

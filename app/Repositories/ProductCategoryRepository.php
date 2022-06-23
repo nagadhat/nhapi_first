@@ -93,7 +93,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         return $this->category::where("on_slider_menu_view", 1)->where('status', 1)->limit(10)->get();
     }
 
-    public function getLocalProducts($outlet_id)
+    public function getLocalProducts($page_size, $outlet_id)
     {
         $outlet = $this->outlet::find($outlet_id);
         if ($outlet) {
@@ -103,7 +103,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
                 ->where('products.target_audience', 0)
                 ->where('products.live_status', 1)
                 ->orderBy('id', 'desc')
-                ->get();
+                ->paginate($page_size);
 
             return $products;
         } else {
@@ -121,7 +121,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
                     ->where('outlet_products.outlet_id', $outlet_id)
                     ->where('products.target_audience', 0)
                     ->where('products.live_status', 1)
-                    ->limit(10)
+                    ->limit($limit)
                     ->inRandomOrder()
                     ->get();
             }
@@ -140,7 +140,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         }
     }
 
-    public function getFlashSaleProducts($outlet_id)
+    public function getFlashSaleProducts($page_size, $outlet_id)
     {
         $outlet = $this->outlet::find($outlet_id);
         if ($outlet) {
@@ -150,7 +150,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
                 ->where("flash_sales_products.status", 1)
                 ->where('outlet_products.outlet_id', $outlet_id)
                 ->inRandomOrder()
-                ->get();
+                ->paginate($page_size);
         } else {
             return 'invalid outlet_id';
         }
@@ -222,16 +222,12 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
 
     public function productByCategoryID(Request $request)
     {
+        $page_size = $request->page_size ?? 15;
+
         $outlet_id = $request->outlet_id;
         $outlet = $this->outlet::find($outlet_id);
         if ($outlet) {
             $catId = $request->category_id;
-            if ($request->limit) {
-                $limit = $request->limit;
-            } else {
-                $limit = 10000;
-            }
-
             if (isset($request->random) && $request->random == true) {
                 return ProductsCategory::join("products", "products_categories.product_id", "products.id")
                     ->join('outlet_products', 'outlet_products.product_id', 'products.id')
@@ -240,9 +236,8 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
                     ->where("products_categories.category_id", $catId)
                     ->where("products.target_audience", 0)
                     ->where('products.live_status', 1)
-                    ->limit($limit)
                     ->inRandomOrder()
-                    ->get();
+                    ->paginate($page_size);
             }
 
             return ProductsCategory::join("products", "products_categories.product_id", "products.id")
@@ -252,8 +247,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
                 ->where("products_categories.category_id", $catId)
                 ->where("products.target_audience", 0)
                 ->where('products.live_status', 1)
-                ->limit($limit)
-                ->get();
+                ->paginate($page_size);
         } else {
             return 'invalid outlet_id';
         }

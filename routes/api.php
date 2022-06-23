@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
 use App\Http\Controllers\API\RegisterController;
 use App\Http\Controllers\API\OrderController;
 use App\Http\Controllers\API\ProductCategoryController;

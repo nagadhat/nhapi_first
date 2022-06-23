@@ -13,6 +13,10 @@ use App\Models\UserCustomer;
 use App\Models\TempUserCustomer;
 use App\Models\Address_assign;
 use App\Models\Address;
+use App\Models\AffiliateBankingInfo;
+use App\Models\AffiliateUser;
+use App\Models\NhAdmin;
+use App\Models\NhAgent;
 use Illuminate\Support\Facades\Validator;
 
 class UserLoginRepository extends BaseController implements UserLoginRepositoryInterface
@@ -24,13 +28,17 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
     protected $addressCodes;
     protected $address;
     protected $tempUserCustomer;
-    public function __construct(User $user, UserCustomer $customer, TempUserCustomer $tempUserCustomer, Address_assign $addressCodes, Address $address)
+    public function __construct(User $user, UserCustomer $customer, TempUserCustomer $tempUserCustomer, Address_assign $addressCodes, Address $address, AffiliateUser $affiliateUser, AffiliateBankingInfo $affiliateBankingInfo, NhAdmin $nhAdmin, NhAgent $nhAgent)
     {
         $this->user = $user;
         $this->customer = $customer;
         $this->addressCodes = $addressCodes;
         $this->address = $address;
         $this->tempUserCustomer = $tempUserCustomer;
+        $this->affiliateUser = $affiliateUser;
+        $this->affiliateBankingInfo = $affiliateBankingInfo;
+        $this->nhAdmin = $nhAdmin;
+        $this->nhAgent = $nhAgent;
     }
 
     public function userLogin(Request $req)
@@ -53,7 +61,7 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
             $success['user'] =  $user;
             return $this->sendResponse($success, $msg);
         } else {
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised username or password.']);
+            return $this->sendError('Unauthorized.', ['error' => 'Unauthorized username or password.']);
         }
     }
 
@@ -119,8 +127,39 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
 
     public function userInfo()
     {
+        // $customer = Auth::user();
+        // return
+        // $user = $this->user::leftjoin('user_customers', 'user_customers.u_id', 'users.id')
+        // ->leftjoin('affiliate_users', 'user_customers.id', 'affiliate_users.user_id')
+        // ->leftjoin('affiliate_banking_infos', 'affiliate_banking_infos.user_id', 'user_customers.id')
+        // ->select('users.*','user_customers.*', 'affiliate_users.*', 'affiliate_banking_infos.*')
+        // ->where('users.id', auth()->user()->id)
+        // ->first();
+
         $user = Auth::user();
-        $user['first_name'] = $this->customer::where('username', Auth::user()->username)->pluck('first_name')->first();
+        $admin = $this->nhAdmin::where('user_id', auth()->user()->id)->first();
+        if ($admin) {
+            $user['admin_info'] = $admin;
+        }
+        $agent = $this->nhAgent::where('uid', auth()->user()->id)->first();
+        if ($agent) {
+            $user['agent_info'] = $agent;
+        }
+
+
+        $customer = $this->customer::where('u_id', $user->id)->first();
+        if ($customer) {
+            $user['customer_info'] = $customer;
+            $affiliate = $this->affiliateUser::where('user_id', $customer->id)->first();
+            if ($affiliate) {
+                $user['affiliate_info'] = $affiliate;
+            }
+            $bankingInfo = $this->affiliateBankingInfo::where('user_id', $customer->id)->first();
+            if ($bankingInfo) {
+                $user['banking_info'] = $bankingInfo;
+            }
+        }
+
         return $user;
     }
 

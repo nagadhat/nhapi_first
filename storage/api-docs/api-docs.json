@@ -776,7 +776,7 @@
                 ]
             }
         },
-        "/api/payment": {
+        "/api/online-order/payment": {
             "post": {
                 "tags": [
                     "Outlet Payment"
@@ -1049,6 +1049,7 @@
                     "Category"
                 ],
                 "summary": "Get category list for the menu just left side in the main slider.",
+                "description": "Get category list for the menu just left side in the main slider.",
                 "operationId": "3fb511fba76449e47b6d3c22ba6cdcac",
                 "responses": {
                     "200": {
@@ -1086,7 +1087,7 @@
                     "Products"
                 ],
                 "summary": "Get local product list by outlet with target audience 0.",
-                "description": "Get local product list by outlet_id where global audience is 0.",
+                "description": "Get local product list by outlet_id where global audience is 0. use parameter page_size=5 to set pagination '/api/all-local-product/{outletId}?per_page=2' value, by default per_page=15",
                 "operationId": "c20c1dad6c0853cb3c18305c1dc23982",
                 "responses": {
                     "200": {
@@ -1124,7 +1125,7 @@
                     "Flash Sale & Products"
                 ],
                 "summary": "Get Flash Sale product list in random order.",
-                "description": "Get Flash Sale product list in random order with detailed product flash discount and price.",
+                "description": "Get Flash Sale product list in random order with detailed product flash discount and price.use parameter page_size=5 to set pagination '/api/all-product-flash-sale/{outletId}?per_page=2' value, by default per_page=15",
                 "operationId": "0e2295a5bb9cf8907be4cef848084a75",
                 "responses": {
                     "200": {
@@ -1238,7 +1239,7 @@
                     "Products"
                 ],
                 "summary": "Get product list according to category ID.",
-                "description": "By default this end-point will provide all records according to given category_id and outlet_id. Required parameter 'category_id' and 'outlet_id', optional parameters 'random', 'limit;. Then you can get custom number of record by providing a body param with the key 'limit'. Also get random records by 'random' = true.",
+                "description": "By default this end-point will provide all records according to given category_id and outlet_id. Required parameter 'category_id' and 'outlet_id', optional parameters 'random', 'page_size;. Then you can get custom number of records per page by providing a body param with the key 'page_size'. Also get random records by 'random' = true.",
                 "operationId": "8b92ea52795cc61a328375be99b699b7",
                 "requestBody": {
                     "description": "Pass user credentials",
@@ -1260,11 +1261,11 @@
                                         "example": "1"
                                     },
                                     "random": {
-                                        "type": "string",
+                                        "type": "boolean",
                                         "example": "true"
                                     },
-                                    "limit": {
-                                        "type": "string",
+                                    "page_size": {
+                                        "type": "integer",
                                         "example": "10"
                                     }
                                 },

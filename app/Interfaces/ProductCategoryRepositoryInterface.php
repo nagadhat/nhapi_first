@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Interfaces;
+
 use Illuminate\Http\Request;
 
 interface ProductCategoryRepositoryInterface
@@ -9,8 +11,8 @@ interface ProductCategoryRepositoryInterface
     public function allBrands(Request $req);
     public function categoriesTopMenu();
     public function categoriesSlide();
-    public function getLocalProducts($outlet_id);
-    public function getFlashSaleProducts($outlet_id);
+    public function getLocalProducts($page_size, $outlet_id);
+    public function getFlashSaleProducts($page_size, $outlet_id);
     public function flashSaleInfo();
     public function flashSaleStatus();
     public function productByCategoryID(Request $req);
