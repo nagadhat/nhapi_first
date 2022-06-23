@@ -17,6 +17,7 @@ use App\Models\AffiliateBankingInfo;
 use App\Models\AffiliateUser;
 use App\Models\NhAdmin;
 use App\Models\NhAgent;
+use App\Models\Vendor;
 use Illuminate\Support\Facades\Validator;
 
 class UserLoginRepository extends BaseController implements UserLoginRepositoryInterface
@@ -28,7 +29,7 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
     protected $addressCodes;
     protected $address;
     protected $tempUserCustomer;
-    public function __construct(User $user, UserCustomer $customer, TempUserCustomer $tempUserCustomer, Address_assign $addressCodes, Address $address, AffiliateUser $affiliateUser, AffiliateBankingInfo $affiliateBankingInfo, NhAdmin $nhAdmin, NhAgent $nhAgent)
+    public function __construct(User $user, UserCustomer $customer, TempUserCustomer $tempUserCustomer, Address_assign $addressCodes, Address $address, AffiliateUser $affiliateUser, AffiliateBankingInfo $affiliateBankingInfo, NhAdmin $nhAdmin, NhAgent $nhAgent, Vendor $vendor)
     {
         $this->user = $user;
         $this->customer = $customer;
@@ -39,6 +40,7 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
         $this->affiliateBankingInfo = $affiliateBankingInfo;
         $this->nhAdmin = $nhAdmin;
         $this->nhAgent = $nhAgent;
+        $this->vendor = $vendor;
     }
 
     public function userLogin(Request $req)
@@ -127,15 +129,6 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
 
     public function userInfo()
     {
-        // $customer = Auth::user();
-        // return
-        // $user = $this->user::leftjoin('user_customers', 'user_customers.u_id', 'users.id')
-        // ->leftjoin('affiliate_users', 'user_customers.id', 'affiliate_users.user_id')
-        // ->leftjoin('affiliate_banking_infos', 'affiliate_banking_infos.user_id', 'user_customers.id')
-        // ->select('users.*','user_customers.*', 'affiliate_users.*', 'affiliate_banking_infos.*')
-        // ->where('users.id', auth()->user()->id)
-        // ->first();
-
         $user = Auth::user();
         $admin = $this->nhAdmin::where('user_id', auth()->user()->id)->first();
         if ($admin) {
@@ -144,6 +137,10 @@ class UserLoginRepository extends BaseController implements UserLoginRepositoryI
         $agent = $this->nhAgent::where('uid', auth()->user()->id)->first();
         if ($agent) {
             $user['agent_info'] = $agent;
+        }
+        $vendor = $this->vendor::where('u_id', auth()->user()->id)->first();
+        if ($vendor) {
+            $user['vendor_info'] = $vendor;
         }
 
 

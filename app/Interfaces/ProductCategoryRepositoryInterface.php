@@ -16,9 +16,10 @@ interface ProductCategoryRepositoryInterface
     public function flashSaleInfo();
     public function flashSaleStatus();
     public function productByCategoryID(Request $req);
-    public function productPriceByProductId(Request $request);
+    public function productPriceByProductId($productId);
     public function addMasterProduct(Request $request);
     public function getProductsByLimit($outlet_id, $limit);
     public function newBrand(Request $request);
     public function createCategory(Request $request);
+    public function getProductDetails($request);
 }

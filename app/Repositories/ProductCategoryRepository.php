@@ -274,6 +274,11 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         return $productSellPrice;
     }
 
+    public function getProductDetails($request)
+    {
+        return $request->all();
+    }
+
     public function addMasterProduct(Request $request)
     {
         $newProduct['title'] = $request['product_title'];

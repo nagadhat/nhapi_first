@@ -1242,7 +1242,6 @@
                 "description": "By default this end-point will provide all records according to given category_id and outlet_id. Required parameter 'category_id' and 'outlet_id', optional parameters 'random', 'page_size;. Then you can get custom number of records per page by providing a body param with the key 'page_size'. Also get random records by 'random' = true.",
                 "operationId": "8b92ea52795cc61a328375be99b699b7",
                 "requestBody": {
-                    "description": "Pass user credentials",
                     "required": true,
                     "content": {
                         "application/json": {
@@ -1312,6 +1311,75 @@
                 "summary": "Get product price by product_id.",
                 "description": "Returns product price by product_id as parameter",
                 "operationId": "1d253e2d115649e8a3d3d14ab41d73fa",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorize Access, Invalid Token or Token has expired",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/get-product-details": {
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get product details by outlet_id and product_id/product_sku/slug.",
+                "description": "Returns product details by outlet_id and product_id/product_sku/slug",
+                "operationId": "e5ad12ba030b41deb717a75597993092",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "outlet_id"
+                                ],
+                                "properties": {
+                                    "outlet_id": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    },
+                                    "product_id": {
+                                        "type": "integer",
+                                        "example": "2699"
+                                    },
+                                    "product_sku": {
+                                        "type": "integer",
+                                        "example": "61e5432891f01"
+                                    },
+                                    "slug": {
+                                        "type": "integer",
+                                        "example": "Barclay-Johnston-629895043b12a"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "Success",

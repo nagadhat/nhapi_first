@@ -415,7 +415,6 @@ class ProductCategoryController extends BaseController
      *     description="By default this end-point will provide all records according to given category_id and outlet_id. Required parameter 'category_id' and 'outlet_id', optional parameters 'random', 'page_size;. Then you can get custom number of records per page by providing a body param with the key 'page_size'. Also get random records by 'random' = true.",
      *     @OA\RequestBody(
      *     required=true,
-     *     description="Pass user credentials",
      *          @OA\JsonContent(
      *              required={"category_id", "outlet_id"},
      *              @OA\Property(property="category_id", type="integer", example="114"),
@@ -514,6 +513,70 @@ class ProductCategoryController extends BaseController
 
         return response()->json([
             'data' => $this->productCategoryRepository->productPriceByProductId($productId)
+        ]);
+    }
+
+
+    /**
+     * @OA\Post(
+     *     path="/api/get-product-details",
+     *     tags={"Products"},
+     *     summary="Get product details by outlet_id and product_id/product_sku/slug.",
+     *     security={{"passport": {}}},
+     *     description="Returns product details by outlet_id and product_id/product_sku/slug",
+     *     @OA\RequestBody(
+     *     required=true,
+     *          @OA\JsonContent(
+     *              required={"outlet_id"},
+     *              @OA\Property(property="outlet_id", type="integer", example="1"),
+     *              @OA\Property(property="product_id", type="integer", example="2699"),
+     *              @OA\Property(property="product_sku", type="integer", example="61e5432891f01"),
+     *              @OA\Property(property="slug", type="integer", example="Barclay-Johnston-629895043b12a"),
+     *          ),
+     *     ),
+     *     security={{"passport": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *         response=401,
+     *         description="Unauthorize Access, Invalid Token or Token has expired",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *           response=400,
+     *           description="Bad Request"
+     *          ),
+     *      @OA\Response(
+     *           response=404,
+     *           description="not found"
+     *          ),
+     *      )
+     *
+     */
+
+    function productDetailsByIDSlugSku(Request $request)
+    {
+        $request->validate([
+            'outlet_id' => 'required',
+            'product_id' => 'nullable',
+            'product_sku' => 'nullable',
+            'slug' => 'nullable',
+        ]);
+        return $request->input(['product_id']);
+
+        return response()->json([
+            'data' => $this->productCategoryRepository->getProductDetails($request)
         ]);
     }
 

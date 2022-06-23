@@ -67,6 +67,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('get-products/{outletId}/{limit}', [ProductCategoryController::class, 'productsByLimit']);
     Route::post('all-product-by-category-id', [ProductCategoryController::class, 'productByCategoryID']);
     Route::get('get-product-price/{productId}', [ProductCategoryController::class, 'productPriceByProductId']);
+    Route::post('get-product-details', [ProductCategoryController::class, 'productDetailsByIDSlugSku']);
 
     // Flash Sales Product Info
     Route::get('get-flash-sale-info', [ProductCategoryController::class, 'flashSaleInfo']);
