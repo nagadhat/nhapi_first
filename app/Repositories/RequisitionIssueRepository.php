@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Interfaces\RequisitionIssueRepositoryInterface;
+use App\Models\Outlet;
 use App\Models\OutletRequisitionProduct;
 use App\Models\OutletRequisition;
 use App\Models\OutletProduct;
@@ -19,8 +20,9 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
     protected $outletProduct;
     protected $outletIssue;
     protected $outletIssueProduct;
-    public function __construct(OutletRequisition $outletRequisition, OutletRequisitionProduct $outletRequisitionProduct, OutletProduct $outletProduct, OutletIssue $outletIssue, OutletIssueProduct $outletIssueProduct, Product $product, OutletReceive $outletReceive, OutletReceiveProduct $outletReceiveProduct)
+    public function __construct(Outlet $outlet, OutletRequisition $outletRequisition, OutletRequisitionProduct $outletRequisitionProduct, OutletProduct $outletProduct, OutletIssue $outletIssue, OutletIssueProduct $outletIssueProduct, Product $product, OutletReceive $outletReceive, OutletReceiveProduct $outletReceiveProduct)
     {
+        $this->outlet = $outlet;
         $this->outletRequisition = $outletRequisition;
         $this->outletRequisitionProduct = $outletRequisitionProduct;
         $this->outletProduct = $outletProduct;
@@ -71,8 +73,67 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
             }
         }
 
-
         return $newRequisition;
+    }
+
+    public function editARequisition($request)
+    {
+        $outlet_id =  $request['requisition']['outlet_id'];
+        $requisition_id =  $request['requisition']['requisition_id'];
+        $requisitionProduct = $request['requisition']['product'];
+
+        $requisition = $this->outletRequisition::find($requisition_id);
+        if (empty($requisition)) {
+            return 'invalid requisition_id';
+        }
+
+        if (empty($this->outlet::find($outlet_id)) || $requisition->outlet_id != $outlet_id) {
+            return 'invalid outlet_id';
+        }
+
+        if ($requisition->partial_status) {
+            return 'requisition already issued, invalid request';
+        }
+
+        $this->outletRequisitionProduct::where('requisition_id', $requisition_id)->delete();
+
+        // check if product_id valid or not
+        $noProduct = [];
+        foreach ($requisitionProduct as $req) {
+            $checkProduct = $this->product::find($req['product_id']);
+            if (!$checkProduct) {
+                $noProduct[] = $req['product_id'];
+            }
+        }
+        if (!empty($noProduct)) {
+            return [
+                'msg' => 'Product not found !!',
+                'product_id' => $noProduct
+            ];
+        }
+
+
+        $newRequisitionProduct = array();
+        foreach ($requisitionProduct as $req) {
+            $req['requisition_id'] = $requisition_id;
+            $req['issued_quantity'] = 0;
+            $req['remaining_quantity'] = $req['product_quantity'];
+            $newRequisitionProduct[] = $this->outletRequisitionProduct::create($req);
+
+            $exist_in_outlet = $this->outletProduct::where('product_id', $req['product_id'])->where('outlet_id', $outlet_id)->first();
+            if (empty($exist_in_outlet)) {
+                $outlet_product['outlet_id'] = $outlet_id;
+                $outlet_product['product_id'] = $req['product_id'];
+                $this->outletProduct::create($outlet_product);
+            }
+        }
+
+
+        return [
+            'msg' => 'updated successfully',
+            'requisition' => $requisition,
+            'products' => $newRequisitionProduct
+        ];
     }
 
     // If POS send issue_id, product_id and product_quantity

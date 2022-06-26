@@ -16,6 +16,9 @@ use App\Models\ProductsVariationColor;
 use App\Models\ProductsVariationSize;
 use App\Models\FlashSale;
 use App\Models\Outlet;
+use App\Models\TempBrandUpdate;
+use App\Models\TempCatUpdate;
+use App\Models\TempProductUpdate;
 use Illuminate\Http\Request;
 
 class ProductCategoryRepository implements ProductCategoryRepositoryInterface
@@ -31,7 +34,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
     protected $products_variation;
     protected $products_variation_color;
     protected $products_variation_size;
-    public function __construct(Brand $brand, Product $product, Category $category, FlashSaleProduct $flashSaleProduct, FlashSale $flashSale, ProductsCategory $productsCategory, ProductsVariations $productsVariations, ProductsVariationColor $productsVariationColor, ProductsVariationSize $productsVariationSize, Outlet $outlet, AffiliateUser $affiliateUser)
+    public function __construct(Brand $brand, Product $product, Category $category, FlashSaleProduct $flashSaleProduct, FlashSale $flashSale, ProductsCategory $productsCategory, ProductsVariations $productsVariations, ProductsVariationColor $productsVariationColor, ProductsVariationSize $productsVariationSize, Outlet $outlet, AffiliateUser $affiliateUser, TempCatUpdate $tempCatUpdate, TempBrandUpdate $tempBrandUpdate, TempProductUpdate $tempProductUpdate)
     {
         $this->product = $product;
         $this->brand = $brand;
@@ -44,6 +47,9 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         $this->products_variation_size = $productsVariationSize;
         $this->outlet = $outlet;
         $this->affiliateUser = $affiliateUser;
+        $this->tempCatUpdate = $tempCatUpdate;
+        $this->tempBrandUpdate = $tempBrandUpdate;
+        $this->tempProductUpdate = $tempProductUpdate;
     }
 
     public function categories(Request $req)
@@ -83,6 +89,39 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
             $category_info['logo'] = '';
         }
         return $this->category::create($category_info);
+    }
+
+    public function editRequestCategory($request)
+    {
+        $category = $this->category::find($request->category_id);
+        if ($category->pos_cat_id != $request->pos_cat_id) {
+            return 'category_id and pos_cat_id do not match';
+        }
+
+        $checkReq = $this->tempCatUpdate::where('category_id', $request->category_id)->get();
+        if ($checkReq->count() > 0) {
+            return 'already requested for an update, wait for the confirmation';
+        }
+
+        $category_info['title'] = $request->title;
+        $category_info['outlet_id'] = $request->outlet_id;
+        $category_info['category_id'] = $request->category_id;
+        $category_info['pos_cat_id'] = $request->pos_cat_id;
+
+        if ($request->hasFile('logo')) {
+            $path = 'public/media/categories';
+            $return_path = 'media/categories/';
+            $category_info['logo'] = $this->uploadFile($request->file('logo'), $path, $return_path);
+        } else {
+            $category_info['logo'] = '';
+        }
+
+        $data = $this->tempCatUpdate::create($category_info);
+
+        return [
+            'msg' => 'successfully requested for update',
+            'data' => $data
+        ];
     }
 
     public function categoriesTopMenu()
@@ -220,6 +259,31 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
             $brand_info['logo'] = '';
         }
         return $this->brand::create($brand_info);
+    }
+
+    public function editABrand($request)
+    {
+        $brand_info['brand_id'] = $request->brand_id;
+        $brand_info['pos_brand_id'] = $request->pos_brand_id;
+        $brand_info['title'] = $request->title;
+
+        $brand = $this->brand::find($request->brand_id);
+        if ($brand->pos_brand_id != $request->pos_brand_id) {
+            return 'brand_id and brand_pos_id does not match';
+        }
+        $brandUpdateRequest = $this->tempBrandUpdate::where('brand_id', $request->brand_id)->get();
+        if ($brandUpdateRequest->count() > 0) {
+            return 'already requested for update';
+        }
+
+        if ($request->hasFile('logo')) {
+            $path = 'public/media/brands';
+            $return_path = 'media/brands/';
+            $brand_info['logo'] = $this->uploadFile($request->file('logo'), $path, $return_path);
+        } else {
+            $brand_info['logo'] = '';
+        }
+        return $this->tempBrandUpdate::create($brand_info);
     }
 
     public function productByCategoryID(Request $request)
@@ -415,6 +479,54 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         }
         $request['product_id'] = $addNewProduct->id;
         $this->variationProduct($request);
+
+        return $addNewProduct;
+    }
+
+    public function editAMasterProduct($request)
+    {
+
+        $product = $this->product::find($request->product_id);
+        if (empty($product)) {
+            return 'invalid product_id';
+        }
+        if (empty($this->outlet::find($request->outlet_id))) {
+            return 'invalid outlet_id';
+        }
+        if ($this->tempProductUpdate::where('product_id', $request->product_id)->get()->count() > 0) {
+            return 'already requested for update';
+        }
+
+        $newProduct['product_id'] = $request['product_id'];
+        $newProduct['title'] = $request['product_title'];
+        $newProduct['product_sku'] = $request['product_sku'];
+        $newProduct['short_description'] = $request['short_description'];
+        $newProduct['long_description'] = $request['full_description'];
+        $newProduct['brand_id'] = $request['brand_id'];
+        $newProduct['category_id'] = $request['category_id'];
+        $newProduct['model'] = $request['model'];
+        $newProduct['price'] = $request['price'];
+        $newProduct['author_id'] = $request['outlet_id'];
+
+        if ($request->hasFile('cover_image')) {
+            // uploadAndGetPath from NhTraits
+            $newProduct['thumbnail_1'] = $this->uploadAndGetPath($request->file('cover_image'));
+        } else {
+            $newProduct['thumbnail_1'] = "";
+        }
+
+        $newProduct['img-1'] = ($request->hasFile('images_1')) ? $this->uploadAndGetPath($request->file('images_1')) : "";
+        $newProduct['img-2'] = ($request->hasFile('images_2')) ? $this->uploadAndGetPath($request->file('images_2')) : "";
+        $newProduct['img-3'] = ($request->hasFile('images_3')) ? $this->uploadAndGetPath($request->file('images_3')) : "";
+        $newProduct['img-4'] = ($request->hasFile('images_4')) ? $this->uploadAndGetPath($request->file('images_4')) : "";
+        $newProduct['img-5'] = ($request->hasFile('images_5')) ? $this->uploadAndGetPath($request->file('images_5')) : "";
+        $newProduct['img-6'] = ($request->hasFile('images_6')) ? $this->uploadAndGetPath($request->file('images_6')) : "";
+        $newProduct['img-7'] = ($request->hasFile('images_7')) ? $this->uploadAndGetPath($request->file('images_7')) : "";
+        $newProduct['img-8'] = ($request->hasFile('images_8')) ? $this->uploadAndGetPath($request->file('images_8')) : "";
+        $newProduct['img-9'] = ($request->hasFile('images_9')) ? $this->uploadAndGetPath($request->file('images_9')) : "";
+
+
+        $addNewProduct = $this->tempProductUpdate::create($newProduct);
 
         return $addNewProduct;
     }

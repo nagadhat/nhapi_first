@@ -18,8 +18,11 @@ interface ProductCategoryRepositoryInterface
     public function productByCategoryID(Request $req);
     public function productPriceByProductId($productId);
     public function addMasterProduct(Request $request);
+    public function editAMasterProduct($request);
     public function getProductsByLimit($outlet_id, $limit);
     public function newBrand(Request $request);
+    public function editABrand($request);
     public function createCategory(Request $request);
+    public function editRequestCategory($request);
     public function getProductDetails($request);
 }

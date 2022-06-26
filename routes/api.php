@@ -61,6 +61,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('all-category-main', [ProductCategoryController::class, 'mainCategories']);
     Route::get('all-category-slide', [ProductCategoryController::class, 'categoriesSlide']);
     Route::get('all-category-top-menu', [ProductCategoryController::class, 'categoriesTopMenu']);
+    Route::post('edit-category', [ProductCategoryController::class, 'editCategory']);
 
     // Products
     Route::get('all-local-product/{outletId}', [ProductCategoryController::class, 'localProducts']);
@@ -76,6 +77,7 @@ Route::middleware('auth:api')->group(function () {
 
     // outlet product
     Route::post('add-master-product', [ProductCategoryController::class, 'addMasterProduct']);
+    Route::post('edit-master-product', [ProductCategoryController::class, 'editMasterProduct']);
     Route::post('store-pos-sale', [OrderController::class, 'storePOSsale']);
 
     // customer order
@@ -84,6 +86,7 @@ Route::middleware('auth:api')->group(function () {
     // Brands
     Route::get('get-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
     Route::post('create-brand', [ProductCategoryController::class, 'newBrand']);
+    Route::post('edit-brand', [ProductCategoryController::class, 'editBrand']);
 
     //Get cart products and prices
     Route::post('add-to-cart', [CartController::class, 'addToCart']);
@@ -98,6 +101,7 @@ Route::middleware('auth:api')->group(function () {
 
     // Product Requisitions Issues
     Route::post('outlet-product-requisition', [RequisitionIssueController::class, 'newRequisition']);
+    Route::post('edit-outlet-product-requisition', [RequisitionIssueController::class, 'editRequisition']);
     Route::post('read-outlet-issue', [RequisitionIssueController::class, 'readOutletIssues']);
     Route::get('outlet-issue-details/{outletID}', [RequisitionIssueController::class, 'outletIssues']);
     Route::get('new-outlet-issue-details/{outletID}', [RequisitionIssueController::class, 'newOutletIssues']);

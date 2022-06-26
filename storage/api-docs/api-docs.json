@@ -921,8 +921,8 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "username",
-                                    "password"
+                                    "title",
+                                    "slug"
                                 ],
                                 "properties": {
                                     "title": {
@@ -940,6 +940,10 @@
                                     "author_id": {
                                         "type": "integer",
                                         "example": "3121"
+                                    },
+                                    "pos_cat_id": {
+                                        "type": "integer",
+                                        "example": "52"
                                     }
                                 },
                                 "type": "object"
@@ -954,6 +958,10 @@
                             "application/json": {
                                 "schema": {
                                     "properties": {
+                                        "id": {
+                                            "type": "integer",
+                                            "example": "44"
+                                        },
                                         "title": {
                                             "type": "string",
                                             "example": "Brand Title Here"
@@ -977,15 +985,80 @@
                                         "created_at": {
                                             "type": "timestamps",
                                             "example": "2022-03-15T07:09:21.000000Z"
-                                        },
-                                        "id": {
-                                            "type": "integer",
-                                            "example": "44"
                                         }
                                     },
                                     "type": "object"
                                 }
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/edit-category": {
+            "post": {
+                "tags": [
+                    "Category"
+                ],
+                "summary": "Edit a category",
+                "description": "Returns project data",
+                "operationId": "edit-category",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "category_id",
+                                    "pos_cat_id",
+                                    "outlet_id"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Category Title Here"
+                                    },
+                                    "logo": {
+                                        "type": "file",
+                                        "example": "Logo.jpg"
+                                    },
+                                    "outlet_id": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    },
+                                    "category_id": {
+                                        "type": "integer",
+                                        "example": "2302"
+                                    },
+                                    "pos_cat_id": {
+                                        "type": "integer",
+                                        "example": "52"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
                         }
                     },
                     "400": {
@@ -1520,8 +1593,7 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "username",
-                                    "password"
+                                    "title"
                                 ],
                                 "properties": {
                                     "title": {
@@ -1573,6 +1645,70 @@
                                     "type": "object"
                                 }
                             }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "description": "Unauthenticated"
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
+        "/api/edit-brand": {
+            "post": {
+                "tags": [
+                    "Brand"
+                ],
+                "summary": "Edit a brand",
+                "description": "Returns project data",
+                "operationId": "edit-brand",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "brand_id",
+                                    "pos_brand_id"
+                                ],
+                                "properties": {
+                                    "brand_id": {
+                                        "type": "string",
+                                        "example": "652"
+                                    },
+                                    "pos_brand_id": {
+                                        "type": "integer",
+                                        "example": "12"
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Brand Title Here"
+                                    },
+                                    "logo": {
+                                        "type": "file",
+                                        "example": "Logo.jpg"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
                         }
                     },
                     "400": {

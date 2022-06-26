@@ -26,7 +26,7 @@ class RequisitionIssueController extends BaseController
 
     public function newRequisition(Request $request)
     {
-        // Valodation Request Data
+        // Validate Request Data
         $outletID = $request['requisition']['outlet_id'];
         $requisitionProduct = $request['requisition']['product'];
 
@@ -52,6 +52,31 @@ class RequisitionIssueController extends BaseController
         ]);
     }
 
+
+    public function editRequisition(Request $request)
+    {
+        $validator = Validator::make($request['requisition'], [
+            'requisition_id' => 'required|integer',
+            'outlet_id' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+        $productValidator = Validator::make($request['requisition']['product'][0], [
+            'product_id' => 'required|integer',
+            'product_quantity' => 'required|integer',
+        ]);
+
+        if ($productValidator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+        return response()->json([
+            'data' => $this->requisitionIssueRepository->editARequisition($request),
+        ]);
+    }
     public function readOutletIssues(Request $request)
     {
         $validator = Validator::make($request['receive_data'], [

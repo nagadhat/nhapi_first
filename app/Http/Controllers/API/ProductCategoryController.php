@@ -87,24 +87,26 @@ class ProductCategoryController extends BaseController
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
-     *              required={"username","password"},
+     *              required={"title","slug"},
      *              @OA\Property(property="title", type="string", example="Category Title Here"),
      *              @OA\Property(property="slug", type="string", example="Category Slug Here"),
      *              @OA\Property(property="logo", type="file", example="Logo.jpg"),
      *              @OA\Property(property="author_id", type="integer", example="3121"),
+     *              @OA\Property(property="pos_cat_id", type="integer", example="52"),
+     *
      *          ),
      *      ),
      *      @OA\Response(
      *          response=201,
      *          description="Successful operation",
      *          @OA\JsonContent(
+     *              @OA\Property(property="id", type="integer", example="44"),
      *              @OA\Property(property="title", type="string", example="Brand Title Here"),
      *              @OA\Property(property="slug", type="string", example="Brand Slug Here"),
      *              @OA\Property(property="author_id", type="integer", example="3121"),
      *              @OA\Property(property="logo", type="file", example="Logo.jpg"),
      *              @OA\Property(property="updated_at", type="timestamps", example="2022-03-15T07:09:21.000000Z"),
      *              @OA\Property(property="created_at", type="timestamps", example="2022-03-15T07:09:21.000000Z"),
-     *              @OA\Property(property="id", type="integer", example="44"),
      *          )
      *       ),
      *      @OA\Response(
@@ -136,6 +138,59 @@ class ProductCategoryController extends BaseController
 
         return response()->json([
             'data' => $this->productCategoryRepository->createCategory($request)
+        ]);
+    }
+
+    /**
+     * @OA\Post(
+     *      path="/api/edit-category",
+     *      operationId="edit-category",
+     *      tags={"Category"},
+     *      summary="Edit a category",
+     *      security={{"passport": {}}},
+     *      description="Returns project data",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              required={"category_id", "pos_cat_id", "outlet_id"},
+     *              @OA\Property(property="title", type="string", example="Category Title Here"),
+     *              @OA\Property(property="logo", type="file", example="Logo.jpg"),
+     *              @OA\Property(property="outlet_id", type="integer", example="1"),
+     *              @OA\Property(property="category_id", type="integer", example="2302"),
+     *              @OA\Property(property="pos_cat_id", type="integer", example="52"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *         response=201,
+     *         description="Success",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad Request"
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
+    function editCategory(Request $request)
+    {
+        $request->validate([
+            'category_id' => 'required',
+            'pos_cat_id'  => 'required',
+            'outlet_id'  => 'required',
+        ]);
+
+        return response()->json([
+            'data' => $this->productCategoryRepository->editRequestCategory($request)
         ]);
     }
 
@@ -693,7 +748,7 @@ class ProductCategoryController extends BaseController
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(
-     *              required={"username","password"},
+     *              required={"title"},
      *              @OA\Property(property="title", type="string", example="Brand Title Here"),
      *              @OA\Property(property="logo", type="file", example="Logo.jpg"),
      *          ),
@@ -726,20 +781,66 @@ class ProductCategoryController extends BaseController
      */
     function newBrand(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'title' => 'required',
             // 'logo'  => 'required',
         ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
-        }
 
         return response()->json([
             'data' => $this->productCategoryRepository->newBrand($request)
         ]);
     }
 
+    /**
+     * @OA\Post(
+     *      path="/api/edit-brand",
+     *      operationId="edit-brand",
+     *      tags={"Brand"},
+     *      summary="Edit a brand",
+     *      security={{"passport": {}}},
+     *      description="Returns project data",
+     *      @OA\RequestBody(
+     *          required=true,
+     *          @OA\JsonContent(
+     *              required={"brand_id","pos_brand_id"},
+     *              @OA\Property(property="brand_id", type="string", example="652"),
+     *              @OA\Property(property="pos_brand_id", type="integer", example="12"),
+     *              @OA\Property(property="title", type="string", example="Brand Title Here"),
+     *              @OA\Property(property="logo", type="file", example="Logo.jpg"),
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *         response=201,
+     *         description="Success",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=400,
+     *          description="Bad Request"
+     *      ),
+     *      @OA\Response(
+     *          response=401,
+     *          description="Unauthenticated",
+     *      ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      )
+     * )
+     */
+    function editBrand(Request $request)
+    {
+        $request->validate([
+            'brand_id' => 'required',
+            'pos_brand_id'  => 'required',
+        ]);
+
+        return response()->json([
+            'data' => $this->productCategoryRepository->editABrand($request)
+        ]);
+    }
 
 
 
@@ -811,6 +912,26 @@ class ProductCategoryController extends BaseController
 
         return response()->json([
             'data' => $this->productCategoryRepository->addMasterProduct($request)
+        ]);
+    }
+
+
+    public function editMasterProduct(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'product_id' => 'required',
+            'outlet_id' => 'required',
+            'product_sku' => 'nullable|unique:products,product_sku,' . $request->product_id,
+            // 'short_description' => 'required',
+            // 'full_description' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+        return response()->json([
+            'data' => $this->productCategoryRepository->editAMasterProduct($request)
         ]);
     }
 
