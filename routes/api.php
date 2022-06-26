@@ -26,7 +26,7 @@ Route::post('forget-password-otp-verify', [UserLoginController::class, 'forgetPa
 Route::post('password-reset', [UserLoginController::class, 'passwordReset']);
 
 Route::middleware('auth:api')->group(function () {
-    // 'Orders' section in API documentation
+    // 'demo' section in API documentation
     Route::get('orders', [OrderController::class, 'index']);
     Route::post('orders', [OrderController::class, 'store']);
     Route::get('orders/{id}', [OrderController::class, 'show']);
@@ -77,6 +77,9 @@ Route::middleware('auth:api')->group(function () {
     // outlet product
     Route::post('add-master-product', [ProductCategoryController::class, 'addMasterProduct']);
     Route::post('store-pos-sale', [OrderController::class, 'storePOSsale']);
+
+    // customer order
+    Route::post('place-order', [OrderController::class, 'placeOnlineOrder']);
 
     // Brands
     Route::get('get-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
