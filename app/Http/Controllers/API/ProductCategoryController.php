@@ -523,7 +523,7 @@ class ProductCategoryController extends BaseController
      *     tags={"Products"},
      *     summary="Get product details by outlet_id and product_id/product_sku/slug.",
      *     security={{"passport": {}}},
-     *     description="Returns product details by outlet_id and product_id/product_sku/slug",
+     *     description="Returns product details by outlet_id and product_id/product_sku/slug, pass outlet_id and one of three product_id, product_sku or slug",
      *     @OA\RequestBody(
      *     required=true,
      *          @OA\JsonContent(
@@ -573,7 +573,13 @@ class ProductCategoryController extends BaseController
             'product_sku' => 'nullable',
             'slug' => 'nullable',
         ]);
-        return $request->input(['product_id']);
+        if (count($request->all()) > 2) {
+            return
+                [
+                    "meg" => 'invalid parameter',
+                    "data" => 'product_id/product_sku/slug use only one',
+                ];
+        }
 
         return response()->json([
             'data' => $this->productCategoryRepository->getProductDetails($request)

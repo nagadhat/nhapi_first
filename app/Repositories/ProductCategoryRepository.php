@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\ProductCategoryRepositoryInterface;
 use App\Http\Controllers\API\FlashSalesController;
+use App\Models\AffiliateUser;
 use App\Traits\NhTraits;
 use App\Models\Product;
 use App\Models\Brand;
@@ -30,7 +31,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
     protected $products_variation;
     protected $products_variation_color;
     protected $products_variation_size;
-    public function __construct(Brand $brand, Product $product, Category $category, FlashSaleProduct $flashSaleProduct, FlashSale $flashSale, ProductsCategory $productsCategory, ProductsVariations $productsVariations, ProductsVariationColor $productsVariationColor, ProductsVariationSize $productsVariationSize, Outlet $outlet)
+    public function __construct(Brand $brand, Product $product, Category $category, FlashSaleProduct $flashSaleProduct, FlashSale $flashSale, ProductsCategory $productsCategory, ProductsVariations $productsVariations, ProductsVariationColor $productsVariationColor, ProductsVariationSize $productsVariationSize, Outlet $outlet, AffiliateUser $affiliateUser)
     {
         $this->product = $product;
         $this->brand = $brand;
@@ -42,6 +43,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         $this->products_variation_color = $productsVariationColor;
         $this->products_variation_size = $productsVariationSize;
         $this->outlet = $outlet;
+        $this->affiliateUser = $affiliateUser;
     }
 
     public function categories(Request $req)
@@ -276,7 +278,76 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
 
     public function getProductDetails($request)
     {
-        return $request->all();
+        if ($request->slug) {
+            // Get product information by slug
+            $productDetails = $this->product::join('outlet_products', 'products.id', 'outlet_products.product_id')
+                ->select('products.*', 'outlet_products.outlet_id', 'outlet_products.quantity as outlet_product_quantity')
+                ->where('outlet_products.outlet_id', $request->outlet_id)
+                ->where('products.slug', $request->slug)
+                ->where('products.live_status', 1)
+                ->first();
+        } elseif ($request->product_id) {
+            // Get product information by slug
+            $productDetails = $this->product::join('outlet_products', 'products.id', 'outlet_products.product_id')
+                ->select('products.*', 'outlet_products.outlet_id', 'outlet_products.quantity as outlet_product_quantity')
+                ->where('outlet_products.outlet_id', $request->outlet_id)
+                ->where('products.id', $request->product_id)
+                ->where('products.live_status', 1)
+                ->first();
+        }
+        if ($request->product_sku) {
+            // Get product information by slug
+            $productDetails = $this->product::join('outlet_products', 'products.id', 'outlet_products.product_id')
+                ->select('products.*', 'outlet_products.outlet_id', 'outlet_products.quantity as outlet_product_quantity')
+                ->where('outlet_products.outlet_id', $request->outlet_id)
+                ->where('products.product_sku', $request->product_sku)
+                ->where('products.live_status', 1)
+                ->first();
+        }
+
+        if (isset($productDetails)) {
+            // condition to check if the user have affiliate subscription to view the special buyback products
+            if (auth()->user()) {
+                $findAffiliateUser = $this->affiliateUser::where('user_id', auth()->user()->userToUserCustomer->id)->get();
+                if ($productDetails->target_audience == 1 && $findAffiliateUser->count() < 1) {
+                    return 'You do not have permission to view this product';
+                }
+            }
+
+            $productDetails['flash_sale_status'] = 0;
+
+            $flashSaleController = new FlashSalesController();
+            // Calculate the product price
+            $productSellPrice = $productDetails["price"];
+            // Discount For flash-sale (Override Existing Discount)
+            if ($flashSaleController->getFlashSaleStatus()) {
+                $productDetails["discount_type"] = ($flashSaleController->getFlashSaleProductDiscountType($productDetails["id"]) != null) ? $flashSaleController->getFlashSaleProductDiscountType($productDetails["id"]) : $productDetails["discount_type"];
+                $productDetails["discount_amount"] = ($flashSaleController->getFlashSaleProductDiscountPrice($productDetails["id"]) > 0) ? $flashSaleController->getFlashSaleProductDiscountPrice($productDetails["id"]) : $productDetails["discount_amount"];
+
+                $productDetails['flash_sale_status'] = 1;
+                $productDetails['maximum_sale_quantity'] = $flashSaleController->getFlashSaleProductDetails($productDetails["id"])->maximum_sale_quantity;
+
+                // Discount Calculation
+                if ($productDetails["discount_type"] == "percentage") {
+                    $productSellPrice = round($productDetails["price"] - (($productDetails["price"] * $productDetails["discount_amount"]) / 100));
+                } else if ($productDetails["discount_type"] == "flat") {
+                    $productSellPrice = round($productDetails["price"] - $productDetails["discount_amount"]);
+                }
+                $productDetails["price"] = $productSellPrice;
+
+
+                // Get product variation
+                $variationColor = $this->products_variation::where("product_id", $productDetails->id)->select("color_name", "color_code", "price")->distinct()->get("color_code");
+                $variationSize = $this->products_variation::where("product_id", $productDetails->id)->select("id", "size_name", "price")->get();
+
+                $productDetails['color'] = $variationColor;
+                $productDetails['size'] = $variationSize;
+            }
+
+            return $productDetails;
+        } else {
+            return 'product not found';
+        }
     }
 
     public function addMasterProduct(Request $request)

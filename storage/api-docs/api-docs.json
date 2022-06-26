@@ -1347,7 +1347,7 @@
                     "Products"
                 ],
                 "summary": "Get product details by outlet_id and product_id/product_sku/slug.",
-                "description": "Returns product details by outlet_id and product_id/product_sku/slug",
+                "description": "Returns product details by outlet_id and product_id/product_sku/slug, pass outlet_id and one of three product_id, product_sku or slug",
                 "operationId": "e5ad12ba030b41deb717a75597993092",
                 "requestBody": {
                     "required": true,

@@ -43,4 +43,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    // function to create relationship with the users and user_customer table info
+    public function userToUserCustomer()
+    {
+        return $this->belongsTo(UserCustomer::class, 'id', 'u_id');
+    }
 }
