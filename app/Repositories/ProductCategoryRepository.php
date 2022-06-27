@@ -242,7 +242,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
     {
         $brand_info['title'] = $request->title;
         $brand_info['slug'] = uniqid();
-        $brand_info['pos_brand_id'] = $request->pos_brand_id;
+        // $brand_info['pos_brand_id'] = $request->pos_brand_id;
 
 
         if ($request->hasFile('logo')) {
@@ -272,7 +272,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         } else {
             $brand_info['logo'] = '';
         }
-        
+
         return $this->tempBrandUpdate::create($brand_info);
     }
 
