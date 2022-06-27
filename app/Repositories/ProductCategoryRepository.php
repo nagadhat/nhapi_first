@@ -272,6 +272,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         } else {
             $brand_info['logo'] = '';
         }
+        
         return $this->tempBrandUpdate::create($brand_info);
     }
 
