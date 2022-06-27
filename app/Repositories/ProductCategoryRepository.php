@@ -93,11 +93,6 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
 
     public function editRequestCategory($request)
     {
-        $category = $this->category::find($request->category_id);
-        // if ($category->pos_cat_id != $request->pos_cat_id) {
-        //     return 'category_id and pos_cat_id do not match';
-        // }
-
         $checkReq = $this->tempCatUpdate::where('category_id', $request->category_id)->get();
         if ($checkReq->count() > 0) {
             return 'already requested for an update, wait for the confirmation';
@@ -106,7 +101,6 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         $category_info['title'] = $request->title;
         $category_info['outlet_id'] = $request->outlet_id;
         $category_info['category_id'] = $request->category_id;
-        $category_info['pos_cat_id'] = $request->pos_cat_id;
 
         if ($request->hasFile('logo')) {
             $path = 'public/media/categories';
@@ -264,13 +258,8 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
     public function editABrand($request)
     {
         $brand_info['brand_id'] = $request->brand_id;
-        $brand_info['pos_brand_id'] = $request->pos_brand_id;
         $brand_info['title'] = $request->title;
 
-        $brand = $this->brand::find($request->brand_id);
-        if ($brand->pos_brand_id != $request->pos_brand_id) {
-            return 'brand_id and brand_pos_id does not match';
-        }
         $brandUpdateRequest = $this->tempBrandUpdate::where('brand_id', $request->brand_id)->get();
         if ($brandUpdateRequest->count() > 0) {
             return 'already requested for update';

@@ -157,7 +157,6 @@ class ProductCategoryController extends BaseController
      *              @OA\Property(property="logo", type="file", example="Logo.jpg"),
      *              @OA\Property(property="outlet_id", type="integer", example="1"),
      *              @OA\Property(property="category_id", type="integer", example="2302"),
-     *              @OA\Property(property="pos_cat_id", type="integer", example="52"),
      *          ),
      *      ),
      *      @OA\Response(
@@ -185,7 +184,6 @@ class ProductCategoryController extends BaseController
     {
         $request->validate([
             'category_id' => 'required',
-            // 'pos_cat_id'  => 'required',
             'outlet_id'  => 'required',
         ]);
 
@@ -804,7 +802,6 @@ class ProductCategoryController extends BaseController
      *          @OA\JsonContent(
      *              required={"brand_id","pos_brand_id"},
      *              @OA\Property(property="brand_id", type="string", example="652"),
-     *              @OA\Property(property="pos_brand_id", type="integer", example="12"),
      *              @OA\Property(property="title", type="string", example="Brand Title Here"),
      *              @OA\Property(property="logo", type="file", example="Logo.jpg"),
      *          ),
@@ -834,7 +831,6 @@ class ProductCategoryController extends BaseController
     {
         $request->validate([
             'brand_id' => 'required',
-            'pos_brand_id'  => 'required',
         ]);
 
         return response()->json([
