@@ -411,7 +411,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         $newProduct['short_description'] = $request['short_description'];
         $newProduct['long_description'] = $request['full_description'];
         $newProduct['brand'] = $request['brand_id'];
-        $newProduct['category'] = $request['category_id'];
+        // $newProduct['category'] = $request['category_id'];
         $newProduct['model'] = $request['model'];
         $newProduct['price'] = $request['product_price'];
         $newProduct['quantity'] = $request['product_quantity'];
