@@ -185,7 +185,7 @@ class ProductCategoryController extends BaseController
     {
         $request->validate([
             'category_id' => 'required',
-            'pos_cat_id'  => 'required',
+            // 'pos_cat_id'  => 'required',
             'outlet_id'  => 'required',
         ]);
 

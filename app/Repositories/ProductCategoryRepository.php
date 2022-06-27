@@ -94,9 +94,9 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
     public function editRequestCategory($request)
     {
         $category = $this->category::find($request->category_id);
-        if ($category->pos_cat_id != $request->pos_cat_id) {
-            return 'category_id and pos_cat_id do not match';
-        }
+        // if ($category->pos_cat_id != $request->pos_cat_id) {
+        //     return 'category_id and pos_cat_id do not match';
+        // }
 
         $checkReq = $this->tempCatUpdate::where('category_id', $request->category_id)->get();
         if ($checkReq->count() > 0) {
