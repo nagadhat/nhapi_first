@@ -11,6 +11,7 @@ use App\Http\Controllers\API\RequisitionIssueController;
 use App\Http\Controllers\API\UserCustomerController;
 use App\Http\Controllers\API\OutletOrderController;
 use App\Http\Controllers\API\PaymentController;
+use App\Http\Controllers\TempController;
 
 Route::get('copy-customer', [UserLoginController::class, 'copyCustomersToUsers']);
 // 'Customer Authentication & Authorization' section in API documentation
@@ -111,4 +112,7 @@ Route::middleware('auth:api')->group(function () {
 
     // order payment
     Route::post('online-order/payment', [PaymentController::class, 'receiveOnlinePayment']);
+
+    // temp fix
+    Route::post('temp-barcode-fix', [TempController::class, 'tempBarcodeFix']);
 });

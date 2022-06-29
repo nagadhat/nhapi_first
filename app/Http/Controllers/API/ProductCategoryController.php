@@ -929,7 +929,7 @@ class ProductCategoryController extends BaseController
         $validator = Validator::make($request->all(), [
             'outlet_id'             => 'required',
             'product_title'         => 'required',
-            'product_sku'           => 'required',
+            'product_sku'           => 'required|unique:products,product_sku',
             // 'short_description'     => 'required',
             'full_description'      => 'required',
         ]);
