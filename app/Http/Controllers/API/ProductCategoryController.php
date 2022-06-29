@@ -68,7 +68,6 @@ class ProductCategoryController extends BaseController
      *      )
      *
      */
-
     function categories(Request $request)
     {
         return response()->json([
@@ -228,7 +227,6 @@ class ProductCategoryController extends BaseController
      *      )
      *
      */
-
     function categoriesTopMenu()
     {
         return response()->json([
@@ -272,7 +270,6 @@ class ProductCategoryController extends BaseController
      *      )
      *
      */
-
     function categoriesSlide()
     {
         return response()->json([
@@ -316,7 +313,6 @@ class ProductCategoryController extends BaseController
      *      )
      *
      */
-
     function localProducts(Request $request, $outlet_id)
     {
         $page_size = $request->page_size ?? 15;
@@ -362,7 +358,6 @@ class ProductCategoryController extends BaseController
      *      )
      *
      */
-
     function flashSaleProducts(Request $request, $outlet_id)
     {
         $page_size = $request->page_size ?? 15;
@@ -522,7 +517,6 @@ class ProductCategoryController extends BaseController
         ]);
     }
 
-
     /**
      * @OA\Get(
      *     path="/api/get-product-price/{productId}",
@@ -559,7 +553,6 @@ class ProductCategoryController extends BaseController
      *      )
      *
      */
-
     function productPriceByProductId(Request $request)
     {
         $productId = $request->route('productId');
@@ -568,7 +561,6 @@ class ProductCategoryController extends BaseController
             'data' => $this->productCategoryRepository->productPriceByProductId($productId)
         ]);
     }
-
 
     /**
      * @OA\Post(
@@ -617,7 +609,6 @@ class ProductCategoryController extends BaseController
      *      )
      *
      */
-
     function productDetailsByIDSlugSku(Request $request)
     {
         $request->validate([
@@ -636,6 +627,50 @@ class ProductCategoryController extends BaseController
 
         return response()->json([
             'data' => $this->productCategoryRepository->getProductDetails($request)
+        ]);
+    }
+
+    /**
+     * @OA\Get(
+     *     path="/api/get-category-by-product/{productId}",
+     *     tags={"Products"},
+     *     summary="Get category list by product_id.",
+     *     security={{"passport": {}}},
+     *     description="Returns category list and details by product_id as parameter",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *         response=401,
+     *         description="Unauthorize Access, Invalid Token or Token has expired",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *           response=400,
+     *           description="Bad Request"
+     *          ),
+     *      @OA\Response(
+     *           response=404,
+     *           description="not found"
+     *          ),
+     *      )
+     *
+     */
+
+    public function categoryListByProduct($product_id)
+    {
+        return response()->json([
+            'data' => $this->productCategoryRepository->getCategoryListByProductId($product_id)
         ]);
     }
 
@@ -726,7 +761,6 @@ class ProductCategoryController extends BaseController
      *      )
      *
      */
-
     function allBrands(Request $request)
     {
         $limit = $request->route('limit');
@@ -837,8 +871,6 @@ class ProductCategoryController extends BaseController
             'data' => $this->productCategoryRepository->editABrand($request)
         ]);
     }
-
-
 
     /**
      * @OA\Post(
@@ -972,13 +1004,6 @@ class ProductCategoryController extends BaseController
     {
         return response()->json([
             'data' => $this->productCategoryRepository->getProductsByLimit($outlet_id, $limit)
-        ]);
-    }
-
-    public function categoryListByProduct($product_id)
-    {
-        return response()->json([
-            'data' => $this->productCategoryRepository->getCategoryListByProductId($product_id)
         ]);
     }
 }
