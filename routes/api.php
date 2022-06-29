@@ -69,6 +69,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('all-product-by-category-id', [ProductCategoryController::class, 'productByCategoryID']);
     Route::get('get-product-price/{productId}', [ProductCategoryController::class, 'productPriceByProductId']);
     Route::post('get-product-details', [ProductCategoryController::class, 'productDetailsByIDSlugSku']);
+    Route::get('get-category-by-product/{productId}', [ProductCategoryController::class, 'categoryListByProduct']);
 
     // Flash Sales Product Info
     Route::get('get-flash-sale-info', [ProductCategoryController::class, 'flashSaleInfo']);

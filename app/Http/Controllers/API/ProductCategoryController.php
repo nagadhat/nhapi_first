@@ -974,4 +974,11 @@ class ProductCategoryController extends BaseController
             'data' => $this->productCategoryRepository->getProductsByLimit($outlet_id, $limit)
         ]);
     }
+
+    public function categoryListByProduct($product_id)
+    {
+        return response()->json([
+            'data' => $this->productCategoryRepository->getCategoryListByProductId($product_id)
+        ]);
+    }
 }

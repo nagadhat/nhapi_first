@@ -175,6 +175,14 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         }
     }
 
+    public function getCategoryListByProductId($product_id)
+    {
+        return $this->products_category::join('categories', 'categories.id', 'products_categories.category_id')
+            ->where('products_categories.product_id', $product_id)
+            ->select('categories.*')
+            ->get();
+    }
+
     public function getFlashSaleProducts($page_size, $outlet_id)
     {
         $outlet = $this->outlet::find($outlet_id);
