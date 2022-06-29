@@ -16,6 +16,7 @@ use App\Models\AffiliatePayout;
 use App\Models\DeliveryLocation;
 use App\Models\Outlet;
 use App\Models\OutletLocation;
+use App\Models\Payment;
 use App\Models\UserCustomer;
 use Error;
 use Facade\FlareClient\Http\Response;
@@ -34,7 +35,7 @@ class OrderRepository implements OrderRepositoryInterface
     protected $product;
     protected $userCustomer;
     protected $affiliatePayout;
-    public function __construct(Order $order, CartRepository $cartRepository, User $user, Cart $cart, OrderTimeline $orderTimeline, AffiliateUser $affiliateUser, OrdersProduct $ordersProduct, Product $product, UserCustomer $userCustomer, AffiliatePayout $affiliatePayout, Outlet $outlet, DeliveryLocation $deliveryLocation, OutletLocation $outletLocation)
+    public function __construct(Order $order, CartRepository $cartRepository, User $user, Cart $cart, OrderTimeline $orderTimeline, AffiliateUser $affiliateUser, OrdersProduct $ordersProduct, Product $product, UserCustomer $userCustomer, AffiliatePayout $affiliatePayout, Outlet $outlet, DeliveryLocation $deliveryLocation, OutletLocation $outletLocation, Payment $payment)
     {
         $this->order = $order;
         $this->cartRepository = $cartRepository;
@@ -49,6 +50,7 @@ class OrderRepository implements OrderRepositoryInterface
         $this->outlet = $outlet;
         $this->deliveryLocation = $deliveryLocation;
         $this->outletLocation = $outletLocation;
+        $this->payment = $payment;
     }
 
     public function getAllOrders()
@@ -211,7 +213,20 @@ class OrderRepository implements OrderRepositoryInterface
             "delivered_on" => Carbon::now(),
         ]);
         // payment process will be here
-
+        $this->payment::create([
+            "date_time" => Carbon::now(),
+            "order_id" => $orderPlaced['id'],
+            "user_id" => $userCustomer->id,
+            "user_name" => $userCustomer->username,
+            "payer_name" => $customerName,
+            "payer_phone" => $customerPhone,
+            "transaction_id" => uniqid(),
+            "transaction_amound" => $orderPlaced->total_products_price + $orderPlaced->total_delivery_charge,
+            "payment_getway" => "Outlet",
+            "note_1" => 'Walk in customer payment',
+            "payment_method" => 'Cash',
+            "transaction_status" => 1
+        ]);
 
         $orderDetails['order_id'] = $orderPlaced['id'];
         $invoice = $orderDetails['order_code'] . $orderDetails['order_id'] . $orderDetails['rand_code'];

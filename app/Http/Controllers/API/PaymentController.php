@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 class PaymentController extends BaseController
 {
+    protected $paymentRepository;
     public function __construct(PaymentRepository $paymentRepository)
     {
         $this->paymentRepository = $paymentRepository;
