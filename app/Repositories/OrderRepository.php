@@ -135,20 +135,26 @@ class OrderRepository implements OrderRepositoryInterface
         // If the POS order exist or not
         $orderExist = $this->order::where('pos_sale_id', $sales_data['pos_sale_id'])->first();
         if (!empty($orderExist)) {
-            return ['status' => false, 'msg' => 'The POS order already has been placed.'];
+            return [
+                'status' => false,
+                'msg' => 'The POS order already has been placed.'
+            ];
         }
 
         // return $sales_data['outlet_id'];
         $user = $this->user::where('id', $orderDetails['user_id'])->first();
         $userCustomer = $this->userCustomer::where('u_id', $orderDetails['user_id'])->first();
+
         $customerName = $userCustomer->first_name;
         $customerPhone = $user->username;
+
         if ($user->username == '01906198500' && isset($sales_data['walk_in_customer_name'])) {
             $customerName = $sales_data['walk_in_customer_name'];
         }
         if ($user->username == '01906198500' && isset($sales_data['walk_in_customer_phone'])) {
             $customerPhone = $sales_data['walk_in_customer_phone'];
         }
+
         $orderDetails['user_id'] = $userCustomer->id;
         $orderDetails['username'] = $user->username;
         $orderDetails['customer_name'] = $customerName;
@@ -158,8 +164,6 @@ class OrderRepository implements OrderRepositoryInterface
         $orderDetails['order_status'] = 6;
         $orderDetails['outlet_id'] = $sales_data['outlet_id'];
         $orderDetails['pos_sale_id'] = $sales_data['pos_sale_id'];
-        $orderDetails['customer_email_2'] = '';
-        $orderDetails['customer_phone_2'] = '';
 
         if ($orderDetails['shipping_type'] == 'inside_dhaka') {
             // temporarily set delivery charge to 0( 60/100 )
@@ -168,10 +172,12 @@ class OrderRepository implements OrderRepositoryInterface
             $orderDetails['deliveryCrgPerShop'] = 0;
         }
 
-
         $carts = $this->cartRepository->getCartProductsFromPos($sales_data, $userCustomer->id, $cartProducts);
         if ($carts['status'] == false) {
-            return ['status' => false, 'msg' => $carts['msg']];
+            return [
+                'status' => false,
+                'msg' => $carts['msg']
+            ];
         }
 
         $totalPrice = 0;
@@ -204,6 +210,8 @@ class OrderRepository implements OrderRepositoryInterface
             "shipped_on" => Carbon::now(),
             "delivered_on" => Carbon::now(),
         ]);
+        // payment process will be here
+
 
         $orderDetails['order_id'] = $orderPlaced['id'];
         $invoice = $orderDetails['order_code'] . $orderDetails['order_id'] . $orderDetails['rand_code'];
@@ -251,7 +259,7 @@ class OrderRepository implements OrderRepositoryInterface
 
         $user = auth()->user();
         return
-        $userCustomer = $this->userCustomer::where('u_id', auth()->id())->first();
+            $userCustomer = $this->userCustomer::where('u_id', auth()->id())->first();
         $customerName = $userCustomer->first_name;
         $customerPhone = $user->username;
 

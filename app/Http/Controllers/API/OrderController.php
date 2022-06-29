@@ -179,9 +179,9 @@ class OrderController extends BaseController
             $validator = Validator::make($product, [
                 'product_id' => 'required|integer',
                 'product_quantity' => 'required|integer',
-                // 'product_unit_price' => 'required|integer',
+                'product_unit_price' => 'required|integer',
                 'order_type' => 'required',
-                'product_variation_size' => 'required|integer',
+                // 'product_variation_size' => 'required|integer',
             ]);
 
             if ($validator->fails()) {

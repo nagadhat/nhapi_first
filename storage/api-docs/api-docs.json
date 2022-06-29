@@ -1043,10 +1043,6 @@
                                     "category_id": {
                                         "type": "integer",
                                         "example": "2302"
-                                    },
-                                    "pos_cat_id": {
-                                        "type": "integer",
-                                        "example": "52"
                                     }
                                 },
                                 "type": "object"
@@ -1483,6 +1479,44 @@
                 ]
             }
         },
+        "/api/get-category-by-product/{productId}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get category list by product_id.",
+                "description": "Returns category list and details by product_id as parameter",
+                "operationId": "6db6fb4ae7fa7dd96a1f040dd65396ba",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorize Access, Invalid Token or Token has expired",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                },
+                "security": [
+                    {
+                        "passport": []
+                    }
+                ]
+            }
+        },
         "/api/all-category-main": {
             "post": {
                 "tags": [
@@ -1685,10 +1719,6 @@
                                     "brand_id": {
                                         "type": "string",
                                         "example": "652"
-                                    },
-                                    "pos_brand_id": {
-                                        "type": "integer",
-                                        "example": "12"
                                     },
                                     "title": {
                                         "type": "string",

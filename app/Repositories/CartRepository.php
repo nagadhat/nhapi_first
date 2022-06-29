@@ -196,7 +196,7 @@ class CartRepository implements CartRepositoryInterface
         $lastStock = array();
         foreach ($cartData as $data) {
             // Get product information
-            $productData = $this->product::where("id", $data["product_id"])->first();
+            $productData = $this->product::find($data["product_id"]);
 
             $firstArray = array(
                 // "cartId" => $data["id"],
@@ -205,23 +205,26 @@ class CartRepository implements CartRepositoryInterface
                 "cartProductImage" => $productData["thumbnail_1"],
                 "cartProductName" => $productData["title"],
                 "cartProductQuantity" => $data["product_quantity"],
-                "cartProductUnitPrice" => $this->pcr->productPriceByProductId($productData["id"]),
+                // "cartProductUnitPrice" => $this->pcr->productPriceByProductId($productData["id"]),
+                "cartProductUnitPrice" => $data["product_unit_price"],
                 "cartProductVendorId" => $productData["vendor"],
                 "cartProductReturnPolicy" => $productData["return_policy"],
                 "cartProductSlug" => $productData["slug"],
             );
-            if ($data["product_variation_size"] != 0) {
-                // Variation Price here
-                $variation = $this->productsVariations::where("id", $data["product_variation_size"])->get()->first();
-                if ($variation["price"] != 0) {
-                    $firstArray["cartProductUnitPrice"] = $variation["price"];
-                }
-            }
+            // Variation Price here
+            // if ($data["product_variation_size"] != 0) {
+            //     $variation = $this->productsVariations::where("id", $data["product_variation_size"])->get()->first();
+            //     if ($variation["price"] != 0) {
+            //         $firstArray["cartProductUnitPrice"] = $variation["price"];
+            //     }
+            // }
 
             if ($orderId != 0) {
                 // Decrease outlet products in Outlet_Products table
-                $outletProduct = $this->outletProduct::where('outlet_id', $sales_data['outlet_id'])->where('product_id', $data["product_id"])->first();
-                if (!empty($outletProduct && $outletProduct->quantity >= $data["product_quantity"])) {
+                $outletProduct = $this->outletProduct::where('outlet_id', $sales_data['outlet_id'])
+                    ->where('product_id', $data["product_id"])
+                    ->first();
+                if (!empty($outletProduct) && $outletProduct->quantity >= $data["product_quantity"]) {
                     $newProductQuantity = $outletProduct->quantity - $data['product_quantity'];
                 } else {
                     $newProductQuantity = 0;
@@ -229,8 +232,13 @@ class CartRepository implements CartRepositoryInterface
                 }
 
                 $outletProduct = $this->outletProduct::updateOrCreate(
-                    ['outlet_id' => $sales_data['outlet_id'], 'product_id' => $data['product_id']],
-                    ['quantity' => $newProductQuantity]
+                    [
+                        'outlet_id' => $sales_data['outlet_id'],
+                        'product_id' => $data['product_id']
+                    ],
+                    [
+                        'quantity' => $newProductQuantity
+                    ]
                 );
 
                 $lastStock = array(
@@ -277,7 +285,9 @@ class CartRepository implements CartRepositoryInterface
     function getVendorsListOfCart($productIds)
     {
         return $this->product::leftjoin("vendors", "vendors.id", "=", "products.vendor")
-            ->whereIn("products.id", $productIds)->select("vendors.id AS vendorId", "vendors.shop_name", DB::raw('count(vendors.id) as totalProduct'))
-            ->groupBy("vendors.id", 'vendors.shop_name')->get();
+            ->select("vendors.id AS vendorId", "vendors.shop_name", DB::raw('count(vendors.id) as totalProduct'))
+            ->whereIn("products.id", $productIds)
+            ->groupBy("vendors.id", 'vendors.shop_name')
+            ->get();
     }
 }
