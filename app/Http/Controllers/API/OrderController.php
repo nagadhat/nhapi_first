@@ -179,7 +179,7 @@ class OrderController extends BaseController
             $validator = Validator::make($product, [
                 'product_id' => 'required|integer',
                 'product_quantity' => 'required|integer',
-                'product_unit_price' => 'required|integer',
+                // 'product_unit_price' => 'required|integer',
                 'order_type' => 'required',
                 'product_variation_size' => 'required|integer',
             ]);
@@ -211,54 +211,32 @@ class OrderController extends BaseController
         $validator = Validator::make($order_data, [
             'outlet_id' => 'required|integer',
             'location_id' => 'required|integer',
-            'user_id' => 'required|integer',
-            'shipping_address' => 'required',
-            'delivery_address' => 'required',
-            'order_type' => 'required',
             'shipping_type' => 'required',
-            'delivery_note' => 'required|integer',
+            'shipping_address_id' => 'required',
+            'delivery_note' => 'required',
         ]);
 
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $outletID = $request['order_data']['outlet_id'];
         $cartProducts = $request['order_data']['cart_products'];
 
-        if (empty($this->outlet::find($outletID))) {
-            return $this->sendError('Invalid Outlet ID', ['error' => 'Outlet Not Found!']);
-        }
-
-
-        return true;
-
         foreach ($cartProducts as $product) {
-            $validator = Validator::make($product, [
+            $cartValidator = Validator::make($product, [
                 'product_id' => 'required|integer',
                 'product_quantity' => 'required|integer',
                 'product_unit_price' => 'required|integer',
                 'order_type' => 'required',
-                'product_variation_size' => 'required|integer',
             ]);
 
-            if ($validator->fails()) {
+            if ($cartValidator->fails()) {
                 return $this->sendError('Validation Error.', $validator->errors());
             }
         }
 
-        // Execute after successfully validation =>
-        $orderDetails['user_id']            = $order_data['user_id'];
-        $orderDetails['shipping_address']   = $order_data['shipping_address'];
-        $orderDetails['delivery_address']   = $order_data['delivery_address'];
-        $orderDetails['shipping_type']      = $order_data['shipping_type'];
-        if ($order_data['delivery_note']) {
-            $orderDetails['delivery_note']  = $order_data['delivery_note'];
-        }
-
-        return 'wait';
         return response()->json([
-            // 'data' => $this->orderRepository->createPosOrder($orderDetails, $cartProducts, $order_data)
+            'data' => $this->orderRepository->createCustomerOrder($order_data)
         ]);
     }
 
