@@ -114,5 +114,5 @@ Route::middleware('auth:api')->group(function () {
     Route::post('online-order/payment', [PaymentController::class, 'receiveOnlinePayment']);
 
     // temp fix
-    Route::post('temp-barcode-fix', [TempController::class, 'tempBarcodeFix']);
+    // Route::post('temp-barcode-fix', [TempController::class, 'tempBarcodeFix']);
 });
