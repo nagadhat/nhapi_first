@@ -81,6 +81,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('add-master-product', [ProductCategoryController::class, 'addMasterProduct']);
     Route::post('edit-master-product', [ProductCategoryController::class, 'editMasterProduct']);
     Route::post('store-pos-sale', [OrderController::class, 'storePOSsale']);
+    Route::post('brand-cat-product-status-by-id', [ProductCategoryController::class, 'brandCatProductStatusById']);
 
     // customer order
     Route::post('place-order', [OrderController::class, 'placeOnlineOrder']);

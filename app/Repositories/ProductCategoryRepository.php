@@ -175,6 +175,38 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         }
     }
 
+    public function getBrandCatProductStatusById($request)
+    {
+        if (empty($this->outlet::find($request->outlet_id))) {
+            return 'invalid outlet_id';
+        } else {
+            if ($request->product_id) {
+                $product = $this->product::find($request->product_id);
+                if ($product) {
+                    return $product->live_status;
+                } else {
+                    return 'invalid product_id';
+                }
+            } elseif ($request->category_id) {
+                $category = $this->category::find($request->category_id);
+                if ($category) {
+                    return $category->status;
+                } else {
+                    return 'invalid category_id';
+                }
+            } elseif ($request->brand_id) {
+                $brand = $this->brand::find($request->brand_id);
+                if ($brand) {
+                    return $brand->status;
+                } else {
+                    return 'invalid brand_id';
+                }
+            } else {
+                return 'invalid request';
+            }
+        }
+    }
+
     public function getCategoryListByProductId($product_id)
     {
         return $this->products_category::join('categories', 'categories.id', 'products_categories.category_id')

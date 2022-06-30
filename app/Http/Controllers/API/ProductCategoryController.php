@@ -1006,4 +1006,24 @@ class ProductCategoryController extends BaseController
             'data' => $this->productCategoryRepository->getProductsByLimit($outlet_id, $limit)
         ]);
     }
+
+
+    public function brandCatProductStatusById(Request $request)
+    {
+        $request->validate([
+            'outlet_id' => 'required'
+        ]);
+
+        if (count($request->all()) > 2) {
+            return
+                [
+                    "meg" => 'invalid parameter',
+                    "data" => 'product_id/category_id/brand_id use only one',
+                ];
+        }
+
+        return response()->json([
+            'data' => $this->productCategoryRepository->getBrandCatProductStatusById($request)
+        ]);
+    }
 }

@@ -20,6 +20,7 @@ interface ProductCategoryRepositoryInterface
     public function addMasterProduct(Request $request);
     public function editAMasterProduct($request);
     public function getProductsByLimit($outlet_id, $limit);
+    public function getBrandCatProductStatusById($request);
     public function getCategoryListByProductId($product_id);
     public function newBrand(Request $request);
     public function editABrand($request);
