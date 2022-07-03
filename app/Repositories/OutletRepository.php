@@ -11,11 +11,12 @@ use App\Models\UserCustomer;
 class OutletRepository implements OutletRepositoryInterface
 {
     protected $outlet;
-    public function __construct(Outlet $outlet, DeliveryLocation $deliveryLocation, OutletLocation $outletLocation)
+    public function __construct(Outlet $outlet, DeliveryLocation $deliveryLocation, OutletLocation $outletLocation, UserCustomer $userCustomer)
     {
         $this->outlet = $outlet;
         $this->deliveryLocation = $deliveryLocation;
         $this->outletLocation = $outletLocation;
+        $this->userCustomer = $userCustomer;
     }
 
     public function getOutlet()
@@ -63,6 +64,6 @@ class OutletRepository implements OutletRepositoryInterface
 
     public function getCustomerList()
     {
-        return UserCustomer::select('id', 'first_name as name')->where('status', 1)->get();
+        return $this->userCustomer::select('id', 'first_name as name')->where('status', 1)->get();
     }
 }
