@@ -814,7 +814,7 @@ class ProductCategoryController extends BaseController
     function newBrand(Request $request)
     {
         $request->validate([
-            'title' => 'required',
+            'title' => 'required|unique:brands,title',
             // 'logo'  => 'required',
         ]);
 
