@@ -235,4 +235,11 @@ class OutletController extends BaseController
             'data' => $this->outletRepository->getOutletByDeliveryLocation($location_id)
         ]);
     }
+
+    public function customerList()
+    {
+        return response()->json([
+            'data' => $this->outletRepository->getCustomerList()
+        ]);
+    }
 }

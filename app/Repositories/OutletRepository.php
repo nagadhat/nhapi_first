@@ -6,6 +6,7 @@ use App\Interfaces\OutletRepositoryInterface;
 use App\Models\DeliveryLocation;
 use App\Models\Outlet;
 use App\Models\OutletLocation;
+use App\Models\UserCustomer;
 
 class OutletRepository implements OutletRepositoryInterface
 {
@@ -58,5 +59,10 @@ class OutletRepository implements OutletRepositoryInterface
         } else {
             return 'Invalid location_id';
         }
+    }
+
+    public function getCustomerList()
+    {
+        return UserCustomer::select('id', 'first_name as name')->where('status', 1)->get();
     }
 }

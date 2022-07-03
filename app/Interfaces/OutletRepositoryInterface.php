@@ -8,4 +8,5 @@ interface OutletRepositoryInterface
     public function getAllDeliveryLocation();
     public function getDeliveryLocationByOutletId($outlet_id);
     public function getOutletByDeliveryLocation($location_id);
+    public function getCustomerList();
 }
