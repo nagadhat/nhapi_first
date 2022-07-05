@@ -16,6 +16,7 @@ use App\Models\ProductsVariationColor;
 use App\Models\ProductsVariationSize;
 use App\Models\FlashSale;
 use App\Models\Outlet;
+use App\Models\OutletProduct;
 use App\Models\TempBrandUpdate;
 use App\Models\TempCatUpdate;
 use App\Models\TempProductUpdate;
@@ -34,7 +35,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
     protected $products_variation;
     protected $products_variation_color;
     protected $products_variation_size;
-    public function __construct(Brand $brand, Product $product, Category $category, FlashSaleProduct $flashSaleProduct, FlashSale $flashSale, ProductsCategory $productsCategory, ProductsVariations $productsVariations, ProductsVariationColor $productsVariationColor, ProductsVariationSize $productsVariationSize, Outlet $outlet, AffiliateUser $affiliateUser, TempCatUpdate $tempCatUpdate, TempBrandUpdate $tempBrandUpdate, TempProductUpdate $tempProductUpdate)
+    public function __construct(Brand $brand, Product $product, Category $category, FlashSaleProduct $flashSaleProduct, FlashSale $flashSale, ProductsCategory $productsCategory, ProductsVariations $productsVariations, ProductsVariationColor $productsVariationColor, ProductsVariationSize $productsVariationSize, Outlet $outlet, OutletProduct $outletProduct, AffiliateUser $affiliateUser, TempCatUpdate $tempCatUpdate, TempBrandUpdate $tempBrandUpdate, TempProductUpdate $tempProductUpdate)
     {
         $this->product = $product;
         $this->brand = $brand;
@@ -50,6 +51,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         $this->tempCatUpdate = $tempCatUpdate;
         $this->tempBrandUpdate = $tempBrandUpdate;
         $this->tempProductUpdate = $tempProductUpdate;
+        $this->outletProduct = $outletProduct;
     }
 
     public function categories(Request $req)
@@ -509,7 +511,10 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         }
         $request['product_id'] = $addNewProduct->id;
         $this->variationProduct($request);
-
+        $this->outletProduct::create([
+            'outlet_id' => 1,
+            'product_id' => $addNewProduct
+        ]);
         return $addNewProduct;
     }
 
