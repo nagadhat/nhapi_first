@@ -59,6 +59,13 @@ class OutletOrderController extends BaseController
         ]);
     }
 
+    public function syncOrders($outlet_id, $dateTime)
+    {
+        return response()->json([
+            'data' => $this->outletOrderRepository->getOutletOrderByDateTime($outlet_id, $dateTime)
+        ]);
+    }
+
 
     /**
      * @OA\Get(

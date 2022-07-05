@@ -108,7 +108,14 @@ class RequisitionIssueController extends BaseController
     public function outletIssues($outletID)
     {
         return response()->json([
-            'data' => $this->requisitionIssueRepository->outletIssues($outletID),
+            'data' => $this->requisitionIssueRepository->getOutletIssues($outletID),
+        ]);
+    }
+
+    public function syncIssueByDateTime($outletID, $dateTime)
+    {
+        return response()->json([
+            'data' => $this->requisitionIssueRepository->getIssueByDateTime($outletID, $dateTime),
         ]);
     }
 

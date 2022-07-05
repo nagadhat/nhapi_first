@@ -620,4 +620,19 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         ]);
         return $id;
     }
+
+    public function getFilterProductByDateTime($dateTime)
+    {
+        return $this->product::where('updated_at', '>', $dateTime)->where('live_status', 1)->get();
+    }
+
+    public function getFilterCategoryByDateTime($dateTime)
+    {
+        return $this->category::where('updated_at', '>', $dateTime)->where('status', 1)->get();
+    }
+
+    public function getFilterBrandByDateTime($dateTime)
+    {
+        return $this->brand::where('updated_at', '>', $dateTime)->where('status', 1)->get();
+    }
 }

@@ -75,6 +75,58 @@ class OutletOrderRepository implements OutletOrderRepositoryInterface
         return $orders;
     }
 
+    public function getOutletOrderByDateTime($outlet_id, $dateTime)
+    {
+        $checkOutlet = $this->outlet::find($outlet_id);
+        if (!$checkOutlet) {
+            return 'Invalid outlet_id';
+        }
+
+        $orders = $this->order::where('outlet_id', $outlet_id)
+            ->whereIn('order_status', [1, 2, 3, 4, 5, 6, 8, 9])
+            ->where('restricted', 0)
+            ->where('updated_at', '>', $dateTime)
+            ->get();
+
+        // product info
+        for ($i = 0; $i < count($orders); $i++) {
+            $orderProducts = $this->ordersProduct::where('order_id', $orders[$i]->id)->get();
+
+            $items = array();
+            foreach ($orderProducts as $orderProduct) {
+                $items[] = array(
+                    'id' => $orderProduct->id,
+                    'product_id' => $orderProduct->product_id,
+                    'product_quantity' => $orderProduct->product_quantity,
+                    'product_unit_price' => $orderProduct->product_unit_price,
+                );
+            }
+
+            $orders[$i]['products'] = $items;
+        }
+        // payment info
+        for ($i = 0; $i < count($orders); $i++) {
+            $payments = $this->payment::where('order_id', $orders[$i]->id)->where('transaction_status', 1)->get();
+
+            $items = array();
+            foreach ($payments as $payment) {
+                $items[] = array(
+                    'id' => $payment->id,
+                    'payer_name' => $payment->payer_name,
+                    'payer_phone' => $payment->payer_phone,
+                    'date_time' => $payment->date_time,
+                    'transaction_amound' => $payment->transaction_amound,
+                    'payment_getway' => $payment->payment_getway,
+                    'bank_name' => $payment->bank_name,
+                    'payment_slip' => $payment->payment_slip
+                );
+            }
+            $orders[$i]['payments'] = $items;
+        }
+
+        return $orders;
+    }
+
     public function getOutletOrderByStatus($outletId, $status)
     {
         $checkOutlet = $this->outlet::find($outletId);

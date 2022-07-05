@@ -52,6 +52,7 @@ Route::middleware('auth:api')->group(function () {
 
     // outlet order management
     Route::get('orders-list/{outlet_id}', [OutletOrderController::class, 'orderList']);
+    Route::get('sync-orders/{outlet_id}/{dateTime}', [OutletOrderController::class, 'syncOrders']);
     Route::get('orders-list/{outlet_id}/{status}', [OutletOrderController::class, 'orderListByStatus']);
     Route::get('orders-details/{outlet_id}/{order_id}', [OutletOrderController::class, 'orderDetailsById']);
     Route::post('order-process', [OutletOrderController::class, 'updateOrderByStatus']);
@@ -63,14 +64,18 @@ Route::middleware('auth:api')->group(function () {
     Route::get('all-category-slide', [ProductCategoryController::class, 'categoriesSlide']);
     Route::get('all-category-top-menu', [ProductCategoryController::class, 'categoriesTopMenu']);
     Route::post('edit-category', [ProductCategoryController::class, 'editCategory']);
+    //category pos
+    Route::get('sync-category/{dateTime}', [ProductCategoryController::class, 'filterCategoryByDateTime']);
 
     // Products
     Route::get('all-local-product/{outletId}', [ProductCategoryController::class, 'localProducts']);
-    Route::get('get-products/{outletId}/{limit}', [ProductCategoryController::class, 'productsByLimit']);
     Route::post('all-product-by-category-id', [ProductCategoryController::class, 'productByCategoryID']);
     Route::get('get-product-price/{productId}', [ProductCategoryController::class, 'productPriceByProductId']);
     Route::post('get-product-details', [ProductCategoryController::class, 'productDetailsByIDSlugSku']);
+    // products pos
+    Route::get('get-products/{outletId}/{limit}', [ProductCategoryController::class, 'productsByLimit']);
     Route::get('get-category-by-product/{productId}', [ProductCategoryController::class, 'categoryListByProduct']);
+    Route::get('sync-products/{dateTime}', [ProductCategoryController::class, 'filterProductByDateTime']);
 
     // Flash Sales Product Info
     Route::get('get-flash-sale-info', [ProductCategoryController::class, 'flashSaleInfo']);
@@ -93,6 +98,8 @@ Route::middleware('auth:api')->group(function () {
     Route::get('get-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
     Route::post('create-brand', [ProductCategoryController::class, 'newBrand']);
     Route::post('edit-brand', [ProductCategoryController::class, 'editBrand']);
+    //category pos
+    Route::get('sync-brand/{dateTime}', [ProductCategoryController::class, 'filterBrandByDateTime']);
 
     //Get cart products and prices
     Route::post('add-to-cart', [CartController::class, 'addToCart']);
@@ -110,6 +117,7 @@ Route::middleware('auth:api')->group(function () {
     Route::post('edit-outlet-product-requisition', [RequisitionIssueController::class, 'editRequisition']);
     Route::post('read-outlet-issue', [RequisitionIssueController::class, 'readOutletIssues']);
     Route::get('outlet-issue-details/{outletID}', [RequisitionIssueController::class, 'outletIssues']);
+    Route::get('sync-issue/{outletID}/{dateTime}', [RequisitionIssueController::class, 'syncIssueByDateTime']);
     Route::get('new-outlet-issue-details/{outletID}', [RequisitionIssueController::class, 'newOutletIssues']);
     Route::get('outlet-issue-details/{outletID}/{reqID}', [RequisitionIssueController::class, 'outletIssuesByRequisition']);
     Route::get('outlet-requisition-status/{outletID}', [RequisitionIssueController::class, 'outletRequisitionsStatus']);

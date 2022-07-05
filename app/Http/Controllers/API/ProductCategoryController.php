@@ -1026,4 +1026,25 @@ class ProductCategoryController extends BaseController
             'data' => $this->productCategoryRepository->getBrandCatProductStatusById($request)
         ]);
     }
+
+    public function filterProductByDateTime($dateTime)
+    {
+        return response()->json([
+            'data' => $this->productCategoryRepository->getFilterProductByDateTime($dateTime)
+        ]);
+    }
+
+    public function filterCategoryByDateTime($dateTime)
+    {
+        return response()->json([
+            'data' => $this->productCategoryRepository->getFilterCategoryByDateTime($dateTime)
+        ]);
+    }
+
+    public function filterBrandByDateTime($dateTime)
+    {
+        return response()->json([
+            'data' => $this->productCategoryRepository->getFilterBrandByDateTime($dateTime)
+        ]);
+    }
 }

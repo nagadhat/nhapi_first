@@ -232,17 +232,31 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
         return "Successfully received the issue and updated product quantity!";
     }
 
-    // public function readMultipleOutletIssues($request){
-    //     $this->outletIssue::whereIn('id', $request->issue_id)->update(['read_by_pos' => 1]);
-    //     $issues = $this->outletIssue::whereIn('id', $request->issue_id)->get();
-    //     return $issues;
-    // }
-
-    public function outletIssues($outletID)
+    public function getOutletIssues($outletID)
     {
-        // return 'ok';
         $issues = $this->outletIssue::where('outlet_id', $outletID)->get();
-        // return $issues;
+
+        for ($i = 0; $i < count($issues); $i++) {
+            $issuedProducts = $this->outletIssueProduct::where('issue_id', $issues[$i]->id)->get();
+
+            $items = array();
+            foreach ($issuedProducts as $issuedProduct) {
+                $items[] = array(
+                    'product_id' => $issuedProduct->product_id,
+                    'product_quantity' => $issuedProduct->product_quantity,
+                    'purchase_price' => $issuedProduct->purchase_price,
+                );
+            }
+
+            $issues[$i]['products'] = $items;
+        }
+
+        return $issues;
+    }
+
+    public function getIssueByDateTime($outletID, $dateTime)
+    {
+        $issues = $this->outletIssue::where('outlet_id', $outletID)->where('updated_at', '>', $dateTime)->get();
 
         // $outletIssues = array();
         for ($i = 0; $i < count($issues); $i++) {
@@ -257,19 +271,10 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
                 );
             }
 
-            // $outletIssues[] = array(
-            //     'id' => $issues[$i]->id,
-            //     'requisition_id' => $issues[$i]->requisition_id,
-            //     'outlet_id' => $issues[$i]->outlet_id,
-            //     'amount' => $issues[$i]->amount,
-            //     'products' => $items,
-            // );
-
             $issues[$i]['products'] = $items;
         }
 
         return $issues;
-        // return $outletIssues;
     }
 
     public function newOutletIssues($outletID)
