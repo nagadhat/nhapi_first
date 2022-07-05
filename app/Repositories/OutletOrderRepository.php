@@ -75,14 +75,14 @@ class OutletOrderRepository implements OutletOrderRepositoryInterface
         return $orders;
     }
 
-    public function getOutletOrderByDateTime($outlet_id, $dateTime)
+    public function getOutletOrderByDateTime($outletId, $dateTime)
     {
-        $checkOutlet = $this->outlet::find($outlet_id);
+        $checkOutlet = $this->outlet::find($outletId);
         if (!$checkOutlet) {
             return 'Invalid outlet_id';
         }
 
-        $orders = $this->order::where('outlet_id', $outlet_id)
+        $orders = $this->order::where('outlet_id', $outletId)
             ->whereIn('order_status', [1, 2, 3, 4, 5, 6, 8, 9])
             ->where('restricted', 0)
             ->where('updated_at', '>', $dateTime)

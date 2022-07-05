@@ -52,7 +52,7 @@ Route::middleware('auth:api')->group(function () {
 
     // outlet order management
     Route::get('orders-list/{outlet_id}', [OutletOrderController::class, 'orderList']);
-    Route::get('sync-orders/{outlet_id}/{dateTime}', [OutletOrderController::class, 'syncOrders']);
+    Route::get('sync-orders/{outletId}/{dateTime}', [OutletOrderController::class, 'syncOrders']);
     Route::get('orders-list/{outlet_id}/{status}', [OutletOrderController::class, 'orderListByStatus']);
     Route::get('orders-details/{outlet_id}/{order_id}', [OutletOrderController::class, 'orderDetailsById']);
     Route::post('order-process', [OutletOrderController::class, 'updateOrderByStatus']);
