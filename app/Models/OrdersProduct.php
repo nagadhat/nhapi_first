@@ -15,11 +15,11 @@ class OrdersProduct extends Model
     // function to create relationship between orders_product table and product table
     public function ordersProductToProduct()
     {
-        return $this->belongsTo(product::class, 'product_id', 'id');
+        return $this->belongsTo(Product::class, 'product_id', 'id');
     }
     // function to create relationship between orders_product table and order table
     public function ordersProductToOrder()
     {
-        return $this->belongsTo(order::class, 'order_id', 'id');
+        return $this->belongsTo(Order::class, 'order_id', 'id');
     }
 }
