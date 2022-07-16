@@ -18,7 +18,7 @@ class OutletOrderController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/orders-list/{outlet_id}",
-     *     tags={"Outlet Orders"},
+     *     tags={"POS Orders"},
      *     summary="Get outlet orders list",
      *     security={{"passport": {}}},
      *     @OA\Response(
@@ -70,7 +70,7 @@ class OutletOrderController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/orders-list/{outlet_id}/{status}",
-     *     tags={"Outlet Orders"},
+     *     tags={"POS Orders"},
      *     summary="Get outlet orders list by status",
      *     security={{"passport": {}}},
      *     @OA\Response(
@@ -115,7 +115,7 @@ class OutletOrderController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/orders-details/{outlet_id}/{order_id}",
-     *     tags={"Outlet Orders"},
+     *     tags={"POS Orders"},
      *     summary="Get order details by outlet id and order id",
      *     security={{"passport": {}}},
      *     @OA\Response(
@@ -161,7 +161,7 @@ class OutletOrderController extends BaseController
      * @OA\Post(
      *      path="/api/order-process",
      *      operationId="update",
-     *      tags={"Outlet Orders"},
+     *      tags={"POS Orders"},
      *      summary="Update order",
      *      security={{"passport": {}}},
      *      description="Returns project data",
