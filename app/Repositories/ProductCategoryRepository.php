@@ -513,7 +513,7 @@ class ProductCategoryRepository implements ProductCategoryRepositoryInterface
         $this->variationProduct($request);
         $this->outletProduct::create([
             'outlet_id' => 1,
-            'product_id' => $addNewProduct
+            'product_id' => $addNewProduct->id
         ]);
         return $addNewProduct;
     }
