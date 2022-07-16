@@ -876,7 +876,7 @@ class ProductCategoryController extends BaseController
      * @OA\Post(
      *      path="/api/add-master-product",
      *      operationId="outlet-product",
-     *      tags={"Outlet Products"},
+     *      tags={"POS Products"},
      *      summary="Add master products from outlet with product description",
      *      security={{"passport": {}}},
      *      description="Add master product from outlet. Enter product details as required parameters",
@@ -966,7 +966,7 @@ class ProductCategoryController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/get-products/{outletId}/{limit}",
-     *     tags={"Products"},
+     *     tags={"POS Products"},
      *     summary="Get product list by outlet_id with limit in random order where target audience is 0.",
      *     security={{"passport": {}}},
      *     description="Returns project data in random order by outlet_id with limit, pass parameter 'all' to get all products in random order",

@@ -26,6 +26,36 @@ Route::post('nh-forget-password-otp', [UserLoginController::class, 'forgetPasswo
 Route::post('forget-password-otp-verify', [UserLoginController::class, 'forgetPasswordOtpVerification']);
 Route::post('password-reset', [UserLoginController::class, 'passwordReset']);
 
+
+
+// Products
+Route::get('all-local-product/{outletId}', [ProductCategoryController::class, 'localProducts']);
+Route::post('all-product-by-category-id', [ProductCategoryController::class, 'productByCategoryID']);
+Route::get('get-product-price/{productId}', [ProductCategoryController::class, 'productPriceByProductId']);
+Route::post('get-product-details', [ProductCategoryController::class, 'productDetailsByIDSlugSku']);
+Route::get('get-category-by-product/{productId}', [ProductCategoryController::class, 'categoryListByProduct']);
+
+// Categories
+Route::post('all-category', [ProductCategoryController::class, 'categories']);
+Route::post('all-category-main', [ProductCategoryController::class, 'mainCategories']);
+Route::get('all-category-slide', [ProductCategoryController::class, 'categoriesSlide']);
+Route::get('all-category-top-menu', [ProductCategoryController::class, 'categoriesTopMenu']);
+
+// Flash Sales Product Info
+Route::get('get-flash-sale-info', [ProductCategoryController::class, 'flashSaleInfo']);
+Route::get('get-flash-sale-status', [ProductCategoryController::class, 'flashSaleStatus']);
+Route::get('get-flash-sale-products/{outletId}', [ProductCategoryController::class, 'flashSaleProducts']);
+
+// Brands
+Route::get('get-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
+
+// Get Outlets
+Route::get('get-all-outlet', [OutletController::class, 'getOutlet']);
+Route::get('get-outlet/{outletId}', [OutletController::class, 'getOutletById']);
+Route::get('outlet-delivery-location', [OutletController::class, 'outletDeliveryLocation']);
+Route::get('outlet-delivery-location/{outletId}', [OutletController::class, 'outletDeliveryLocationByOutlet']);
+Route::get('outlet/{locationId}', [OutletController::class, 'outletByDeliveryLocation']);
+
 Route::middleware('auth:api')->group(function () {
     // 'demo' section in API documentation
     Route::get('orders', [OrderController::class, 'index']);
@@ -49,8 +79,7 @@ Route::middleware('auth:api')->group(function () {
     Route::get('nh-user-address-codes/{userId}', [UserLoginController::class, 'userAddressCodesById']);
     Route::get('nh-user-address/{addressId}', [UserLoginController::class, 'userAddressByAddressId']);
 
-
-    // outlet order management
+    // outlet order management pos
     Route::get('orders-list/{outlet_id}', [OutletOrderController::class, 'orderList']);
     Route::get('sync-orders/{outletId}/{dateTime}', [OutletOrderController::class, 'syncOrders']);
     Route::get('orders-list/{outlet_id}/{status}', [OutletOrderController::class, 'orderListByStatus']);
@@ -58,59 +87,41 @@ Route::middleware('auth:api')->group(function () {
     Route::post('order-process', [OutletOrderController::class, 'updateOrderByStatus']);
 
     // Categories
-    Route::post('all-category', [ProductCategoryController::class, 'categories']);
     Route::post('create-category', [ProductCategoryController::class, 'createCategory']);
-    Route::post('all-category-main', [ProductCategoryController::class, 'mainCategories']);
-    Route::get('all-category-slide', [ProductCategoryController::class, 'categoriesSlide']);
-    Route::get('all-category-top-menu', [ProductCategoryController::class, 'categoriesTopMenu']);
     Route::post('edit-category', [ProductCategoryController::class, 'editCategory']);
+
     //category pos
     Route::get('sync-category/{dateTime}', [ProductCategoryController::class, 'filterCategoryByDateTime']);
-
-    // Products
-    Route::get('all-local-product/{outletId}', [ProductCategoryController::class, 'localProducts']);
-    Route::post('all-product-by-category-id', [ProductCategoryController::class, 'productByCategoryID']);
-    Route::get('get-product-price/{productId}', [ProductCategoryController::class, 'productPriceByProductId']);
-    Route::post('get-product-details', [ProductCategoryController::class, 'productDetailsByIDSlugSku']);
-    // products pos
-    Route::get('get-products/{outletId}/{limit}', [ProductCategoryController::class, 'productsByLimit']);
-    Route::get('get-category-by-product/{productId}', [ProductCategoryController::class, 'categoryListByProduct']);
-    Route::get('sync-products/{dateTime}', [ProductCategoryController::class, 'filterProductByDateTime']);
-
-    // Flash Sales Product Info
-    Route::get('get-flash-sale-info', [ProductCategoryController::class, 'flashSaleInfo']);
-    Route::get('get-flash-sale-status', [ProductCategoryController::class, 'flashSaleStatus']);
-    Route::get('get-flash-sale-products/{outletId}', [ProductCategoryController::class, 'flashSaleProducts']);
 
     // outlet customer info
     Route::get('get-customer-list', [OutletController::class, 'customerList']);
 
-    // outlet product
+    // outlet product pos
+    Route::get('get-products/{outletId}/{limit}', [ProductCategoryController::class, 'productsByLimit']);
+    Route::get('sync-products/{dateTime}', [ProductCategoryController::class, 'filterProductByDateTime']);
+
     Route::post('add-master-product', [ProductCategoryController::class, 'addMasterProduct']);
     Route::post('edit-master-product', [ProductCategoryController::class, 'editMasterProduct']);
+
+    // outlet sale pos
     Route::post('store-pos-sale', [OrderController::class, 'storePOSsale']);
+
+    // pos helper
     Route::post('brand-cat-product-status-by-id', [ProductCategoryController::class, 'brandCatProductStatusById']);
 
     // customer order
     Route::post('place-order', [OrderController::class, 'placeOnlineOrder']);
 
     // Brands
-    Route::get('get-brand/{limit}', [ProductCategoryController::class, 'allBrands']);
     Route::post('create-brand', [ProductCategoryController::class, 'newBrand']);
     Route::post('edit-brand', [ProductCategoryController::class, 'editBrand']);
+
     //category pos
     Route::get('sync-brand/{dateTime}', [ProductCategoryController::class, 'filterBrandByDateTime']);
 
     //Get cart products and prices
     Route::post('add-to-cart', [CartController::class, 'addToCart']);
     Route::get('get-cart-product/{userId}', [CartController::class, 'allCartProductById']);
-
-    // Get Outlets
-    Route::get('get-all-outlet', [OutletController::class, 'getOutlet']);
-    Route::get('get-outlet/{outletId}', [OutletController::class, 'getOutletById']);
-    Route::get('outlet-delivery-location', [OutletController::class, 'outletDeliveryLocation']);
-    Route::get('outlet-delivery-location/{outletId}', [OutletController::class, 'outletDeliveryLocationByOutlet']);
-    Route::get('outlet/{locationId}', [OutletController::class, 'outletByDeliveryLocation']);
 
     // Product Requisitions Issues
     Route::post('outlet-product-requisition', [RequisitionIssueController::class, 'newRequisition']);

@@ -236,9 +236,13 @@ class RegisterController extends BaseController
     {
         $user_exist = User::where('username', $req->username)->first();
         if ($user_exist) {
-            return $this->sendError('Failed.', ['error' => 'User already exist']);
-        } else return response()->json([
-            'data' => $this->registerControllerRepository->regOtpVerification($req)
-        ]);
+            return response()->json([
+                'msg' => 'User already exist'
+            ]);
+        } else {
+            return response()->json([
+                'data' => $this->registerControllerRepository->regOtpVerification($req)
+            ]);
+        }
     }
 }
