@@ -20,7 +20,6 @@ class OutletController extends BaseController
      *     path="/api/get-all-outlet",
      *     tags={"Outlet & Location"},
      *     summary="Get outlet list",
-     *     security={{"passport": {}}},
      *     description="Get outlet list",
      *     @OA\Response(
      *         response=200,
@@ -64,7 +63,6 @@ class OutletController extends BaseController
      *     path="/api/get-outlet/{outletId}",
      *     tags={"Outlet & Location"},
      *     summary="Get outlet details by id",
-     *     security={{"passport": {}}},
      *     description="Get outlet details by outlet_id",
      *     @OA\Response(
      *         response=200,
@@ -109,7 +107,6 @@ class OutletController extends BaseController
      *     path="/api/outlet-delivery-location",
      *     tags={"Outlet & Location"},
      *     summary="Get outlet delivery location list",
-     *     security={{"passport": {}}},
      *     description="Get outlet delivery location list",
      *     @OA\Response(
      *         response=200,
@@ -153,7 +150,6 @@ class OutletController extends BaseController
      *     path="/api/outlet-delivery-location/{outletId}",
      *     tags={"Outlet & Location"},
      *     summary="Get outlet delivery location list by outlet_id",
-     *     security={{"passport": {}}},
      *     description="Get outlet delivery location list by outlet_id, When a customer selects one of these location, they will only see the products of that specific outlets throughout the whole website...",
      *     @OA\Response(
      *         response=200,
@@ -197,7 +193,6 @@ class OutletController extends BaseController
      *     path="/api/outlet/{locationId}",
      *     tags={"Outlet & Location"},
      *     summary="Get outlet info by delivery_id",
-     *     security={{"passport": {}}},
      *     description="Get outlet info by delivery location id, When a customer selects a location, they will only see the products of that specific outlets throughout the whole website...",
      *     @OA\Response(
      *         response=200,

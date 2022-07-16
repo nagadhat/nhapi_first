@@ -430,12 +430,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/get-outlet/{outletId}": {
@@ -468,12 +463,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/outlet-delivery-location": {
@@ -506,12 +496,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/outlet-delivery-location/{outletId}": {
@@ -544,12 +529,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/outlet/{locationId}": {
@@ -582,12 +562,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/orders-list/{outlet_id}": {
@@ -899,12 +874,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/create-category": {
@@ -1104,12 +1074,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/all-category-slide": {
@@ -1142,12 +1107,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/all-local-product/{outletId}": {
@@ -1180,12 +1140,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/all-product-flash-sale/{outletId}": {
@@ -1218,12 +1173,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/all-product-flash-sale-info": {
@@ -1256,12 +1206,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/get-flash-sale-status": {
@@ -1294,12 +1239,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/all-product-by-category-id": {
@@ -1364,12 +1304,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/get-product-price/{productId}": {
@@ -1402,12 +1337,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/get-product-details": {
@@ -1471,12 +1401,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/get-category-by-product/{productId}": {
@@ -1509,12 +1434,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/all-category-main": {
@@ -1567,12 +1487,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/get-brand/{limit}": {
@@ -1605,12 +1520,7 @@
                     "404": {
                         "description": "not found"
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/create-brand": {
@@ -1761,7 +1671,7 @@
         "/api/add-master-product": {
             "post": {
                 "tags": [
-                    "Outlet Products"
+                    "POS Products"
                 ],
                 "summary": "Add master products from outlet with product description",
                 "description": "Add master product from outlet. Enter product details as required parameters",
@@ -1880,7 +1790,7 @@
         "/api/get-products/{outletId}/{limit}": {
             "get": {
                 "tags": [
-                    "Products"
+                    "POS Products"
                 ],
                 "summary": "Get product list by outlet_id with limit in random order where target audience is 0.",
                 "description": "Returns project data in random order by outlet_id with limit, pass parameter 'all' to get all products in random order",

@@ -38,7 +38,6 @@ class ProductCategoryController extends BaseController
      *              @OA\Property(property="list_type", type="string", example="short_list"),
      *          ),
      *     ),
-     *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=201,
      *         description="Success",
@@ -197,7 +196,6 @@ class ProductCategoryController extends BaseController
      *     tags={"Category"},
      *     summary="Get category list for home_page_top_menu.",
      *     description="By default this end-point will provide category list where 'home_page_top_menu' = 1. This response used in just beneath the main slide  Used in: index",
-     *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -240,7 +238,6 @@ class ProductCategoryController extends BaseController
      *     tags={"Category"},
      *     summary="Get category list for the menu just left side in the main slider.",
      *     description="Get category list for the menu just left side in the main slider.",
-     *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -283,7 +280,6 @@ class ProductCategoryController extends BaseController
      *     tags={"Products"},
      *     summary="Get local product list by outlet with target audience 0.",
      *     description="Get local product list by outlet_id where global audience is 0. use parameter page_size=5 to set pagination '/api/all-local-product/{outletId}?per_page=2' value, by default per_page=15",
-     *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -328,7 +324,6 @@ class ProductCategoryController extends BaseController
      *     tags={"Flash Sale & Products"},
      *     summary="Get Flash Sale product list in random order.",
      *     description="Get Flash Sale product list in random order with detailed product flash discount and price.use parameter page_size=5 to set pagination '/api/all-product-flash-sale/{outletId}?per_page=2' value, by default per_page=15",
-     *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -373,7 +368,6 @@ class ProductCategoryController extends BaseController
      *     tags={"Flash Sale & Products"},
      *     summary="Get Flash Sale info.",
      *     description="Get Flash Sale info like, Flash Sale active or not, Flash Sale start and end date.",
-     *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -417,7 +411,6 @@ class ProductCategoryController extends BaseController
      *     tags={"Flash Sale & Products"},
      *     summary="Get Flash active status.",
      *     description="Get Flash Sale active status.",
-     *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -471,7 +464,6 @@ class ProductCategoryController extends BaseController
      *              @OA\Property(property="page_size", type="integer", example="10"),
      *          ),
      *     ),
-     *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -522,7 +514,6 @@ class ProductCategoryController extends BaseController
      *     path="/api/get-product-price/{productId}",
      *     tags={"Products"},
      *     summary="Get product price by product_id.",
-     *     security={{"passport": {}}},
      *     description="Returns product price by product_id as parameter",
      *     @OA\Response(
      *         response=200,
@@ -567,7 +558,6 @@ class ProductCategoryController extends BaseController
      *     path="/api/get-product-details",
      *     tags={"Products"},
      *     summary="Get product details by outlet_id and product_id/product_sku/slug.",
-     *     security={{"passport": {}}},
      *     description="Returns product details by outlet_id and product_id/product_sku/slug, pass outlet_id and one of three product_id, product_sku or slug",
      *     @OA\RequestBody(
      *     required=true,
@@ -579,7 +569,6 @@ class ProductCategoryController extends BaseController
      *              @OA\Property(property="slug", type="integer", example="Barclay-Johnston-629895043b12a"),
      *          ),
      *     ),
-     *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -635,7 +624,6 @@ class ProductCategoryController extends BaseController
      *     path="/api/get-category-by-product/{productId}",
      *     tags={"Products"},
      *     summary="Get category list by product_id.",
-     *     security={{"passport": {}}},
      *     description="Returns category list and details by product_id as parameter",
      *     @OA\Response(
      *         response=200,
@@ -688,7 +676,6 @@ class ProductCategoryController extends BaseController
      *              @OA\Property(property="limit", type="integer", example=5),
      *          ),
      *     ),
-     *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -731,7 +718,6 @@ class ProductCategoryController extends BaseController
      *     tags={"Brand"},
      *     summary="Get brand list with it's all data.",
      *     description="By default the limit parameter is /all. use neumaric value to set limit",
-     *     security={{"passport": {}}},
      *     @OA\Response(
      *         response=200,
      *         description="Success",
