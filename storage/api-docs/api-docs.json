@@ -568,7 +568,7 @@
         "/api/orders-list/{outlet_id}": {
             "get": {
                 "tags": [
-                    "Outlet Orders"
+                    "POS Orders"
                 ],
                 "summary": "Get outlet orders list",
                 "operationId": "672b144754dbd5c7addc81e9e04d9d93",
@@ -605,7 +605,7 @@
         "/api/orders-list/{outlet_id}/{status}": {
             "get": {
                 "tags": [
-                    "Outlet Orders"
+                    "POS Orders"
                 ],
                 "summary": "Get outlet orders list by status",
                 "operationId": "8fa117a852b06a6ef520a62eee003454",
@@ -642,7 +642,7 @@
         "/api/orders-details/{outlet_id}/{order_id}": {
             "get": {
                 "tags": [
-                    "Outlet Orders"
+                    "POS Orders"
                 ],
                 "summary": "Get order details by outlet id and order id",
                 "operationId": "2ef784623c431f04e2a5d89d20941234",
@@ -679,7 +679,7 @@
         "/api/order-process": {
             "post": {
                 "tags": [
-                    "Outlet Orders"
+                    "POS Orders"
                 ],
                 "summary": "Update order",
                 "description": "Returns project data",

@@ -19,7 +19,7 @@ class PaymentController extends BaseController
      * @OA\Post(
      *      path="/api/online-order/payment",
      *      operationId="payment",
-     *      tags={"Outlet Payment"},
+     *      tags={"POS Payment"},
      *      summary="Receive Online payment",
      *      security={{"passport": {}}},
      *      description="Receive online payment when customer comes to the outlet for order pickup",
