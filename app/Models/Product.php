@@ -9,5 +9,9 @@ class Product extends Model
 {
     use HasFactory;
     protected $table = "products";
-    protected $guarded = ['id'];
+    protected $guarded = [];
+    /**
+     * The attributes that should be hidden for arrays.
+     */
+    protected $hidden = ['quantity'];
 }

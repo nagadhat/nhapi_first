@@ -175,6 +175,42 @@ class UserLoginController extends Controller
         ]);
     }
 
+
+    /**
+     * @OA\Get(
+     *     path="/api/logged-in-user-info",
+     *     tags={"User"},
+     *     summary="Get logged in user info list",
+     *     security={{"passport": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *         response=401,
+     *         description="Unauthorize Access, Invalid Token or Token has expired",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *           response=400,
+     *           description="Bad Request"
+     *          ),
+     *      @OA\Response(
+     *           response=404,
+     *           description="not found"
+     *          ),
+     *      )
+     *
+     */
     function userInfo()
     {
         return response()->json([
@@ -182,6 +218,41 @@ class UserLoginController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/logged-in-user-address-codes",
+     *     tags={"User"},
+     *     summary="Get logged in user address ids",
+     *     security={{"passport": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *         response=401,
+     *         description="Unauthorize Access, Invalid Token or Token has expired",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *           response=400,
+     *           description="Bad Request"
+     *          ),
+     *      @OA\Response(
+     *           response=404,
+     *           description="not found"
+     *          ),
+     *      )
+     *
+     */
     function userAddressCodes()
     {
         return response()->json([
@@ -189,6 +260,41 @@ class UserLoginController extends Controller
         ]);
     }
 
+    /**
+     * @OA\Get(
+     *     path="/api/logged-in-user-address",
+     *     tags={"User"},
+     *     summary="Get logged in user address details",
+     *     security={{"passport": {}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Success",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *         response=401,
+     *         description="Unauthorize Access, Invalid Token or Token has expired",
+     *          @OA\MediaType(
+     *             mediaType="application/json",
+     *          )
+     *     ),
+     *      @OA\Response(
+     *          response=403,
+     *          description="Forbidden"
+     *      ),
+     *      @OA\Response(
+     *           response=400,
+     *           description="Bad Request"
+     *          ),
+     *      @OA\Response(
+     *           response=404,
+     *           description="not found"
+     *          ),
+     *      )
+     *
+     */
     function userAddress()
     {
         return response()->json([
@@ -228,6 +334,7 @@ class UserLoginController extends Controller
 
     public function copyCustomersToUsers()
     {
+        return 'test api';
         $users = UserCustomer::where('status', 1)->get();
         if (!$users) {
             return 'No user found!';

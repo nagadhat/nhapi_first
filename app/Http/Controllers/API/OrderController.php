@@ -31,7 +31,7 @@ class OrderController extends BaseController
     /**
      * @OA\Get(
      *     path="/api/orders",
-     *     tags={"Orders CRUD"},
+     *     tags={"Xample Demo"},
      *     summary="Get orders list",
      *     security={{"passport": {}}},
      *     @OA\Response(
@@ -65,6 +65,7 @@ class OrderController extends BaseController
      */
     public function index()
     {
+        return 'test api';
         return response()->json([
             'data' => $this->orderRepository->getAllOrders()
         ]);
@@ -74,7 +75,7 @@ class OrderController extends BaseController
      * @OA\Post(
      *      path="/api/orders",
      *      operationId="store",
-     *      tags={"Orders CRUD"},
+     *      tags={"Xample Demo"},
      *      summary="Store new order",
      *      security={{"passport": {}}},
      *      description="Returns project data",
@@ -103,6 +104,7 @@ class OrderController extends BaseController
      */
     public function store(Request $request)
     {
+        return 'test api';
         $validator = Validator::make($request->all(), [
             'user_id'           => 'required',
             'shipping_address'  => 'required',
@@ -144,7 +146,7 @@ class OrderController extends BaseController
         //     'details'
         // ]);
     }
-    
+
     public function storePOSsale(Request $request)
     {
         // Validation Request Data
@@ -159,7 +161,7 @@ class OrderController extends BaseController
         $validator = Validator::make($sales_data, [
             'user_id' => 'required|integer',
             'outlet_id' => 'required|integer',
-            'pos_sale_id' => 'required|integer',
+            'pos_sale_id' => 'required',
             'shipping_address' => 'required',
             'delivery_address' => 'required',
             'shipping_type' => 'required',
@@ -169,20 +171,20 @@ class OrderController extends BaseController
             'delivery_charge' => 'required|integer',
         ]);
 
-        if($validator->fails()){
+        if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        foreach($cartProducts as $product){
+        foreach ($cartProducts as $product) {
             $validator = Validator::make($product, [
                 'product_id' => 'required|integer',
                 'product_quantity' => 'required|integer',
                 'product_unit_price' => 'required|integer',
                 'order_type' => 'required',
-                'product_variation_size' => 'required|integer',
+                // 'product_variation_size' => 'required|integer',
             ]);
 
-            if($validator->fails()){
+            if ($validator->fails()) {
                 return $this->sendError('Validation Error.', $validator->errors());
             }
         }
@@ -201,10 +203,47 @@ class OrderController extends BaseController
         ]);
     }
 
+    public function placeOnlineOrder(Request $request)
+    {
+        // Validation Request Data
+        $order_data = $request['order_data'];
+
+        $validator = Validator::make($order_data, [
+            'outlet_id' => 'required|integer',
+            'location_id' => 'required|integer',
+            'shipping_type' => 'required',
+            'shipping_address_id' => 'required',
+            'delivery_note' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return $this->sendError('Validation Error.', $validator->errors());
+        }
+
+        $cartProducts = $request['order_data']['cart_products'];
+
+        foreach ($cartProducts as $product) {
+            $cartValidator = Validator::make($product, [
+                'product_id' => 'required|integer',
+                'product_quantity' => 'required|integer',
+                'product_unit_price' => 'required|integer',
+                'order_type' => 'required',
+            ]);
+
+            if ($cartValidator->fails()) {
+                return $this->sendError('Validation Error.', $validator->errors());
+            }
+        }
+
+        return response()->json([
+            'data' => $this->orderRepository->createCustomerOrder($order_data)
+        ]);
+    }
+
     /**
      * @OA\Get(
      *      path="/api/orders/{id}",
-     *      tags={"Orders CRUD"},
+     *      tags={"Xample Demo"},
      *      summary="Get order information",
      *      security={{"passport": {}}},
      *      description="Returns order data",
@@ -238,6 +277,7 @@ class OrderController extends BaseController
      */
     public function show(Request $request)
     {
+        return 'test api';
         $orderId = $request->route('id');
 
         return response()->json([
@@ -248,7 +288,7 @@ class OrderController extends BaseController
      * @OA\Put(
      *      path="/api/orders/{id}",
      *      operationId="updateProject",
-     *      tags={"Orders CRUD"},
+     *      tags={"Xample Demo"},
      *      summary="Update existing order",
      *      security={{"bearer":{}}},
      *      description="Returns updated project data",
@@ -290,6 +330,7 @@ class OrderController extends BaseController
      */
     public function update(Request $request)
     {
+        return 'test api';
         $orderId = $request->route('id');
         $orderDetails = $request->only([
             'client',
@@ -305,7 +346,7 @@ class OrderController extends BaseController
      * @OA\Delete(
      *      path="/api/orders/{id}",
      *      operationId="destroy",
-     *      tags={"Orders CRUD"},
+     *      tags={"Xample Demo"},
      *      summary="Delete existing order",
      *      security={{"bearer":{}}},
      *      description="Deletes a record and returns no content",
@@ -339,6 +380,7 @@ class OrderController extends BaseController
      */
     public function destroy(Request $request)
     {
+        return 'test api';
         $orderId = $request->route('id');
         $this->orderRepository->deleteOrder($orderId);
 

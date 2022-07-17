@@ -13,15 +13,21 @@ use App\Models\User;
 use App\Models\Cart;
 use App\Models\AffiliateUser;
 use App\Models\AffiliatePayout;
+use App\Models\DeliveryLocation;
+use App\Models\Outlet;
+use App\Models\OutletLocation;
+use App\Models\Payment;
 use App\Models\UserCustomer;
+use Error;
+use Facade\FlareClient\Http\Response;
 use Illuminate\Support\Carbon;
 
-class OrderRepository implements OrderRepositoryInterface 
+class OrderRepository implements OrderRepositoryInterface
 {
     use SmsTraits;
     protected $user;
     protected $order;
-    protected $cartRepository;    
+    protected $cartRepository;
     protected $cart;
     protected $orderTimeline;
     protected $affiliateUser;
@@ -29,7 +35,8 @@ class OrderRepository implements OrderRepositoryInterface
     protected $product;
     protected $userCustomer;
     protected $affiliatePayout;
-    public function __construct(Order $order, CartRepository $cartRepository, User $user, Cart $cart, OrderTimeline $orderTimeline, AffiliateUser $affiliateUser, OrdersProduct $ordersProduct, Product $product, UserCustomer $userCustomer, AffiliatePayout $affiliatePayout){
+    public function __construct(Order $order, CartRepository $cartRepository, User $user, Cart $cart, OrderTimeline $orderTimeline, AffiliateUser $affiliateUser, OrdersProduct $ordersProduct, Product $product, UserCustomer $userCustomer, AffiliatePayout $affiliatePayout, Outlet $outlet, DeliveryLocation $deliveryLocation, OutletLocation $outletLocation, Payment $payment)
+    {
         $this->order = $order;
         $this->cartRepository = $cartRepository;
         $this->user = $user;
@@ -40,28 +47,33 @@ class OrderRepository implements OrderRepositoryInterface
         $this->product = $product;
         $this->userCustomer = $userCustomer;
         $this->affiliatePayout = $affiliatePayout;
+        $this->outlet = $outlet;
+        $this->deliveryLocation = $deliveryLocation;
+        $this->outletLocation = $outletLocation;
+        $this->payment = $payment;
     }
 
-    public function getAllOrders() 
+    public function getAllOrders()
     {
         return $this->order::orderBy('id', 'desc')->get();
     }
 
-    public function getOrderById($orderId) 
+    public function getOrderById($orderId)
     {
         return $this->order::findOrFail($orderId);
     }
 
-    public function deleteOrder($orderId) 
+    public function deleteOrder($orderId)
     {
         $this->order::destroy($orderId);
     }
 
-    public function createOrder(array $orderDetails) 
+    public function createOrder(array $orderDetails)
     {
         $user = $this->user::where('id', $orderDetails['user_id'])->first();
+        $userCustomer = $this->userCustomer::where('u_id', $orderDetails['user_id'])->first();
 
-        $orderDetails['user_id'] = $user->id;
+        $orderDetails['user_id'] = $userCustomer->id;
         $orderDetails['username'] = $user->username;
         $orderDetails['customer_name'] = $user->username;
         $orderDetails['customer_email_1'] = $user->email;
@@ -72,15 +84,15 @@ class OrderRepository implements OrderRepositoryInterface
         $orderDetails['customer_phone_2'] = '';
 
         if ($orderDetails['shipping_type'] == 'inside_dhaka') {
-            // temproraly set delivery charge to 0( 60/100 )
+            // temporarily set delivery charge to 0( 60/100 )
             $orderDetails['deliveryCrgPerShop'] = 0;
         } else {
             $orderDetails['deliveryCrgPerShop'] = 0;
         }
 
         $carts = $this->cartRepository->getCartProducts($orderDetails['user_id']);
-        if($carts['status'] == false){
-            return ['status'=>false, 'msg'=>'Cart is empty.'];
+        if ($carts['status'] == false) {
+            return ['status' => false, 'msg' => 'Cart is empty.'];
         }
 
         $totalPrice = 0;
@@ -94,7 +106,7 @@ class OrderRepository implements OrderRepositoryInterface
         $orderDetails['order_type'] = $carts['orderType'];
         $orderDetails['total_quantity'] = $totalQuantity;
         $orderDetails['total_products_price'] = $totalPrice;
-        $orderDetails['total_delivery_charge'] = $carts['totalVendors'] * $orderDetails['deliveryCrgPerShop'];        
+        $orderDetails['total_delivery_charge'] = $carts['totalVendors'] * $orderDetails['deliveryCrgPerShop'];
 
         $orderPlaced = $this->order::create($orderDetails);
 
@@ -106,53 +118,68 @@ class OrderRepository implements OrderRepositoryInterface
         ]);
 
         $orderDetails['order_id'] = $orderPlaced['id'];
-        $invoice = $orderDetails['order_code'].$orderDetails['order_id'].$orderDetails['rand_code'];
+        $invoice = $orderDetails['order_code'] . $orderDetails['order_id'] . $orderDetails['rand_code'];
 
         $createOrdersProducts = $this->cartRepository->getCartProducts($orderDetails['user_id'], $orderDetails['order_id']);
 
-        $smsContent = "Your order for " . $carts['totalQuantity']." product has been placed successfully on 'Nagadhat Bangladesh Ltd'."."\nInvoice: ".$invoice.".\nFor any query, Please call to 09602444444";
+        $smsContent = "Your order for " . $carts['totalQuantity'] . " product has been placed successfully on 'Nagadhat Bangladesh Ltd'." . "\nInvoice: " . $invoice . ".\nFor any query, Please call to 09602444444";
         $smsSend = $this->sendSingleSms($orderDetails['username'], $smsContent);
 
-        $apot = $this->afifiliatePostOrderTask($orderDetails['user_id'], $orderDetails['order_id']);
+        $apot = $this->affiliatePostOrderTask($orderDetails['user_id'], $orderDetails['order_id']);
         // return $apot;
 
         // $this->cart::whereIn('product_id', $carts['productIds'])->delete();
-        return ['status'=>true, 'msg'=>'Order has been placed successfully.'];
+        return ['status' => true, 'msg' => 'Order has been placed successfully.'];
     }
-    
-    public function createPosOrder(array $orderDetails, $cartProducts, $sales_data) 
+
+    public function createPosOrder(array $orderDetails, $cartProducts, $sales_data)
     {
         // If the POS order exist or not
         $orderExist = $this->order::where('pos_sale_id', $sales_data['pos_sale_id'])->first();
-        if(!empty($orderExist)){
-            return ['status'=>false, 'msg'=>'The POS order already hs been placed.'];
+        if (!empty($orderExist)) {
+            return [
+                'status' => false,
+                'msg' => 'The POS order already has been placed.'
+            ];
         }
-        
+
         // return $sales_data['outlet_id'];
         $user = $this->user::where('id', $orderDetails['user_id'])->first();
+        $userCustomer = $this->userCustomer::where('u_id', $orderDetails['user_id'])->first();
 
-        $orderDetails['user_id'] = $user->id;
+        $customerName = $userCustomer->first_name;
+        $customerPhone = $user->username;
+
+        if ($user->username == '01906198500' && isset($sales_data['walk_in_customer_name'])) {
+            $customerName = $sales_data['walk_in_customer_name'];
+        }
+        if ($user->username == '01906198500' && isset($sales_data['walk_in_customer_phone'])) {
+            $customerPhone = $sales_data['walk_in_customer_phone'];
+        }
+
+        $orderDetails['user_id'] = $userCustomer->id;
         $orderDetails['username'] = $user->username;
-        $orderDetails['customer_name'] = $user->username;
+        $orderDetails['customer_name'] = $customerName;
         $orderDetails['customer_email_1'] = $user->email;
-        $orderDetails['customer_phone_1'] = $user->username;
+        $orderDetails['customer_phone_1'] = $customerPhone;
         $orderDetails['rand_code'] = rand(100, 999);
-        $orderDetails['order_status'] = 1;
-        $orderDetails['order_from'] = $sales_data['outlet_id'];
+        $orderDetails['order_status'] = 6;
+        $orderDetails['outlet_id'] = $sales_data['outlet_id'];
         $orderDetails['pos_sale_id'] = $sales_data['pos_sale_id'];
-        $orderDetails['customer_email_2'] = '';
-        $orderDetails['customer_phone_2'] = '';
 
         if ($orderDetails['shipping_type'] == 'inside_dhaka') {
-            // temproraly set delivery charge to 0( 60/100 )
+            // temporarily set delivery charge to 0( 60/100 )
             $orderDetails['deliveryCrgPerShop'] = 0;
         } else {
             $orderDetails['deliveryCrgPerShop'] = 0;
         }
 
-        $carts = $this->cartRepository->getCartProductsFromPos($sales_data, $orderDetails['user_id'], $cartProducts);
-        if($carts['status'] == false){
-            return ['status'=>false, 'msg'=>$carts['msg']];
+        $carts = $this->cartRepository->getCartProductsFromPos($sales_data, $userCustomer->id, $cartProducts);
+        if ($carts['status'] == false) {
+            return [
+                'status' => false,
+                'msg' => $carts['msg']
+            ];
         }
 
         $totalPrice = 0;
@@ -166,7 +193,11 @@ class OrderRepository implements OrderRepositoryInterface
         $orderDetails['order_type'] = $carts['orderType'];
         $orderDetails['total_quantity'] = $totalQuantity;
         $orderDetails['total_products_price'] = $totalPrice;
-        $orderDetails['total_delivery_charge'] = $carts['totalVendors'] * $orderDetails['deliveryCrgPerShop'];        
+        $orderDetails['total_delivery_charge'] = $carts['totalVendors'] * $orderDetails['deliveryCrgPerShop'];
+
+
+        unset($orderDetails['shipping_type']);
+        unset($orderDetails['deliveryCrgPerShop']);
 
         // Place new order
         $orderPlaced = $this->order::create($orderDetails);
@@ -174,41 +205,170 @@ class OrderRepository implements OrderRepositoryInterface
         // create an order timeline for the user to see
         $newOrderTimeline = $this->orderTimeline::create([
             "order_id" => $orderPlaced['id'],
-            "user_id" => $orderDetails['user_id'],
+            "user_id" => $userCustomer->id,
+            "placed_on" => Carbon::now(),
+            "paid_on" => Carbon::now(),
+            "processing_on" => Carbon::now(),
+            "shipped_on" => Carbon::now(),
+            "delivered_on" => Carbon::now(),
+        ]);
+        // payment process will be here
+        $this->payment::create([
+            "date_time" => Carbon::now(),
+            "order_id" => $orderPlaced['id'],
+            "user_id" => $userCustomer->id,
+            "user_name" => $userCustomer->username,
+            "payer_name" => $customerName,
+            "payer_phone" => $customerPhone,
+            "transaction_id" => uniqid(),
+            "transaction_amound" => $orderPlaced->total_products_price + $orderPlaced->total_delivery_charge,
+            "payment_getway" => "Outlet",
+            "note_1" => 'Walk in customer payment',
+            "payment_method" => 'Cash',
+            "transaction_status" => 1
+        ]);
+
+        $orderDetails['order_id'] = $orderPlaced['id'];
+        $invoice = $orderDetails['order_code'] . $orderDetails['order_id'] . $orderDetails['rand_code'];
+
+        $createOrdersProducts = $this->cartRepository->getCartProductsFromPos($sales_data, $userCustomer->id, $cartProducts, $orderDetails['order_id']);
+
+        $smsContent = "Your order for " . $carts['totalQuantity'] . " product has been placed successfully on 'Nagadhat Bangladesh Ltd'." . "\nInvoice: " . $invoice . ".\nFor any query, Please call to 09602444444";
+        $smsSend = $this->sendSingleSms($orderDetails['username'], $smsContent);
+
+        // Affiliate Post Order Task (Commission Distribute)
+        $apot = $this->affiliatePostOrderTask($userCustomer->id, $orderDetails['order_id']);
+
+        return [
+            'status' => true,
+            'msg' => 'Order has been placed successfully.',
+            'outlet_id' => $sales_data['outlet_id'],
+            'id' => $orderPlaced->id,
+            'pos_sale_id' => $orderPlaced->pos_sale_id,
+            'stock' => $createOrdersProducts['lastOutletStock']
+        ];
+    }
+
+
+    public function createCustomerOrder($order_data)
+    {
+
+        $outlet_id = $order_data['outlet_id'];
+        if (empty($this->outlet::find($outlet_id))) {
+            return [
+                'error' => 422,
+                'msg' => 'invalid outlet_id'
+            ];
+        }
+
+        $location_id = $order_data['location_id'];
+        $outlet_location_exists = $this->outletLocation->where('outlet_id', $outlet_id)->where('location_id', $location_id)->first();
+        if (!$outlet_location_exists) {
+            return [
+                'error' => 422,
+                'msg' => 'invalid location_id'
+            ];
+        }
+
+        $cartProducts = $order_data['cart_products'];
+
+        $user = auth()->user();
+        return
+            $userCustomer = $this->userCustomer::where('u_id', auth()->id())->first();
+        $customerName = $userCustomer->first_name;
+        $customerPhone = $user->username;
+
+        $orderDetails['user_id'] = $userCustomer->id;
+        $orderDetails['username'] = $user->username;
+        $orderDetails['customer_name'] = $customerName;
+        $orderDetails['customer_email_1'] = $user->email;
+        $orderDetails['customer_phone_1'] = $customerPhone;
+        $orderDetails['rand_code'] = rand(100, 999);
+        $orderDetails['order_status'] = 1;
+        $orderDetails['outlet_id'] = $sales_data['outlet_id'];
+        $orderDetails['pos_sale_id'] = $sales_data['pos_sale_id'];
+        $orderDetails['customer_email_2'] = '';
+        $orderDetails['customer_phone_2'] = '';
+
+        if ($orderDetails['shipping_type'] == 'inside_dhaka') {
+            // temporarily set delivery charge to 0( 60/100 )
+            $orderDetails['deliveryCrgPerShop'] = 0;
+        } else {
+            $orderDetails['deliveryCrgPerShop'] = 0;
+        }
+
+
+        $carts = $this->cartRepository->getCartProductsFromPos($sales_data, $userCustomer->id, $cartProducts);
+        if ($carts['status'] == false) {
+            return ['status' => false, 'msg' => $carts['msg']];
+        }
+
+        $totalPrice = 0;
+        $totalQuantity = 0;
+        foreach ($carts['chartProducts'] as $cart) {
+            $totalQuantity += $cart['cartProductQuantity'];
+            $totalPrice += ($cart['cartProductUnitPrice'] * $cart['cartProductQuantity']);
+        }
+
+        $orderDetails['order_code'] = $carts['orderCode'];
+        $orderDetails['order_type'] = $carts['orderType'];
+        $orderDetails['total_quantity'] = $totalQuantity;
+        $orderDetails['total_products_price'] = $totalPrice;
+        $orderDetails['total_delivery_charge'] = $carts['totalVendors'] * $orderDetails['deliveryCrgPerShop'];
+
+
+        unset($orderDetails['shipping_type']);
+        unset($orderDetails['deliveryCrgPerShop']);
+
+        // Place new order
+        $orderPlaced = $this->order::create($orderDetails);
+
+        // create an order timeline for the user to see
+        $newOrderTimeline = $this->orderTimeline::create([
+            "order_id" => $orderPlaced['id'],
+            "user_id" => $userCustomer->id,
             "placed_on" => Carbon::now()
         ]);
 
         $orderDetails['order_id'] = $orderPlaced['id'];
-        $invoice = $orderDetails['order_code'].$orderDetails['order_id'].$orderDetails['rand_code'];
-        $createOrdersProducts = $this->cartRepository->getCartProductsFromPos($sales_data, $orderDetails['user_id'], $cartProducts, $orderDetails['order_id']);
-        $smsContent = "Your order for " . $carts['totalQuantity']." product has been placed successfully on 'Nagadhat Bangladesh Ltd'."."\nInvoice: ".$invoice.".\nFor any query, Please call to 09602444444";
+        $invoice = $orderDetails['order_code'] . $orderDetails['order_id'] . $orderDetails['rand_code'];
+
+        $createOrdersProducts = $this->cartRepository->getCartProductsFromPos($sales_data, $userCustomer->id, $cartProducts, $orderDetails['order_id']);
+
+        $smsContent = "Your order for " . $carts['totalQuantity'] . " product has been placed successfully on 'Nagadhat Bangladesh Ltd'." . "\nInvoice: " . $invoice . ".\nFor any query, Please call to 09602444444";
         $smsSend = $this->sendSingleSms($orderDetails['username'], $smsContent);
 
         // Afifiliate Post Order Task (Commission Distribute)
-        $apot = $this->afifiliatePostOrderTask($orderDetails['user_id'], $orderDetails['order_id']);
-        return ['status'=>true, 'msg'=>'Order has been placed successfully.', 'data'=>$orderPlaced];
+        $apot = $this->affiliatePostOrderTask($userCustomer->id, $orderDetails['order_id']);
+
+        return ['status' => true, 'msg' => 'Order has been placed successfully.', 'outlet_id' => $sales_data['outlet_id'], 'id' => $orderPlaced->id, 'pos_sale_id' => $orderPlaced->pos_sale_id, 'stock' => $createOrdersProducts['lastOutletStock']];
+
+        // return ['status'=>true, 'msg'=>'Order has been placed successfully.', 'data'=>collect($orderPlaced->toArray())->except(['user_id']), 'stock'=>$createOrdersProducts];
+        // return ['status'=>true, 'msg'=>'Order has been placed successfully.', 'data'=>$orderPlaced];
     }
 
-    public function updateOrder($orderId, array $newDetails) 
+    public function updateOrder($orderId, array $newDetails)
     {
         return $this->order::whereId($orderId)->update($newDetails);
     }
 
-    public function getFulfilledOrders() 
+    public function getFulfilledOrders()
     {
         return $this->order::where('is_fulfilled', true);
     }
-    public function getOrders() 
+    public function getOrders()
     {
         return $this->order::all();
     }
-    public function createNewOrder($data) 
+    public function createNewOrder($data)
     {
         return $this->order::create($data);
     }
 
-    public function afifiliatePostOrderTask($userId, $orderId){
-        $userData = $this->userCustomer::where('u_id', $userId)->first();
+    public function affiliatePostOrderTask($userId, $orderId)
+    {
+        // $userData = $this->userCustomer::where('u_id', $userId)->first();
+        $userData = $this->userCustomer::find($userId);
         $payoutDetails["withdrawable"] = 0;
         $payoutDetails["bonus_from"] = $userId;
 
@@ -251,7 +411,7 @@ class OrderRepository implements OrderRepositoryInterface
                     // return $this->createPayoutRecord($payoutDetails);
 
                     $newPayout = $this->createPayoutRecord($payoutDetails);
-                    
+
                     // Create a new payout record  and save to database
                     // $affiliateController = new AffiliateController();
                     // $newPayout = $affiliateController->createPayoutRecord($payoutDetails);
@@ -259,7 +419,7 @@ class OrderRepository implements OrderRepositoryInterface
                 }
 
                 // condition to destribute commission to 5 generation of referers if the product is global affiliate product
-                if ($orderProduct->orderProductDetailsToProduct->target_audience == 1) {
+                if ($orderProduct->ordersProductToProduct->target_audience == 1) {
 
                     $secondLevAffiliate = $this->userCustomer::find($findAffiliateUser->user_id);
                     $findSecondLevAffiliate = $this->affiliateUser::where('user_id', $secondLevAffiliate->referrer_id)->first();
@@ -399,7 +559,7 @@ class OrderRepository implements OrderRepositoryInterface
             }
         }
     }
-    // End of afifiliatePostOrderTask
+    // End of affiliatePostOrderTask
 
     public function createPayoutRecord($payoutDetails)
     {

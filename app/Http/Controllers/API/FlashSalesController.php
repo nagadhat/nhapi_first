@@ -42,7 +42,7 @@ class FlashSalesController extends Controller
     // This function will show flash-sale page
     function showFlashSale()
     {
-        // Get flash sale information and configaretion
+        // Get flash sale information and configuration
         $flashSaleDetails = FlashSale::where("id", 3)->get();
         return view("public.flash-sale", ["flashSaleSetting" => $flashSaleDetails[0]]);
     }
@@ -55,14 +55,6 @@ class FlashSalesController extends Controller
             ->where("status", 1)
             ->inRandomOrder()
             ->paginate($request["showPerPage"]);
-
-        // dd($productsDetailsList);
-        // ->transform(function($product_details) {
-        //     $product_details->thumb = product_thumb_url( isset($product_details->thumbnail_1) ? $product_details->thumbnail_1 : '');
-
-        //     return $product_details;
-        // });
-
 
         return $productsDetailsList;
     }

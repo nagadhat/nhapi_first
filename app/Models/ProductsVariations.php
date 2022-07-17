@@ -9,5 +9,5 @@ class ProductsVariations extends Model
 {
     use HasFactory;
     protected $table = "products_variations";
-    protected $guarded = ['id'];
+    protected $guarded = [];
 }

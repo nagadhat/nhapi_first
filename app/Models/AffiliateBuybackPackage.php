@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductCategory extends Model
+class AffiliateBuybackPackage extends Model
 {
     use HasFactory;
-    protected $table = "products_categories";
+    protected $guarded = [];
 }
