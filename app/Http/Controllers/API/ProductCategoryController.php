@@ -320,10 +320,10 @@ class ProductCategoryController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/all-product-flash-sale/{outletId}",
+     *     path="/api/get-flash-sale-products/{outletId}",
      *     tags={"Flash Sale & Products"},
      *     summary="Get Flash Sale product list in random order.",
-     *     description="Get Flash Sale product list in random order with detailed product flash discount and price.use parameter page_size=5 to set pagination '/api/all-product-flash-sale/{outletId}?per_page=2' value, by default per_page=15",
+     *     description="Get Flash Sale product list in random order with detailed product flash discount and price.use parameter page_size=5 to set pagination '/api/get-flash-sale-products/{outletId}?per_page=2' value, by default per_page=15",
      *     @OA\Response(
      *         response=200,
      *         description="Success",
@@ -364,7 +364,7 @@ class ProductCategoryController extends BaseController
 
     /**
      * @OA\Get(
-     *     path="/api/all-product-flash-sale-info",
+     *     path="/api/get-flash-sale-info",
      *     tags={"Flash Sale & Products"},
      *     summary="Get Flash Sale info.",
      *     description="Get Flash Sale info like, Flash Sale active or not, Flash Sale start and end date.",
