@@ -56,7 +56,14 @@ Route::get('outlet-delivery-location', [OutletController::class, 'outletDelivery
 Route::get('outlet-delivery-location/{outletId}', [OutletController::class, 'outletDeliveryLocationByOutlet']);
 Route::get('outlet/{locationId}', [OutletController::class, 'outletByDeliveryLocation']);
 
+// public cart items and prices
+Route::post('add-to-cart', [CartController::class, 'addToCart']);
+Route::get('cart-item-by-public/{uId}/{locationId}', [CartController::class, 'cartItemByUId']);
+
 Route::middleware('auth:api')->group(function () {
+    // cart items and prices
+    Route::get('cart-item-by-user/{userId}/{locationId}', [CartController::class, 'allCartProductByUserId']);
+
     // 'demo' section in API documentation
     Route::get('orders', [OrderController::class, 'index']);
     Route::post('orders', [OrderController::class, 'store']);
@@ -118,10 +125,6 @@ Route::middleware('auth:api')->group(function () {
 
     //category pos
     Route::get('sync-brand/{dateTime}', [ProductCategoryController::class, 'filterBrandByDateTime']);
-
-    //Get cart products and prices
-    Route::post('add-to-cart', [CartController::class, 'addToCart']);
-    Route::get('get-cart-product/{userId}', [CartController::class, 'allCartProductById']);
 
     // Product Requisitions Issues
     Route::post('outlet-product-requisition', [RequisitionIssueController::class, 'newRequisition']);

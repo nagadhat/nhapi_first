@@ -32,21 +32,52 @@ class CartRepository implements CartRepositoryInterface
 
     public function addToCart(Request $request)
     {
-        $productExist = $this->cart::where('user_id', $request->user_id)->where('product_id', $request->product_id)->first();
+        if ($request->uid && $request->uid) {
+            return [
+                'status' => false,
+                'msg' => 'user_id or uid only one field acceptable',
+            ];
+        } elseif ($request->user_id) {
+            $productExist = $this->cart::where('user_id', $request->user_id)->where('product_id', $request->product_id)->first();
 
-        if ($productExist) {
-            $productExist->quantity = $productExist->quantity + $request->quantity;
-            $productExist->save();
-            $cartProduct = $productExist;
-        } else $cartProduct = $this->cart::create($request->all());
+            if ($productExist) {
+                $productExist->quantity = $productExist->quantity + $request->quantity;
+                $productExist->save();
+                $cartProduct = $productExist;
+            } else {
+                $cartProduct = $this->cart::create($request->all());
+            }
+            return [
+                'status' => true,
+                'msg' => 'Product added to cart successfully',
+                'data' => $cartProduct
+            ];
+        } elseif ($request->uid) {
+            $productExist = $this->cart::where('user_id', $request->user_id)->where('uid', $request->uid)->first();
 
-        return ['status' => true, 'msg' => 'Product added to cart successfully', 'data' => $cartProduct];
+            if ($productExist) {
+                $productExist->quantity = $productExist->quantity + $request->quantity;
+                $productExist->save();
+                $cartProduct = $productExist;
+            } else {
+                $cartProduct = $this->cart::create($request->all());
+            }
+            return [
+                'status' => true,
+                'msg' => 'Product added to cart successfully',
+                'data' => $cartProduct
+            ];
+        } else {
+            return [
+                'status' => false,
+                'msg' => 'user_id or uid field is missing',
+            ];
+        }
     }
 
-    public function allCartProductById($userId)
+    public function allCartProductById($userId, $locationId)
     {
-        // $cartData = $this->cart::where("user_id", Auth::id())->get()->toArray();
-        $cartData = $this->cart::where("user_id", $userId)->get()->toArray();
+        $cartData = $this->cart::where("user_id", $userId)->where('location_id', $locationId)->get()->toArray();
         if (empty($cartData)) {
             return ['status' => false, 'msg' => 'Cart is empty.'];
         }
@@ -69,7 +100,7 @@ class CartRepository implements CartRepositoryInterface
                 "cartProductSlug" => $productData["slug"],
             );
             if ($data["product_variation_size"] != 0) {
-                // Veriation Price here
+                // Variation Price here
                 $variation = $this->productsVariations::where("id", $data["product_variation_size"])->get()->first();
                 if ($variation["price"] != 0) {
                     $firstArray["cartProductUnitPrice"] = $variation["price"];
@@ -78,11 +109,44 @@ class CartRepository implements CartRepositoryInterface
             $cartProductsDetails[] = $firstArray;
         }
         return $cartProductsDetails;
-
-        $vendors = $this->getVendorsListOfCart($userId);
-        $totalVendor = count($vendors);
-        return ['chartProducts' => $cartProductsDetails, 'vendors' => $vendors, 'totalVendors' => $totalVendor];
     }
+
+    public function getCartItemByUId($uId, $locationId)
+    {
+        $cartData = $this->cart::where("uid", $uId)->get()->toArray();
+        if (empty($cartData)) {
+            return ['status' => false, 'msg' => 'Cart is empty.'];
+        }
+
+        $cartProductsDetails = array();
+        foreach ($cartData as $data) {
+            // Get product information
+            $productData = $this->product::where("id", $data["product_id"])->first();
+
+            $firstArray = array(
+                "cartId" => $data["id"],
+                "productId" => $data["product_id"],
+                "orderType" => $data["order_type"],
+                "cartProductImage" => $productData["thumbnail_1"],
+                "cartProductName" => $productData["title"],
+                "cartProductQuantity" => $data["quantity"],
+                "cartProductUnitPrice" => $this->pcr->productPriceByProductId($productData["id"]),
+                "cartProductVendorId" => $productData["vendor"],
+                "cartProductReturnPolicy" => $productData["return_policy"],
+                "cartProductSlug" => $productData["slug"],
+            );
+            if ($data["product_variation_size"] != 0) {
+                // Variation Price here
+                $variation = $this->productsVariations::where("id", $data["product_variation_size"])->get()->first();
+                if ($variation["price"] != 0) {
+                    $firstArray["cartProductUnitPrice"] = $variation["price"];
+                }
+            }
+            $cartProductsDetails[] = $firstArray;
+        }
+        return $cartProductsDetails;
+    }
+
 
     public function getCartProducts($userId, $orderId = 0)
     {

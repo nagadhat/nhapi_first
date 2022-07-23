@@ -5,86 +5,35 @@
         "version": "1"
     },
     "paths": {
-        "/api/all-cart-product/{userId}": {
+        "/api/cart-item-by-user/{userId}/{locationId}": {
             "get": {
                 "tags": [
                     "Cart Product"
                 ],
-                "summary": "Get Cart Product by User ID",
-                "description": "Returns Products",
-                "operationId": "893474df5a2caa8f9e9a7607e460e995",
-                "parameters": [
-                    {
-                        "name": "userId",
-                        "in": "path",
-                        "description": "User ID",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
+                "summary": "Get cart data",
+                "description": "Returns cart data by user_id and location_id when user is logged in.",
+                "operationId": "60648a199f98cacf210440c09d2f51cd",
                 "responses": {
                     "200": {
-                        "description": "This will return all product listed in cart of the given user id.",
+                        "description": "Success",
                         "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "cartId": {
-                                            "type": "intiger",
-                                            "example": "567"
-                                        },
-                                        "productId": {
-                                            "type": "intiger",
-                                            "example": "2562"
-                                        },
-                                        "orderType": {
-                                            "type": "string",
-                                            "example": "Regular"
-                                        },
-                                        "cartProductImage": {
-                                            "type": "string",
-                                            "example": "media/products/26072021737515495.webp"
-                                        },
-                                        "cartProductName": {
-                                            "type": "string",
-                                            "example": "DIBAOLING Hand Sanitizer Formula"
-                                        },
-                                        "cartProductQuantity": {
-                                            "type": "intiger",
-                                            "example": "10"
-                                        },
-                                        "cartProductUnitPrice": {
-                                            "type": "intiger",
-                                            "example": "500"
-                                        },
-                                        "cartProductVendorId": {
-                                            "type": "intiger",
-                                            "example": "40"
-                                        },
-                                        "cartProductReturnPolicy": {
-                                            "type": "string",
-                                            "example": "null"
-                                        },
-                                        "cartProductSlug": {
-                                            "type": "string",
-                                            "example": "DIBAOLING-Hand-Sanitizer-Formula-610abac3cc9c4"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
+                            "application/json": {}
                         }
+                    },
+                    "401": {
+                        "description": "Unauthorize Access, Invalid Token or Token has expired",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
                     },
                     "400": {
                         "description": "Bad Request"
                     },
-                    "401": {
-                        "description": "Unauthenticated"
-                    },
-                    "403": {
-                        "description": "Forbidden"
+                    "404": {
+                        "description": "not found"
                     }
                 },
                 "security": [
@@ -94,13 +43,46 @@
                 ]
             }
         },
+        "/api/cart-item-by-public/{uId}/{locationId}": {
+            "get": {
+                "tags": [
+                    "Cart Product"
+                ],
+                "summary": "Get cart data",
+                "description": "Returns cart data by unique identifier according to location when user is not logged in.",
+                "operationId": "445e635575b6cf7a59aa8cb7eae9303b",
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorize Access, Invalid Token or Token has expired",
+                        "content": {
+                            "application/json": {}
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "404": {
+                        "description": "not found"
+                    }
+                }
+            }
+        },
         "/api/add-to-cart": {
             "post": {
                 "tags": [
                     "Cart Product"
                 ],
                 "summary": "Add to cart",
-                "description": "This end-point will add products to cart",
+                "description": "This end-point will add products to cart, outlet_id, location_id, product_id, order_type, quantity fields are required, including user_id / uid, product_variation_size field is optional. When user is logged in include user-id, when user is not logged in or not a registered user enter uid. uid is a unique identifier which will represent a public users identity according to the location they are. if location changes cart item could change accordingly.",
                 "operationId": "add-to-cart",
                 "requestBody": {
                     "required": true,
@@ -108,13 +90,25 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "username",
-                                    "password"
+                                    "outlet_id",
+                                    "location_id"
                                 ],
                                 "properties": {
                                     "user_id": {
                                         "type": "integer",
                                         "example": "3121"
+                                    },
+                                    "uid": {
+                                        "type": "string",
+                                        "example": "userAgentUniqueId"
+                                    },
+                                    "outlet_id": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    },
+                                    "location_id": {
+                                        "type": "integer",
+                                        "example": "67"
                                     },
                                     "order_type": {
                                         "type": "string",
