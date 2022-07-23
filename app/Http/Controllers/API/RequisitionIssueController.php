@@ -30,6 +30,15 @@ class RequisitionIssueController extends BaseController
         $outletID = $request['requisition']['outlet_id'];
         $requisitionProduct = $request['requisition']['product'];
 
+        $val = Validator::make($request['requisition'], [
+            'outlet_id' => 'required',
+            'requisition_no' => 'required',
+        ]);
+
+        if ($val->fails()) {
+            return $this->sendError('Validation Error.', $val->errors());
+        }
+
         if (empty($this->outlet::find($outletID))) {
             return $this->sendError('Invalid Outlet ID', ['error' => 'Outlet Not Found!']);
         }

@@ -754,7 +754,7 @@
         "/api/online-order/payment": {
             "post": {
                 "tags": [
-                    "Outlet Payment"
+                    "POS Payment"
                 ],
                 "summary": "Receive Online payment",
                 "description": "Receive online payment when customer comes to the outlet for order pickup",
@@ -1143,14 +1143,14 @@
                 }
             }
         },
-        "/api/all-product-flash-sale/{outletId}": {
+        "/api/get-flash-sale-products/{outletId}": {
             "get": {
                 "tags": [
                     "Flash Sale & Products"
                 ],
                 "summary": "Get Flash Sale product list in random order.",
-                "description": "Get Flash Sale product list in random order with detailed product flash discount and price.use parameter page_size=5 to set pagination '/api/all-product-flash-sale/{outletId}?per_page=2' value, by default per_page=15",
-                "operationId": "0e2295a5bb9cf8907be4cef848084a75",
+                "description": "Get Flash Sale product list in random order with detailed product flash discount and price.use parameter page_size=5 to set pagination '/api/get-flash-sale-products/{outletId}?per_page=2' value, by default per_page=15",
+                "operationId": "e677d928c3e76b873d7e30b0ba77d7f1",
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -1176,14 +1176,14 @@
                 }
             }
         },
-        "/api/all-product-flash-sale-info": {
+        "/api/get-flash-sale-info": {
             "get": {
                 "tags": [
                     "Flash Sale & Products"
                 ],
                 "summary": "Get Flash Sale info.",
                 "description": "Get Flash Sale info like, Flash Sale active or not, Flash Sale start and end date.",
-                "operationId": "679486c5a9747e8aff7170c3597a5cc4",
+                "operationId": "22a192226d130b9ae5d8fcdcdaf69d91",
                 "responses": {
                     "200": {
                         "description": "Success",

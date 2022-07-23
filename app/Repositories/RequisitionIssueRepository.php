@@ -36,7 +36,15 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
     public function newRequisition($request)
     {
         $outletID =  $request['requisition']['outlet_id'];
+        $requisitionNo = $request['requisition']['requisition_no'];
         $requisitionProduct = $request['requisition']['product'];
+
+        $check = $this->outletRequisition::where('requisition_no', $requisitionNo)->first();
+        if ($check) {
+            return [
+                'error' => 'Requisition already created.'
+            ];
+        }
 
         // check if product_id valid or not
         $noProduct = [];
@@ -54,7 +62,8 @@ class RequisitionIssueRepository implements RequisitionIssueRepositoryInterface
         }
 
         $createRequisition = $this->outletRequisition::create([
-            'outlet_id' => $request['requisition']['outlet_id']
+            'outlet_id' => $outletID,
+            'requisition_no' => $requisitionNo,
         ]);
 
         $newRequisition = array();

@@ -18,7 +18,7 @@ class CartController extends BaseController
 
     /**
      * @OA\Get(
-     *      path="/api/all-cart-product/{userId}",
+     *      path="/api/get-cart-product/{userId}",
      *      tags={"Cart Product"},
      *      summary="Get Cart Product by User ID",
      *      security={{"passport": {}}},
@@ -105,8 +105,11 @@ class CartController extends BaseController
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
+            'uid' => 'nullable',
             'order_type' => 'required',
             'product_id' => 'required',
+            'outlet_id' => 'required',
+            'location_id' => 'required',
             'quantity' => 'required',
             'product_variation_size' => 'required',
         ]);
