@@ -110,7 +110,6 @@ class CartController extends BaseController
      *  @OA\Post(
      *  path="/api/add-to-cart",
      *  summary="Add to cart",
-     *  security={{"passport": {}}},
      *  description="This end-point will add products to cart, outlet_id, location_id, product_id, order_type, quantity fields are required, including user_id / uid, product_variation_size field is optional. When user is logged in include user-id, when user is not logged in or not a registered user enter uid. uid is a unique identifier which will represent a public users identity according to the location they are. if location changes cart item could change accordingly.",
      *  operationId="add-to-cart",
      *  tags={"Cart Product"},
