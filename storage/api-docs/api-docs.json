@@ -157,12 +157,7 @@
                             }
                         }
                     }
-                },
-                "security": [
-                    {
-                        "passport": []
-                    }
-                ]
+                }
             }
         },
         "/api/orders": {

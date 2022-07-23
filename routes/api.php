@@ -58,11 +58,11 @@ Route::get('outlet/{locationId}', [OutletController::class, 'outletByDeliveryLoc
 
 // public cart items and prices
 Route::post('add-to-cart', [CartController::class, 'addToCart']);
-Route::get('cart-item-by-public/{uId}/{locationId}', [CartController::class, 'cartItemByUId']);
+Route::get('cart-item-by-public/{locationId}/{uId}', [CartController::class, 'cartItemByUId']);
 
 Route::middleware('auth:api')->group(function () {
     // cart items and prices
-    Route::get('cart-item-by-user/{userId}/{locationId}', [CartController::class, 'allCartProductByUserId']);
+    Route::get('cart-item-by-user/{locationId}/{userId}', [CartController::class, 'allCartProductByUserId']);
 
     // 'demo' section in API documentation
     Route::get('orders', [OrderController::class, 'index']);

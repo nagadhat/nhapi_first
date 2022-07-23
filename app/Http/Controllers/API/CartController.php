@@ -19,7 +19,7 @@ class CartController extends BaseController
 
     /**
      * @OA\Get(
-     *      path="/api/cart-item-by-user/{userId}/{locationId}",
+     *      path="/api/cart-item-by-user/{locationId}/{userId}",
      *      tags={"Cart Product"},
      *      summary="Get cart data",
      *      security={{"passport": {}}},
@@ -54,7 +54,7 @@ class CartController extends BaseController
      *
      */
 
-    public function allCartProductByUserId($userId, $locationId)
+    public function allCartProductByUserId($locationId, $userId)
     {
         return response()->json([
             'data' => $this->cartRepository->allCartProductById($userId, $locationId)
@@ -64,7 +64,7 @@ class CartController extends BaseController
 
     /**
      * @OA\Get(
-     *      path="/api/cart-item-by-public/{uId}/{locationId}",
+     *      path="/api/cart-item-by-public/{locationId}/{uId}",
      *      tags={"Cart Product"},
      *      summary="Get cart data",
      *      description="Returns cart data by unique identifier according to location when user is not logged in.",
@@ -98,7 +98,7 @@ class CartController extends BaseController
      *
      */
 
-    public function cartItemByUId($uId, $locationId)
+    public function cartItemByUId($locationId, $uId)
     {
         return response()->json([
             'data' => $this->cartRepository->getCartItemByUId($uId, $locationId)
