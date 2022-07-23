@@ -75,7 +75,7 @@ class CartRepository implements CartRepositoryInterface
         }
     }
 
-    public function allCartProductById($userId, $locationId)
+    public function allCartProductById($locationId, $userId)
     {
         $cartData = $this->cart::where("user_id", $userId)->where('location_id', $locationId)->get()->toArray();
         if (empty($cartData)) {
@@ -111,7 +111,7 @@ class CartRepository implements CartRepositoryInterface
         return $cartProductsDetails;
     }
 
-    public function getCartItemByUId($uId, $locationId)
+    public function getCartItemByUId($locationId, $uId)
     {
         $cartData = $this->cart::where("uid", $uId)->get()->toArray();
         if (empty($cartData)) {

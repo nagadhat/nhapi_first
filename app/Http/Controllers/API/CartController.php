@@ -57,7 +57,7 @@ class CartController extends BaseController
     public function allCartProductByUserId($locationId, $userId)
     {
         return response()->json([
-            'data' => $this->cartRepository->allCartProductById($userId, $locationId)
+            'data' => $this->cartRepository->allCartProductById($locationId, $userId)
         ]);
     }
 
@@ -101,7 +101,7 @@ class CartController extends BaseController
     public function cartItemByUId($locationId, $uId)
     {
         return response()->json([
-            'data' => $this->cartRepository->getCartItemByUId($uId, $locationId)
+            'data' => $this->cartRepository->getCartItemByUId($locationId, $uId)
         ]);
     }
 
