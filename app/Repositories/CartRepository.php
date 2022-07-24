@@ -32,7 +32,7 @@ class CartRepository implements CartRepositoryInterface
 
     public function addToCart(Request $request)
     {
-        if ($request->uid && $request->uid) {
+        if ($request->uid && $request->user_id) {
             return [
                 'status' => false,
                 'msg' => 'user_id or uid only one field acceptable',
