@@ -5,14 +5,14 @@
         "version": "1"
     },
     "paths": {
-        "/api/cart-item-by-user/{userId}/{locationId}": {
+        "/api/cart-item-by-user/{locationId}/{userId}": {
             "get": {
                 "tags": [
                     "Cart Product"
                 ],
                 "summary": "Get cart data",
                 "description": "Returns cart data by user_id and location_id when user is logged in.",
-                "operationId": "60648a199f98cacf210440c09d2f51cd",
+                "operationId": "892b1475c421dbba06fb2716193f87c4",
                 "responses": {
                     "200": {
                         "description": "Success",
@@ -43,14 +43,14 @@
                 ]
             }
         },
-        "/api/cart-item-by-public/{uId}/{locationId}": {
+        "/api/cart-item-by-public/{locationId}/{uId}": {
             "get": {
                 "tags": [
                     "Cart Product"
                 ],
                 "summary": "Get cart data",
                 "description": "Returns cart data by unique identifier according to location when user is not logged in.",
-                "operationId": "445e635575b6cf7a59aa8cb7eae9303b",
+                "operationId": "3fb35a269de3a058ec0d95f4181bd870",
                 "responses": {
                     "200": {
                         "description": "Success",

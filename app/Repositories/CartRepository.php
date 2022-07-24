@@ -38,7 +38,10 @@ class CartRepository implements CartRepositoryInterface
                 'msg' => 'user_id or uid only one field acceptable',
             ];
         } elseif ($request->user_id) {
-            $productExist = $this->cart::where('user_id', $request->user_id)->where('product_id', $request->product_id)->first();
+            $productExist = $this->cart::where('user_id', $request->user_id)
+                ->where('product_id', $request->product_id)
+                ->where('location_id', $request->location_id)
+                ->first();
 
             if ($productExist) {
                 $productExist->quantity = $productExist->quantity + $request->quantity;
@@ -53,7 +56,10 @@ class CartRepository implements CartRepositoryInterface
                 'data' => $cartProduct
             ];
         } elseif ($request->uid) {
-            $productExist = $this->cart::where('user_id', $request->user_id)->where('uid', $request->uid)->first();
+            $productExist = $this->cart::where('user_id', $request->user_id)
+                ->where('uid', $request->uid)
+                ->where('location_id', $request->location_id)
+                ->first();
 
             if ($productExist) {
                 $productExist->quantity = $productExist->quantity + $request->quantity;
