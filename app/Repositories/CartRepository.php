@@ -56,8 +56,8 @@ class CartRepository implements CartRepositoryInterface
                 'data' => $cartProduct
             ];
         } elseif ($request->uid) {
-            $productExist = $this->cart::where('user_id', $request->user_id)
-                ->where('uid', $request->uid)
+            $productExist = $this->cart::where('uid', $request->uid)
+                ->where('product_id', $request->product_id)
                 ->where('location_id', $request->location_id)
                 ->first();
 
